@@ -221,13 +221,13 @@ body{font-family:'Tajawal',sans-serif;background:var(--dk);color:white;overflow-
 <nav class="topnav">
   <div class="nav-logo">Rihla</div>
   <div class="nav-actions">
-    <button class="nav-btn nav-btn-ghost">دخول</button>
-    <button class="nav-btn nav-btn-primary">تسجيل مجاني</button>
+    <a href="auth.html"><button class="nav-btn nav-btn-ghost">دخول</button></a>
+    <a href="auth.html"><button class="nav-btn nav-btn-primary">تسجيل مجاني</button></a>
   </div>
 </nav>
 
 <!-- OFFLINE TOAST -->
-<div class="offline-toast" id="offlineToast">📵 أنت غير متصل — تعمل بوضع التخزين المؤقت</div>
+<div class="offline-toast" id="offlineToast" style="display:none">📵 أنت غير متصل — تعمل بوضع التخزين المؤقت</div>
 
 <!-- INSTALL BANNER -->
 <div class="install-banner" id="installBanner">
@@ -322,7 +322,7 @@ body{font-family:'Tajawal',sans-serif;background:var(--dk);color:white;overflow-
   <div class="bnav-item" onclick="setTab(this);document.getElementById('agents').scrollIntoView({behavior:'smooth'})">
     <div class="bni">🤝</div><div class="bnl">المساعدون</div>
   </div>
-  <div class="bnav-item" onclick="setTab(this);showToast('تسجيل الدخول قريباً 👤')">
+  <div class="bnav-item" onclick="window.location.href='auth.html'">
     <div class="bni">👤</div><div class="bnl">حسابي</div>
   </div>
 </nav>
@@ -417,7 +417,7 @@ function showToast(msg) {
 // ─── PWA: SERVICE WORKER ───
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('./sw.js')
+    navigator.serviceWorker.register('/sw.js')
       .then(reg => console.log('✅ رِحلة SW registered:', reg.scope))
       .catch(err => console.log('❌ SW error:', err));
   });
@@ -428,7 +428,10 @@ let deferredPrompt;
 window.addEventListener('beforeinstallprompt', e => {
   e.preventDefault();
   deferredPrompt = e;
-  setTimeout(() => document.getElementById('installBanner').classList.add('show'), 3000);
+  // أظهر البانر بعد 4 ثواني فقط إذا لم يكن مثبتاً
+  setTimeout(() => {
+    if (deferredPrompt) document.getElementById('installBanner').classList.add('show');
+  }, 4000);
 });
 
 document.getElementById('installBtn').addEventListener('click', () => {
@@ -446,19 +449,25 @@ document.getElementById('dismissBtn').addEventListener('click', () => {
   document.getElementById('installBanner').classList.remove('show');
 });
 
-window.addEventListener('appinstalled', () => showToast('✅ رِحلة مثبّتة بنجاح!'));
+window.addEventListener('appinstalled', () => {
+  deferredPrompt = null;
+  document.getElementById('installBanner').classList.remove('show');
+  showToast('✅ رِحلة مثبّتة بنجاح!');
+});
 
 // ─── OFFLINE DETECTION ───
-function updateOnlineStatus() {
-  const toast = document.getElementById('offlineToast');
-  if (!navigator.onLine) {
-    toast.classList.add('show');
-  } else {
-    toast.classList.remove('show');
-  }
-}
-window.addEventListener('online', updateOnlineStatus);
-window.addEventListener('offline', updateOnlineStatus);
+// لا تظهر أي رسالة عند التحميل — فقط عند فقدان الاتصال فعلاً
+window.addEventListener('offline', () => {
+  const t = document.getElementById('offlineToast');
+  t.style.display = 'block';
+  t.classList.add('show');
+});
+window.addEventListener('online', () => {
+  const t = document.getElementById('offlineToast');
+  t.classList.remove('show');
+  setTimeout(() => t.style.display='none', 500);
+  showToast('✅ عدت للاتصال بالإنترنت');
+});
 
 // ─── INIT ───
 renderTrips();
