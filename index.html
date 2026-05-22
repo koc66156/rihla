@@ -18,6 +18,7 @@
 
 <!-- Fonts -->
 <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&family=Righteous&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
 :root {
@@ -221,13 +222,13 @@ body{font-family:'Tajawal',sans-serif;background:var(--dk);color:white;overflow-
 <nav class="topnav">
   <div class="nav-logo">Rihla</div>
   <div class="nav-actions">
-    <button class="nav-btn nav-btn-ghost">دخول</button>
-    <button class="nav-btn nav-btn-primary">تسجيل مجاني</button>
+    <a href="auth.html"><button class="nav-btn nav-btn-ghost">دخول</button></a>
+    <a href="auth.html"><button class="nav-btn nav-btn-primary">تسجيل مجاني</button></a>
   </div>
 </nav>
 
 <!-- OFFLINE TOAST -->
-<div class="offline-toast" id="offlineToast">📵 أنت غير متصل — تعمل بوضع التخزين المؤقت</div>
+<div class="offline-toast" id="offlineToast" style="display:none">📵 أنت غير متصل — تعمل بوضع التخزين المؤقت</div>
 
 <!-- INSTALL BANNER -->
 <div class="install-banner" id="installBanner">
@@ -255,8 +256,8 @@ body{font-family:'Tajawal',sans-serif;background:var(--dk);color:white;overflow-
     <h1>سافر مع<br><span class="grad">رُفقة تشاركك</span><br>الشغف 🌍</h1>
     <p>لا تسافر وحدك. ابحث عن رفيق سفر، انضم لمجموعة، أو نظّم رحلتك الخاصة مع أناس من الكويت والخليج.</p>
     <div class="hero-btns">
-      <button class="hbtn hbtn-p" onclick="showToast('قريباً — نحن في مرحلة البناء! 🚀')">ابحث عن رفيق ✈️</button>
-      <button class="hbtn hbtn-s" onclick="document.getElementById('trips').scrollIntoView({behavior:'smooth'})">تصفح الرحلات</button>
+      <button class="hbtn hbtn-p" onclick="document.getElementById('trips').scrollIntoView({behavior:'smooth'})">ابحث عن رفيق ✈️</button>
+      <button class="hbtn hbtn-s" onclick="window.location.href='post-trip.html'">+ انشر رحلتك</button>
     </div>
     <div class="stats-row">
       <div class="stat"><span class="num">١٢٠+</span><div class="lbl">رحلة نشطة</div></div>
@@ -322,7 +323,7 @@ body{font-family:'Tajawal',sans-serif;background:var(--dk);color:white;overflow-
   <div class="bnav-item" onclick="setTab(this);document.getElementById('agents').scrollIntoView({behavior:'smooth'})">
     <div class="bni">🤝</div><div class="bnl">المساعدون</div>
   </div>
-  <div class="bnav-item" onclick="setTab(this);showToast('تسجيل الدخول قريباً 👤')">
+  <div class="bnav-item" onclick="goToProfile()">
     <div class="bni">👤</div><div class="bnl">حسابي</div>
   </div>
 </nav>
@@ -332,14 +333,20 @@ body{font-family:'Tajawal',sans-serif;background:var(--dk);color:white;overflow-
 
 <script>
 // ─── DATA ───
-const TRIPS = [
-  {id:1,name:"كبادوكيا والبالون السحري",dest:"تركيا 🇹🇷",em:"🏔️",grad:"linear-gradient(135deg,#5B7FBF,#92A8D1)",date:"١٥ يونيو",dur:"٧ أيام",seats:3,org:"سالم",ac:"#FFE0B2",at:"#E65100",av:"سم",tags:["مغامرة","ثقافة"]},
-  {id:2,name:"أسبوع في المالديف",dest:"المالديف 🇲🇻",em:"🌊",grad:"linear-gradient(135deg,#26A69A,#80CBC4)",date:"١ يوليو",dur:"٨ أيام",seats:5,org:"نورة",ac:"#E1BEE7",at:"#6A1B9A",av:"نو",tags:["شاطئ"]},
-  {id:3,name:"روما وفلورنسا",dest:"إيطاليا 🇮🇹",em:"🏛️",grad:"linear-gradient(135deg,#EF6C00,#FFA726)",date:"٢٠ أغسطس",dur:"١٠ أيام",seats:2,org:"أحمد",ac:"#C8E6C9",at:"#1B5E20",av:"أح",tags:["ثقافة"]},
-  {id:4,name:"اليابان — طوكيو وكيوتو",dest:"اليابان 🇯🇵",em:"🗼",grad:"linear-gradient(135deg,#00838F,#4DD0E1)",date:"١٠ سبتمبر",dur:"١٢ يوماً",seats:4,org:"ريم",ac:"#FFCDD2",at:"#B71C1C",av:"رن",tags:["ثقافة","مغامرة"]},
-  {id:5,name:"سفاري كينيا",dest:"كينيا 🇰🇪",em:"🦁",grad:"linear-gradient(135deg,#558B2F,#8BC34A)",date:"١٢ نوفمبر",dur:"٩ أيام",seats:4,org:"مريم",ac:"#FFF9C4",at:"#F57F17",av:"مر",tags:["مغامرة","طبيعة"]},
-  {id:6,name:"جورجيا — جبال القوقاز",dest:"جورجيا 🇬🇪",em:"⛰️",grad:"linear-gradient(135deg,#2E7D32,#66BB6A)",date:"١ أبريل",dur:"٧ أيام",seats:7,org:"لينا",ac:"#E8F5E9",at:"#1B5E20",av:"لش",tags:["طبيعة","مغامرة"]},
-];
+const GRADIENTS = {
+  '✈️':'linear-gradient(135deg,#1A6BFF,#00C9B1)',
+  '🏔️':'linear-gradient(135deg,#5B7FBF,#92A8D1)',
+  '🌊':'linear-gradient(135deg,#26A69A,#80CBC4)',
+  '🏛️':'linear-gradient(135deg,#EF6C00,#FFA726)',
+  '🌴':'linear-gradient(135deg,#2E7D32,#66BB6A)',
+  '🗼':'linear-gradient(135deg,#1565C0,#42A5F5)',
+  '🦁':'linear-gradient(135deg,#558B2F,#8BC34A)',
+  '⛰️':'linear-gradient(135deg,#4E342E,#8D6E63)',
+  '🏝️':'linear-gradient(135deg,#00838F,#4DD0E1)',
+  '🌸':'linear-gradient(135deg,#AD1457,#F48FB1)',
+  '🎭':'linear-gradient(135deg,#6A1B9A,#CE93D8)',
+  '🍜':'linear-gradient(135deg,#E65100,#FFCC02)',
+};
 
 const AGENTS = [
   {name:"محمد الرشيد",rating:"٤.٩ ⭐ (١٢٠+ حجز)",ac:"#BBDEFB",at:"#0D47A1",av:"مح",svcs:["تذاكر طيران","فنادق","تأشيرات"]},
@@ -348,30 +355,71 @@ const AGENTS = [
 ];
 
 let activeFilter = 'الكل';
+let allTrips = [];
+
+// ─── FETCH TRIPS FROM SUPABASE ───
+async function fetchTrips() {
+  const grid = document.getElementById('tripsGrid');
+  grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:40px;color:rgba(255,255,255,0.4)"><div style="font-size:32px;margin-bottom:12px">⏳</div>جاري تحميل الرحلات...</div>`;
+
+  const { data, error } = await sb
+    .from('trips')
+    .select('*, profiles(full_name)')
+    .eq('status', 'active')
+    .order('created_at', { ascending: false });
+
+  if (error || !data) {
+    grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:40px;color:rgba(255,255,255,0.4)">⚠️ تعذّر تحميل الرحلات</div>`;
+    return;
+  }
+
+  allTrips = data;
+  renderTrips();
+}
 
 // ─── RENDER TRIPS ───
 function renderTrips() {
   const grid = document.getElementById('tripsGrid');
-  const filtered = activeFilter === 'الكل' ? TRIPS : TRIPS.filter(t => t.tags.includes(activeFilter));
+  const filtered = activeFilter === 'الكل'
+    ? allTrips
+    : allTrips.filter(t => t.tags && t.tags.includes(activeFilter));
+
+  if (filtered.length === 0) {
+    grid.innerHTML = `
+      <div style="grid-column:1/-1;text-align:center;padding:48px 20px;background:rgba(255,255,255,0.03);border-radius:20px;border:1px dashed rgba(255,255,255,0.1)">
+        <div style="font-size:48px;margin-bottom:16px">🗺️</div>
+        <div style="font-size:16px;font-weight:800;margin-bottom:8px">لا توجد رحلات بعد</div>
+        <div style="font-size:13px;color:rgba(255,255,255,0.4);margin-bottom:20px">كن أول من ينشر رحلة!</div>
+        <button onclick="window.location.href='post-trip.html'" style="padding:12px 28px;border-radius:20px;background:var(--or);color:white;border:none;font-family:'Tajawal',sans-serif;font-size:14px;font-weight:800;cursor:pointer">+ انشر رحلتك</button>
+      </div>`;
+    return;
+  }
+
   grid.innerHTML = filtered.map(t => {
-    const sc = t.seats <= 2 ? `background:rgba(229,57,53,0.2);color:#ff6b6b` : `background:rgba(0,201,177,0.15);color:#00C9B1`;
-    const st = t.seats <= 2 ? `⚠️ ${t.seats} فقط` : `✅ ${t.seats} أماكن`;
+    const grad = GRADIENTS[t.emoji] || 'linear-gradient(135deg,#FF5C1A,#FFD000)';
+    const seatsLeft = t.seats - (t.seats_taken || 0);
+    const sc = seatsLeft <= 2 ? `background:rgba(229,57,53,0.2);color:#ff6b6b` : `background:rgba(0,201,177,0.15);color:#00C9B1`;
+    const st = seatsLeft <= 2 ? `⚠️ ${seatsLeft} فقط` : `✅ ${seatsLeft} أماكن`;
+    const orgName = t.profiles?.full_name || 'مسافر';
+    const orgInitials = orgName.split(' ').map(w=>w[0]).join('').substring(0,2);
+    const dateObj = new Date(t.date);
+    const dateAr = dateObj.toLocaleDateString('ar-KW',{day:'numeric',month:'long'});
     return `
     <div class="tcard">
-      <div class="tc-img" style="background:${t.grad}">
-        ${t.em}
+      <div class="tc-img" style="background:${grad}">
+        ${t.emoji || '✈️'}
         <div class="tc-seats" style="${sc}">${st}</div>
-        <div class="tc-dest">${t.dest}</div>
+        <div class="tc-dest">${t.country}</div>
       </div>
       <div class="tc-body">
-        <div class="tc-title">${t.name}</div>
-        <div class="tc-meta"><span>📅 ${t.date}</span><span>⏱ ${t.dur}</span></div>
+        <div class="tc-title">${t.title}</div>
+        <div class="tc-meta"><span>📅 ${dateAr}</span><span>⏱ ${t.duration}</span></div>
         <div class="tc-foot">
           <div class="tc-org">
-            <div class="av" style="background:${t.ac};color:${t.at}">${t.av}</div>
-            <span>${t.org}</span>
+            <div class="av" style="background:rgba(255,92,26,0.2);color:var(--or)">${orgInitials}</div>
+            <span>${orgName.split(' ')[0]}</span>
           </div>
-          <button class="tc-join" onclick="joinTrip('${t.name}')">انضم ✈️</button>
+          <button class="tc-join" onclick="joinTrip('${t.title}','${t.id}')">انضم ✈️</button>
         </div>
       </div>
     </div>`;
@@ -406,7 +454,7 @@ function setTab(el) {
   el.classList.add('active');
 }
 
-function joinTrip(name) { showToast(`🎉 أرسلت طلب الانضمام إلى "${name}"`); }
+function joinTrip(name, id) { showToast(`🎉 أرسلت طلب الانضمام إلى "${name}"`); }
 
 function showToast(msg) {
   const t = document.getElementById('toast');
@@ -417,7 +465,7 @@ function showToast(msg) {
 // ─── PWA: SERVICE WORKER ───
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('./sw.js')
+    navigator.serviceWorker.register('/sw.js')
       .then(reg => console.log('✅ رِحلة SW registered:', reg.scope))
       .catch(err => console.log('❌ SW error:', err));
   });
@@ -428,7 +476,10 @@ let deferredPrompt;
 window.addEventListener('beforeinstallprompt', e => {
   e.preventDefault();
   deferredPrompt = e;
-  setTimeout(() => document.getElementById('installBanner').classList.add('show'), 3000);
+  // أظهر البانر بعد 4 ثواني فقط إذا لم يكن مثبتاً
+  setTimeout(() => {
+    if (deferredPrompt) document.getElementById('installBanner').classList.add('show');
+  }, 4000);
 });
 
 document.getElementById('installBtn').addEventListener('click', () => {
@@ -446,22 +497,58 @@ document.getElementById('dismissBtn').addEventListener('click', () => {
   document.getElementById('installBanner').classList.remove('show');
 });
 
-window.addEventListener('appinstalled', () => showToast('✅ رِحلة مثبّتة بنجاح!'));
+window.addEventListener('appinstalled', () => {
+  deferredPrompt = null;
+  document.getElementById('installBanner').classList.remove('show');
+  showToast('✅ رِحلة مثبّتة بنجاح!');
+});
 
 // ─── OFFLINE DETECTION ───
-function updateOnlineStatus() {
-  const toast = document.getElementById('offlineToast');
-  if (!navigator.onLine) {
-    toast.classList.add('show');
+// لا تظهر أي رسالة عند التحميل — فقط عند فقدان الاتصال فعلاً
+window.addEventListener('offline', () => {
+  const t = document.getElementById('offlineToast');
+  t.style.display = 'block';
+  t.classList.add('show');
+});
+window.addEventListener('online', () => {
+  const t = document.getElementById('offlineToast');
+  t.classList.remove('show');
+  setTimeout(() => t.style.display='none', 500);
+  showToast('✅ عدت للاتصال بالإنترنت');
+});
+
+// ─── SUPABASE INIT ───
+const { createClient } = supabase;
+const sb = createClient(
+  'https://ybjdagurvkweabujkeyz.supabase.co',
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InliamRhZ3Vydmt3ZWFidWprZXl6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkzNjQyMDAsImV4cCI6MjA5NDk0MDIwMH0.CIK7sew_-kBlC_t_szCjKjjnFNg695kwSryuRshQ9nI'
+);
+
+// ─── PROFILE NAV ───
+async function goToProfile() {
+  const { data: { session } } = await sb.auth.getSession();
+  if (session) {
+    window.location.href = 'profile.html';
   } else {
-    toast.classList.remove('show');
+    window.location.href = 'auth.html';
   }
 }
-window.addEventListener('online', updateOnlineStatus);
-window.addEventListener('offline', updateOnlineStatus);
+
+// ─── CHECK SESSION — update nav if logged in ───
+sb.auth.getSession().then(({ data: { session } }) => {
+  if (session) {
+    const actions = document.querySelector('.nav-actions');
+    if (actions) {
+      actions.innerHTML = `
+        <span style="font-size:13px;color:rgba(255,255,255,0.6);font-weight:600">مرحباً 👋</span>
+        <a href="profile.html"><button class="nav-btn nav-btn-primary">ملفي الشخصي</button></a>
+      `;
+    }
+  }
+});
 
 // ─── INIT ───
-renderTrips();
+fetchTrips();
 renderAgents();
 </script>
 </body>
