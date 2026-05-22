@@ -18,6 +18,7 @@
 
 <!-- Fonts -->
 <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&family=Righteous&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
 :root {
@@ -322,7 +323,7 @@ body{font-family:'Tajawal',sans-serif;background:var(--dk);color:white;overflow-
   <div class="bnav-item" onclick="setTab(this);document.getElementById('agents').scrollIntoView({behavior:'smooth'})">
     <div class="bni">🤝</div><div class="bnl">المساعدون</div>
   </div>
-  <div class="bnav-item" onclick="window.location.href='auth.html'">
+  <div class="bnav-item" onclick="goToProfile()">
     <div class="bni">👤</div><div class="bnl">حسابي</div>
   </div>
 </nav>
@@ -467,6 +468,36 @@ window.addEventListener('online', () => {
   t.classList.remove('show');
   setTimeout(() => t.style.display='none', 500);
   showToast('✅ عدت للاتصال بالإنترنت');
+});
+
+// ─── PROFILE NAV ───
+async function goToProfile() {
+  const { data: { session } } = await sb.auth.getSession();
+  if (session) {
+    window.location.href = 'profile.html';
+  } else {
+    window.location.href = 'auth.html';
+  }
+}
+
+// ─── CHECK SESSION — update nav if logged in ───
+const { createClient } = supabase;
+const sb = createClient(
+  'https://ybjdagurvkweabujkeyz.supabase.co',
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InliamRhZ3Vydmt3ZWFidWprZXl6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkzNjQyMDAsImV4cCI6MjA5NDk0MDIwMH0.CIK7sew_-kBlC_t_szCjKjjnFNg695kwSryuRshQ9nI'
+);
+
+sb.auth.getSession().then(({ data: { session } }) => {
+  if (session) {
+    // المستخدم مسجل — غيّر أزرار الـ nav
+    const actions = document.querySelector('.nav-actions');
+    if (actions) {
+      actions.innerHTML = `
+        <span style="font-size:13px;color:rgba(255,255,255,0.6);font-weight:600">مرحباً 👋</span>
+        <a href="profile.html"><button class="nav-btn nav-btn-primary">ملفي الشخصي</button></a>
+      `;
+    }
+  }
 });
 
 // ─── INIT ───
