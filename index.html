@@ -18,7 +18,6 @@
 
 <!-- Fonts -->
 <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&family=Righteous&display=swap" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
 :root {
@@ -222,13 +221,13 @@ body{font-family:'Tajawal',sans-serif;background:var(--dk);color:white;overflow-
 <nav class="topnav">
   <div class="nav-logo">Rihla</div>
   <div class="nav-actions">
-    <a href="auth.html"><button class="nav-btn nav-btn-ghost">دخول</button></a>
-    <a href="auth.html"><button class="nav-btn nav-btn-primary">تسجيل مجاني</button></a>
+    <button class="nav-btn nav-btn-ghost">دخول</button>
+    <button class="nav-btn nav-btn-primary">تسجيل مجاني</button>
   </div>
 </nav>
 
 <!-- OFFLINE TOAST -->
-<div class="offline-toast" id="offlineToast" style="display:none">📵 أنت غير متصل — تعمل بوضع التخزين المؤقت</div>
+<div class="offline-toast" id="offlineToast">📵 أنت غير متصل — تعمل بوضع التخزين المؤقت</div>
 
 <!-- INSTALL BANNER -->
 <div class="install-banner" id="installBanner">
@@ -323,7 +322,7 @@ body{font-family:'Tajawal',sans-serif;background:var(--dk);color:white;overflow-
   <div class="bnav-item" onclick="setTab(this);document.getElementById('agents').scrollIntoView({behavior:'smooth'})">
     <div class="bni">🤝</div><div class="bnl">المساعدون</div>
   </div>
-  <div class="bnav-item" onclick="goToProfile()">
+  <div class="bnav-item" onclick="setTab(this);showToast('تسجيل الدخول قريباً 👤')">
     <div class="bni">👤</div><div class="bnl">حسابي</div>
   </div>
 </nav>
@@ -418,7 +417,7 @@ function showToast(msg) {
 // ─── PWA: SERVICE WORKER ───
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/sw.js')
+    navigator.serviceWorker.register('./sw.js')
       .then(reg => console.log('✅ رِحلة SW registered:', reg.scope))
       .catch(err => console.log('❌ SW error:', err));
   });
@@ -429,10 +428,7 @@ let deferredPrompt;
 window.addEventListener('beforeinstallprompt', e => {
   e.preventDefault();
   deferredPrompt = e;
-  // أظهر البانر بعد 4 ثواني فقط إذا لم يكن مثبتاً
-  setTimeout(() => {
-    if (deferredPrompt) document.getElementById('installBanner').classList.add('show');
-  }, 4000);
+  setTimeout(() => document.getElementById('installBanner').classList.add('show'), 3000);
 });
 
 document.getElementById('installBtn').addEventListener('click', () => {
@@ -450,55 +446,19 @@ document.getElementById('dismissBtn').addEventListener('click', () => {
   document.getElementById('installBanner').classList.remove('show');
 });
 
-window.addEventListener('appinstalled', () => {
-  deferredPrompt = null;
-  document.getElementById('installBanner').classList.remove('show');
-  showToast('✅ رِحلة مثبّتة بنجاح!');
-});
+window.addEventListener('appinstalled', () => showToast('✅ رِحلة مثبّتة بنجاح!'));
 
 // ─── OFFLINE DETECTION ───
-// لا تظهر أي رسالة عند التحميل — فقط عند فقدان الاتصال فعلاً
-window.addEventListener('offline', () => {
-  const t = document.getElementById('offlineToast');
-  t.style.display = 'block';
-  t.classList.add('show');
-});
-window.addEventListener('online', () => {
-  const t = document.getElementById('offlineToast');
-  t.classList.remove('show');
-  setTimeout(() => t.style.display='none', 500);
-  showToast('✅ عدت للاتصال بالإنترنت');
-});
-
-// ─── PROFILE NAV ───
-async function goToProfile() {
-  const { data: { session } } = await sb.auth.getSession();
-  if (session) {
-    window.location.href = 'profile.html';
+function updateOnlineStatus() {
+  const toast = document.getElementById('offlineToast');
+  if (!navigator.onLine) {
+    toast.classList.add('show');
   } else {
-    window.location.href = 'auth.html';
+    toast.classList.remove('show');
   }
 }
-
-// ─── CHECK SESSION — update nav if logged in ───
-const { createClient } = supabase;
-const sb = createClient(
-  'https://ybjdagurvkweabujkeyz.supabase.co',
-  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InliamRhZ3Vydmt3ZWFidWprZXl6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkzNjQyMDAsImV4cCI6MjA5NDk0MDIwMH0.CIK7sew_-kBlC_t_szCjKjjnFNg695kwSryuRshQ9nI'
-);
-
-sb.auth.getSession().then(({ data: { session } }) => {
-  if (session) {
-    // المستخدم مسجل — غيّر أزرار الـ nav
-    const actions = document.querySelector('.nav-actions');
-    if (actions) {
-      actions.innerHTML = `
-        <span style="font-size:13px;color:rgba(255,255,255,0.6);font-weight:600">مرحباً 👋</span>
-        <a href="profile.html"><button class="nav-btn nav-btn-primary">ملفي الشخصي</button></a>
-      `;
-    }
-  }
-});
+window.addEventListener('online', updateOnlineStatus);
+window.addEventListener('offline', updateOnlineStatus);
 
 // ─── INIT ───
 renderTrips();
