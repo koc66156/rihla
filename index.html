@@ -357,6 +357,13 @@ const AGENTS = [
 let activeFilter = 'الكل';
 let allTrips = [];
 
+// ─── SUPABASE INIT ───
+const { createClient } = supabase;
+const sb = createClient(
+  'https://ybjdagurvkweabujkeyz.supabase.co',
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InliamRhZ3Vydmt3ZWFidWprZXl6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkzNjQyMDAsImV4cCI6MjA5NDk0MDIwMH0.CIK7sew_-kBlC_t_szCjKjjnFNg695kwSryuRshQ9nI'
+);
+
 // ─── FETCH TRIPS FROM SUPABASE ───
 async function fetchTrips() {
   const grid = document.getElementById('tripsGrid');
@@ -516,13 +523,6 @@ window.addEventListener('online', () => {
   setTimeout(() => t.style.display='none', 500);
   showToast('✅ عدت للاتصال بالإنترنت');
 });
-
-// ─── SUPABASE INIT ───
-const { createClient } = supabase;
-const sb = createClient(
-  'https://ybjdagurvkweabujkeyz.supabase.co',
-  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InliamRhZ3Vydmt3ZWFidWprZXl6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkzNjQyMDAsImV4cCI6MjA5NDk0MDIwMH0.CIK7sew_-kBlC_t_szCjKjjnFNg695kwSryuRshQ9nI'
-);
 
 // ─── PROFILE NAV ───
 async function goToProfile() {
