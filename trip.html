@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>رِحلة — تفاصيل الرحلة</title>
+<meta name="theme-color" content="#FF5C1A">
+<link rel="manifest" href="manifest.json">
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&family=Righteous&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root{--or:#FF5C1A;--yl:#FFD000;--tl:#00C9B1;--dk:#0E0E0E;--muted:rgba(255,255,255,0.45);--card:rgba(255,255,255,0.05);--border:rgba(255,255,255,0.08);--nav-h:60px;--bot-h:68px;}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+body{font-family:'Tajawal',sans-serif;background:var(--dk);color:white;min-height:100vh;padding-bottom:calc(var(--bot-h)+20px);}
+
+.bg{position:fixed;inset:0;z-index:0;overflow:hidden;pointer-events:none;}
+.blob{position:absolute;border-radius:50%;filter:blur(80px);opacity:0.3;animation:drift 10s ease-in-out infinite alternate;}
+.b1{width:350px;height:350px;background:var(--or);top:-80px;right:-80px;}
+.b2{width:280px;height:280px;background:var(--tl);bottom:100px;left:-60px;animation-delay:-5s;}
+@keyframes drift{from{transform:translate(0,0);}to{transform:translate(20px,20px);}}
+
+/* NAV */
+.topnav{position:fixed;top:0;width:100%;z-index:1000;padding:0 20px;height:var(--nav-h);display:flex;align-items:center;justify-content:space-between;background:rgba(14,14,14,0.92);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);}
+.nav-logo{font-family:'Righteous',cursive;font-size:24px;background:linear-gradient(90deg,var(--or),var(--yl));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;text-decoration:none;}
+.nav-back{color:rgba(255,255,255,0.5);font-size:13px;font-weight:700;text-decoration:none;display:flex;align-items:center;gap:6px;}
+.nav-back:hover{color:var(--or);}
+
+/* LOADING */
+.loading-screen{position:fixed;inset:0;z-index:2000;background:var(--dk);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;}
+.loading-screen.hide{display:none;}
+.spinner{width:40px;height:40px;border:3px solid rgba(255,92,26,0.2);border-top-color:var(--or);border-radius:50%;animation:spin .7s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+
+/* HERO IMG */
+.trip-hero{height:240px;display:flex;align-items:center;justify-content:center;font-size:80px;position:relative;margin-top:var(--nav-h);}
+.trip-hero .country-badge{position:absolute;bottom:16px;right:16px;background:rgba(0,0,0,0.5);color:white;padding:6px 16px;border-radius:20px;font-size:13px;font-weight:700;backdrop-filter:blur(8px);}
+.trip-hero .seats-badge{position:absolute;top:16px;left:16px;padding:6px 16px;border-radius:20px;font-size:12px;font-weight:800;}
+
+/* CONTENT */
+.content{position:relative;z-index:1;padding:0 20px;}
+
+.trip-title{font-size:26px;font-weight:900;margin:20px 0 8px;}
+.trip-dest{font-size:14px;color:var(--muted);margin-bottom:20px;display:flex;align-items:center;gap:6px;}
+
+/* STATS ROW */
+.info-row{display:flex;gap:0;background:var(--card);border:1px solid var(--border);border-radius:18px;overflow:hidden;margin-bottom:24px;}
+.info-item{flex:1;padding:16px 8px;text-align:center;border-left:1px solid var(--border);}
+.info-item:last-child{border-left:none;}
+.info-item .iv{font-size:16px;font-weight:900;display:block;background:linear-gradient(135deg,var(--or),var(--yl));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.info-item .il{font-size:11px;color:var(--muted);margin-top:3px;}
+
+/* TAGS */
+.tags-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:24px;}
+.tag{padding:6px 14px;border-radius:14px;background:rgba(255,92,26,0.12);color:var(--or);font-size:12px;font-weight:700;}
+
+/* DESCRIPTION */
+.desc-box{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:20px;margin-bottom:24px;}
+.desc-box h3{font-size:14px;font-weight:800;color:var(--muted);margin-bottom:12px;letter-spacing:1px;}
+.desc-box p{font-size:14px;line-height:1.8;color:rgba(255,255,255,0.8);}
+
+/* ORGANIZER */
+.org-box{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:20px;margin-bottom:24px;}
+.org-box h3{font-size:14px;font-weight:800;color:var(--muted);margin-bottom:14px;letter-spacing:1px;}
+.org-inner{display:flex;align-items:center;gap:14px;}
+.org-av{width:52px;height:52px;border-radius:16px;background:linear-gradient(135deg,var(--or),var(--yl));display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:900;flex-shrink:0;}
+.org-info strong{display:block;font-size:16px;font-weight:900;margin-bottom:4px;}
+.org-info span{font-size:12px;color:var(--muted);}
+.org-type{display:inline-block;padding:3px 10px;border-radius:10px;background:rgba(255,92,26,0.15);color:var(--or);font-size:11px;font-weight:700;margin-top:6px;}
+
+/* REQUESTS (for trip owner) */
+.requests-box{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:20px;margin-bottom:24px;}
+.requests-box h3{font-size:14px;font-weight:800;color:var(--muted);margin-bottom:14px;letter-spacing:1px;}
+.req-item{display:flex;align-items:center;gap:12px;padding:12px;background:rgba(255,255,255,0.04);border-radius:14px;margin-bottom:10px;border:1px solid rgba(255,255,255,0.06);}
+.req-av{width:40px;height:40px;border-radius:12px;background:rgba(255,92,26,0.15);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;}
+.req-info{flex:1;}
+.req-info strong{display:block;font-size:14px;font-weight:800;margin-bottom:3px;}
+.req-info span{font-size:12px;color:var(--muted);}
+.req-actions{display:flex;gap:8px;}
+.req-accept{padding:7px 14px;border-radius:10px;background:rgba(0,201,177,0.15);color:var(--tl);border:1px solid rgba(0,201,177,0.25);font-family:'Tajawal',sans-serif;font-size:12px;font-weight:800;cursor:pointer;transition:all .2s;}
+.req-accept:hover{background:var(--tl);color:var(--dk);}
+.req-reject{padding:7px 14px;border-radius:10px;background:rgba(229,57,53,0.1);color:#ff6b6b;border:1px solid rgba(229,57,53,0.2);font-family:'Tajawal',sans-serif;font-size:12px;font-weight:800;cursor:pointer;transition:all .2s;}
+.req-reject:hover{background:rgba(229,57,53,0.2);}
+.req-status{padding:5px 12px;border-radius:10px;font-size:11px;font-weight:800;}
+.rs-pending{background:rgba(255,208,0,0.15);color:var(--yl);}
+.rs-accepted{background:rgba(0,201,177,0.15);color:var(--tl);}
+.rs-rejected{background:rgba(229,57,53,0.1);color:#ff6b6b;}
+.no-requests{font-size:13px;color:var(--muted);text-align:center;padding:16px;}
+
+/* JOIN SECTION */
+.join-box{background:linear-gradient(135deg,rgba(255,92,26,0.1),rgba(255,208,0,0.05));border:1px solid rgba(255,92,26,0.2);border-radius:18px;padding:20px;margin-bottom:24px;}
+.join-box h3{font-size:15px;font-weight:800;margin-bottom:6px;}
+.join-box p{font-size:13px;color:var(--muted);margin-bottom:16px;line-height:1.6;}
+.join-msg{width:100%;padding:12px 16px;border-radius:14px;border:1.5px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.06);font-family:'Tajawal',sans-serif;font-size:14px;color:white;outline:none;resize:none;min-height:80px;margin-bottom:14px;transition:border-color .2s;}
+.join-msg:focus{border-color:var(--or);}
+.join-msg::placeholder{color:rgba(255,255,255,0.2);}
+.join-btn{width:100%;padding:15px;border-radius:16px;background:linear-gradient(135deg,var(--or),#ff8c42);color:white;border:none;font-family:'Tajawal',sans-serif;font-size:17px;font-weight:900;cursor:pointer;transition:all .2s;box-shadow:0 6px 20px rgba(255,92,26,0.3);position:relative;}
+.join-btn:hover:not(:disabled){transform:translateY(-2px);}
+.join-btn:disabled{opacity:0.6;cursor:not-allowed;}
+.join-btn .bl{display:none;width:20px;height:20px;border:2.5px solid rgba(255,255,255,0.3);border-top-color:white;border-radius:50%;animation:spin .7s linear infinite;margin:0 auto;}
+.join-btn.loading .bt{display:none;}
+.join-btn.loading .bl{display:block;}
+
+/* STATUS BOXES */
+.status-box{padding:16px 20px;border-radius:16px;margin-bottom:24px;display:flex;align-items:center;gap:12px;font-size:14px;font-weight:700;}
+.sb-pending{background:rgba(255,208,0,0.1);border:1px solid rgba(255,208,0,0.2);color:var(--yl);}
+.sb-accepted{background:rgba(0,201,177,0.1);border:1px solid rgba(0,201,177,0.2);color:var(--tl);}
+.sb-owner{background:rgba(255,92,26,0.1);border:1px solid rgba(255,92,26,0.2);color:var(--or);}
+
+/* BOTTOM NAV */
+.botnav{position:fixed;bottom:0;width:100%;z-index:1000;height:var(--bot-h);background:rgba(14,14,14,0.95);backdrop-filter:blur(20px);border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-around;}
+.bnav-item{display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;padding:8px 16px;border-radius:14px;flex:1;text-decoration:none;border:none;background:transparent;}
+.bni{font-size:22px;}
+.bnl{font-size:11px;font-weight:700;color:var(--muted);}
+
+/* TOAST */
+.toast{position:fixed;bottom:calc(var(--bot-h)+16px);left:50%;transform:translateX(-50%) translateY(80px);background:#1a1a1a;color:white;padding:12px 22px;border-radius:22px;font-size:13px;font-weight:700;box-shadow:0 8px 24px rgba(0,0,0,0.4);transition:transform .4s cubic-bezier(.34,1.56,.64,1);z-index:9999;border:1px solid rgba(255,255,255,0.08);}
+.toast.show{transform:translateX(-50%) translateY(0);}
+</style>
+</head>
+<body>
+
+<div class="bg"><div class="blob b1"></div><div class="blob b2"></div></div>
+
+<div class="loading-screen" id="loadingScreen">
+  <div class="spinner"></div>
+  <p style="font-size:14px;color:rgba(255,255,255,0.4)">جاري التحميل...</p>
+</div>
+
+<nav class="topnav">
+  <a href="index.html" class="nav-logo">Rihla</a>
+  <a href="index.html" class="nav-back">← الرحلات</a>
+</nav>
+
+<div id="mainContent" style="display:none">
+  <div class="trip-hero" id="tripHero">
+    <div class="seats-badge" id="seatsBadge"></div>
+    <div class="country-badge" id="countryBadge"></div>
+  </div>
+
+  <div class="content">
+    <div class="trip-title" id="tripTitle"></div>
+    <div class="trip-dest" id="tripDest">📍</div>
+
+    <div class="info-row" id="infoRow"></div>
+    <div class="tags-row" id="tagsRow"></div>
+
+    <div class="desc-box">
+      <h3>عن الرحلة</h3>
+      <p id="tripDesc"></p>
+    </div>
+
+    <div class="org-box">
+      <h3>المنظم</h3>
+      <div class="org-inner">
+        <div class="org-av" id="orgAv"></div>
+        <div class="org-info">
+          <strong id="orgName"></strong>
+          <span id="orgEmail"></span>
+          <div class="org-type">✈️ مسافر</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- يظهر للمنظم فقط -->
+    <div class="requests-box" id="requestsBox" style="display:none">
+      <h3>طلبات الانضمام</h3>
+      <div id="requestsList"></div>
+    </div>
+
+    <!-- يظهر حسب الحالة -->
+    <div id="actionArea"></div>
+  </div>
+</div>
+
+<!-- BOTTOM NAV -->
+<nav class="botnav">
+  <button class="bnav-item" onclick="window.location.href='index.html'"><div class="bni">🏠</div><div class="bnl">الرئيسية</div></button>
+  <button class="bnav-item" onclick="window.location.href='index.html#trips'"><div class="bni">✈️</div><div class="bnl">الرحلات</div></button>
+  <button class="bnav-item" onclick="window.location.href='index.html#agents'"><div class="bni">🤝</div><div class="bnl">المساعدون</div></button>
+  <button class="bnav-item" onclick="goToProfile()"><div class="bni">👤</div><div class="bnl">حسابي</div></button>
+</nav>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const{createClient}=supabase;
+const sb=createClient(
+  'https://ybjdagurvkweabujkeyz.supabase.co',
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InliamRhZ3Vydmt3ZWFidWprZXl6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkzNjQyMDAsImV4cCI6MjA5NDk0MDIwMH0.CIK7sew_-kBlC_t_szCjKjjnFNg695kwSryuRshQ9nI'
+);
+
+const GRADIENTS={
+  '✈️':'linear-gradient(135deg,#1A6BFF,#00C9B1)',
+  '🏔️':'linear-gradient(135deg,#5B7FBF,#92A8D1)',
+  '🌊':'linear-gradient(135deg,#26A69A,#80CBC4)',
+  '🏛️':'linear-gradient(135deg,#EF6C00,#FFA726)',
+  '🌴':'linear-gradient(135deg,#2E7D32,#66BB6A)',
+  '🗼':'linear-gradient(135deg,#1565C0,#42A5F5)',
+  '🦁':'linear-gradient(135deg,#558B2F,#8BC34A)',
+  '⛰️':'linear-gradient(135deg,#4E342E,#8D6E63)',
+  '🏝️':'linear-gradient(135deg,#00838F,#4DD0E1)',
+  '🌸':'linear-gradient(135deg,#AD1457,#F48FB1)',
+  '🎭':'linear-gradient(135deg,#6A1B9A,#CE93D8)',
+  '🍜':'linear-gradient(135deg,#E65100,#FFCC02)',
+};
+
+let currentUser=null, trip=null, myRequest=null;
+
+// ── GET TRIP ID FROM URL ──
+function getTripId(){
+  return new URLSearchParams(window.location.search).get('id');
+}
+
+// ── INIT ──
+async function init(){
+  const tripId=getTripId();
+  if(!tripId){ window.location.href='index.html'; return; }
+
+  const{data:{session}}=await sb.auth.getSession();
+  currentUser=session?.user||null;
+
+  // جلب بيانات الرحلة
+  const{data:t,error}=await sb.from('trips').select('*').eq('id',tripId).single();
+  if(error||!t){ window.location.href='index.html'; return; }
+  trip=t;
+
+  // جلب طلبي إذا كان مسجلاً
+  if(currentUser){
+    const{data:req}=await sb.from('join_requests')
+      .select('*').eq('trip_id',tripId).eq('requester_id',currentUser.id).single();
+    myRequest=req||null;
+  }
+
+  renderTrip();
+  document.getElementById('loadingScreen').classList.add('hide');
+  document.getElementById('mainContent').style.display='block';
+
+  // إذا كان المنظم اعرض الطلبات
+  if(currentUser && currentUser.id===trip.user_id){
+    loadRequests();
+  }
+}
+
+// ── RENDER TRIP ──
+function renderTrip(){
+  const grad=GRADIENTS[trip.emoji]||'linear-gradient(135deg,#FF5C1A,#FFD000)';
+  const seatsLeft=(trip.seats||5)-(trip.seats_taken||0);
+  const seatsStyle=seatsLeft<=2?'background:rgba(229,57,53,0.25);color:#ff6b6b':'background:rgba(0,201,177,0.18);color:#00C9B1';
+  const seatsText=seatsLeft<=2?`⚠️ ${seatsLeft} أماكن فقط`:`✅ ${seatsLeft} أماكن متاحة`;
+  const dateStr=trip.date?new Date(trip.date).toLocaleDateString('ar-KW',{day:'numeric',month:'long',year:'numeric'}):'';
+
+  // Hero
+  const hero=document.getElementById('tripHero');
+  hero.style.background=grad;
+  hero.innerHTML=`
+    <span style="font-size:80px">${trip.emoji||'✈️'}</span>
+    <div class="seats-badge" style="${seatsStyle}">${seatsText}</div>
+    <div class="country-badge">${trip.country||''}</div>
+  `;
+
+  document.getElementById('tripTitle').textContent=trip.title||'';
+  document.getElementById('tripDest').innerHTML=`📍 ${trip.destination||''} — ${trip.country||''}`;
+
+  // Info
+  document.getElementById('infoRow').innerHTML=`
+    <div class="info-item"><span class="iv">${dateStr}</span><span class="il">تاريخ السفر</span></div>
+    <div class="info-item"><span class="iv">${trip.duration||''}</span><span class="il">المدة</span></div>
+    <div class="info-item"><span class="iv">${seatsLeft}</span><span class="il">أماكن</span></div>
+  `;
+
+  // Tags
+  document.getElementById('tagsRow').innerHTML=(trip.tags||[]).map(t=>`<span class="tag">${t}</span>`).join('');
+
+  // Desc
+  document.getElementById('tripDesc').textContent=trip.description||'لا يوجد وصف';
+
+  // Organizer
+  const initials=trip.user_id?trip.user_id.substring(0,2).toUpperCase():'مس';
+  document.getElementById('orgAv').textContent='✈️';
+  document.getElementById('orgName').textContent='منظم الرحلة';
+  document.getElementById('orgEmail').textContent='';
+
+  // Action area
+  renderActionArea(seatsLeft);
+}
+
+// ── ACTION AREA ──
+function renderActionArea(seatsLeft){
+  const area=document.getElementById('actionArea');
+
+  // المنظم نفسه
+  if(currentUser && currentUser.id===trip.user_id){
+    area.innerHTML=`
+      <div class="status-box sb-owner">
+        🎯 أنت منظم هذه الرحلة — راجع الطلبات أدناه
+      </div>`;
+    document.getElementById('requestsBox').style.display='block';
+    return;
+  }
+
+  // غير مسجل
+  if(!currentUser){
+    area.innerHTML=`
+      <div class="join-box">
+        <h3>هل تريد الانضمام؟ ✈️</h3>
+        <p>سجّل دخولك أولاً لإرسال طلب الانضمام</p>
+        <button class="join-btn" onclick="window.location.href='auth.html'">
+          <span class="bt">تسجيل / دخول</span>
+        </button>
+      </div>`;
+    return;
+  }
+
+  // طلب موجود
+  if(myRequest){
+    if(myRequest.status==='pending'){
+      area.innerHTML=`<div class="status-box sb-pending">⏳ طلبك قيد المراجعة — سيتواصل معك المنظم قريباً</div>`;
+    } else if(myRequest.status==='accepted'){
+      area.innerHTML=`<div class="status-box sb-accepted">🎉 تم قبول طلبك! تواصل مع المنظم للتنسيق</div>`;
+    } else {
+      area.innerHTML=`
+        <div class="status-box" style="background:rgba(229,57,53,0.1);border-color:rgba(229,57,53,0.2);color:#ff6b6b">
+          ❌ لم يتم قبول طلبك في هذه الرحلة
+        </div>
+        <div class="join-box" style="margin-top:16px">
+          <h3>هل تريد المحاولة مرة أخرى؟</h3>
+          <p>يمكنك إرسال رسالة مختلفة للمنظم</p>
+          <textarea class="join-msg" id="joinMsg" placeholder="اكتب رسالة للمنظم..."></textarea>
+          <button class="join-btn" id="joinBtn" onclick="sendRequest()">
+            <span class="bt">إعادة الإرسال ✈️</span><div class="bl"></div>
+          </button>
+        </div>`;
+    }
+    return;
+  }
+
+  // لا أماكن
+  if(seatsLeft<=0){
+    area.innerHTML=`<div class="status-box" style="background:rgba(229,57,53,0.1);border-color:rgba(229,57,53,0.2);color:#ff6b6b">⚠️ الأماكن ممتلئة في هذه الرحلة</div>`;
+    return;
+  }
+
+  // يمكنه الانضمام
+  area.innerHTML=`
+    <div class="join-box">
+      <h3>انضم لهذه الرحلة ✈️</h3>
+      <p>أرسل طلب انضمام للمنظم مع رسالة تعريفية — الانضمام مجاني وبدون إلزام مالي</p>
+      <textarea class="join-msg" id="joinMsg" placeholder="عرّف عن نفسك وأخبر المنظم لماذا تريد الانضمام..."></textarea>
+      <button class="join-btn" id="joinBtn" onclick="sendRequest()">
+        <span class="bt">إرسال طلب الانضمام 🚀</span><div class="bl"></div>
+      </button>
+    </div>`;
+}
+
+// ── SEND REQUEST ──
+async function sendRequest(){
+  const btn=document.getElementById('joinBtn');
+  const msg=document.getElementById('joinMsg')?.value.trim()||'';
+  btn.classList.add('loading');btn.disabled=true;
+
+  // حذف الطلب القديم إذا كان مرفوضاً
+  if(myRequest&&myRequest.status==='rejected'){
+    await sb.from('join_requests').delete().eq('id',myRequest.id);
+  }
+
+  const{error}=await sb.from('join_requests').insert({
+    trip_id:trip.id,
+    requester_id:currentUser.id,
+    trip_owner_id:trip.user_id,
+    message:msg,
+    status:'pending'
+  });
+
+  btn.classList.remove('loading');btn.disabled=false;
+
+  if(error){
+    if(error.code==='23505') showToast('⚠️ أرسلت طلباً لهذه الرحلة مسبقاً');
+    else showToast('❌ حدث خطأ — حاول مجدداً');
+    return;
+  }
+
+  showToast('🎉 تم إرسال طلبك! انتظر رد المنظم');
+  setTimeout(()=>init(),1500);
+}
+
+// ── LOAD REQUESTS (للمنظم) ──
+async function loadRequests(){
+  const{data:requests}=await sb.from('join_requests')
+    .select('*').eq('trip_id',trip.id).order('created_at',{ascending:false});
+
+  const list=document.getElementById('requestsList');
+  if(!requests||requests.length===0){
+    list.innerHTML=`<div class="no-requests">لا توجد طلبات بعد</div>`;
+    return;
+  }
+
+  list.innerHTML=requests.map(r=>{
+    const statusMap={
+      pending:`<span class="req-status rs-pending">⏳ قيد المراجعة</span>`,
+      accepted:`<span class="req-status rs-accepted">✅ مقبول</span>`,
+      rejected:`<span class="req-status rs-rejected">❌ مرفوض</span>`,
+    };
+    const actions=r.status==='pending'?`
+      <div class="req-actions">
+        <button class="req-accept" onclick="updateRequest('${r.id}','accepted')">قبول ✓</button>
+        <button class="req-reject" onclick="updateRequest('${r.id}','rejected')">رفض ✗</button>
+      </div>`:statusMap[r.status];
+
+    return`
+      <div class="req-item" id="req-${r.id}">
+        <div class="req-av">✈️</div>
+        <div class="req-info">
+          <strong>طلب انضمام</strong>
+          <span>${r.message||'بدون رسالة'}</span>
+        </div>
+        ${actions}
+      </div>`;
+  }).join('');
+}
+
+// ── UPDATE REQUEST ──
+async function updateRequest(reqId, status){
+  const{error}=await sb.from('join_requests').update({status}).eq('id',reqId);
+  if(error){showToast('❌ حدث خطأ');return;}
+
+  if(status==='accepted'){
+    // قلّل عدد الأماكن
+    await sb.from('trips').update({seats_taken:(trip.seats_taken||0)+1}).eq('id',trip.id);
+    showToast('✅ تم قبول الطلب!');
+  } else {
+    showToast('تم رفض الطلب');
+  }
+  loadRequests();
+}
+
+async function goToProfile(){
+  const{data:{session}}=await sb.auth.getSession();
+  window.location.href=session?'profile.html':'auth.html';
+}
+
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),3500);
+}
+
+init();
+</script>
+</body>
+</html>
