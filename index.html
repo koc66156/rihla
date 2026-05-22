@@ -371,14 +371,30 @@ async function fetchTrips() {
 
   const { data, error } = await sb
     .from('trips')
-    .select('*, profiles(full_name)')
+    .select('*')
     .eq('status', 'active')
     .order('created_at', { ascending: false });
 
-  if (error || !data) {
-    grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:40px;color:rgba(255,255,255,0.4)">⚠️ تعذّر تحميل الرحلات</div>`;
+  if (error) {
+    console.error('Supabase error:', error);
+    grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:40px;color:rgba(255,255,255,0.4)">⚠️ ${error.message}</div>`;
     return;
   }
+
+  if (!data || data.length === 0) {
+    grid.innerHTML = `
+      <div style="grid-column:1/-1;text-align:center;padding:48px 20px;background:rgba(255,255,255,0.03);border-radius:20px;border:1px dashed rgba(255,255,255,0.1)">
+        <div style="font-size:48px;margin-bottom:16px">🗺️</div>
+        <div style="font-size:16px;font-weight:800;margin-bottom:8px">لا توجد رحلات بعد</div>
+        <div style="font-size:13px;color:rgba(255,255,255,0.4);margin-bottom:20px">كن أول من ينشر رحلة!</div>
+        <button onclick="window.location.href='post-trip.html'" style="padding:12px 28px;border-radius:20px;background:var(--or);color:white;border:none;font-family:'Tajawal',sans-serif;font-size:14px;font-weight:800;cursor:pointer">+ انشر رحلتك</button>
+      </div>`;
+    return;
+  }
+
+  allTrips = data;
+  renderTrips();
+}
 
   allTrips = data;
   renderTrips();
@@ -407,8 +423,8 @@ function renderTrips() {
     const seatsLeft = t.seats - (t.seats_taken || 0);
     const sc = seatsLeft <= 2 ? `background:rgba(229,57,53,0.2);color:#ff6b6b` : `background:rgba(0,201,177,0.15);color:#00C9B1`;
     const st = seatsLeft <= 2 ? `⚠️ ${seatsLeft} فقط` : `✅ ${seatsLeft} أماكن`;
-    const orgName = t.profiles?.full_name || 'مسافر';
-    const orgInitials = orgName.split(' ').map(w=>w[0]).join('').substring(0,2);
+    const orgName = t.user_id ? t.user_id.substring(0,4) : 'مسافر';
+    const orgInitials = '✈';
     const dateObj = new Date(t.date);
     const dateAr = dateObj.toLocaleDateString('ar-KW',{day:'numeric',month:'long'});
     return `
