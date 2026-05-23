@@ -169,45 +169,12 @@ body { font-family: 'Tajawal', sans-serif; background: var(--dk); color: white; 
     <div class="hero-btns">
       <button class="hbtn hbtn-p" onclick="document.getElementById('trips').scrollIntoView({behavior:'smooth'})">ابحث عن رفيق ✈️</button>
       <button class="hbtn hbtn-s" onclick="window.location.href='post-trip.html'">+ انشر رحلتك</button>
-      <button class="hbtn hbtn-s" onclick="window.location.href='flights.html'" style="background:rgba(0,201,177,0.12);border-color:rgba(0,201,177,0.3);color:var(--tl)">🛫 ابحث عن طيران</button>
     </div>
     <div class="stats-row">
       <div class="stat"><span class="num" id="statTrips">٠</span><div class="lbl">رحلة نشطة</div></div>
       <div class="stat"><span class="num">٢٤٠٠+</span><div class="lbl">مسافر مسجّل</div></div>
       <div class="stat"><span class="num">٣٨</span><div class="lbl">وجهة حول العالم</div></div>
     </div>
-  </div>
-</section>
-
-<!-- FLIGHTS SECTION -->
-<section class="section" style="padding-top:0">
-  <div class="sec-label">طيران</div>
-  <h2 class="sec-title">ابحث عن رحلة طيران ✈️</h2>
-  <p class="sec-sub">أوصلك لأفضل الأسعار في ثوانٍ</p>
-  <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:20px;padding:20px;">
-    <div style="display:grid;grid-template-columns:1fr auto 1fr;gap:8px;align-items:center;margin-bottom:14px;">
-      <div style="background:rgba(255,255,255,0.06);border:1.5px solid rgba(255,255,255,0.1);border-radius:14px;padding:12px 14px;display:flex;align-items:center;gap:8px;">
-        <span>🛫</span>
-        <input type="text" id="quickFrom" placeholder="من" style="background:transparent;border:none;font-family:'Tajawal',sans-serif;font-size:14px;color:white;outline:none;width:100%;">
-      </div>
-      <button onclick="swapQuick()" style="background:var(--or);border:none;color:white;width:32px;height:32px;border-radius:50%;font-size:16px;cursor:pointer;flex-shrink:0;">⇅</button>
-      <div style="background:rgba(255,255,255,0.06);border:1.5px solid rgba(255,255,255,0.1);border-radius:14px;padding:12px 14px;display:flex;align-items:center;gap:8px;">
-        <span>🛬</span>
-        <input type="text" id="quickTo" placeholder="إلى" style="background:transparent;border:none;font-family:'Tajawal',sans-serif;font-size:14px;color:white;outline:none;width:100%;">
-      </div>
-    </div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px;">
-      <div style="background:rgba(255,255,255,0.06);border:1.5px solid rgba(255,255,255,0.1);border-radius:14px;padding:12px 14px;display:flex;align-items:center;gap:8px;">
-        <span>📅</span>
-        <input type="date" id="quickDate" style="background:transparent;border:none;font-family:'Tajawal',sans-serif;font-size:13px;color:white;outline:none;width:100%;-webkit-appearance:none;">
-      </div>
-      <div style="background:rgba(255,255,255,0.06);border:1.5px solid rgba(255,255,255,0.1);border-radius:14px;padding:12px 14px;display:flex;align-items:center;gap:8px;">
-        <span>👥</span>
-        <span style="font-size:13px;color:rgba(255,255,255,0.5);">١ مسافر</span>
-      </div>
-    </div>
-    <button onclick="quickFlightSearch()" style="width:100%;padding:14px;border-radius:14px;background:linear-gradient(135deg,var(--or),#ff8c42);color:white;border:none;font-family:'Tajawal',sans-serif;font-size:16px;font-weight:800;cursor:pointer;">🔍 ابحث عن رحلات</button>
-    <button onclick="window.location.href='flights.html'" style="width:100%;padding:10px;border-radius:14px;background:transparent;color:rgba(255,255,255,0.4);border:none;font-family:'Tajawal',sans-serif;font-size:13px;font-weight:600;cursor:pointer;margin-top:8px;">خيارات بحث متقدمة ←</button>
   </div>
 </section>
 
@@ -263,26 +230,18 @@ body { font-family: 'Tajawal', sans-serif; background: var(--dk); color: white; 
 
 <!-- BOTTOM NAV -->
 <nav class="botnav">
-  <a href="index.html" style="display:flex;flex-direction:column;align-items:center;gap:4px;flex:1;text-decoration:none;padding:8px 0;">
-    <span style="font-size:20px">🏠</span>
-    <span style="font-size:10px;font-weight:700;color:var(--or)">الرئيسية</span>
-  </a>
-  <a href="trips.html" style="display:flex;flex-direction:column;align-items:center;gap:4px;flex:1;text-decoration:none;padding:8px 0;">
-    <span style="font-size:20px">✈️</span>
-    <span style="font-size:10px;font-weight:700;color:var(--muted)">الرحلات</span>
-  </a>
-  <a href="flights.html" style="display:flex;flex-direction:column;align-items:center;gap:4px;flex:1;text-decoration:none;padding:8px 0;">
-    <span style="font-size:20px">🛫</span>
-    <span style="font-size:10px;font-weight:700;color:var(--muted)">طيران</span>
-  </a>
-  <a href="agents.html" style="display:flex;flex-direction:column;align-items:center;gap:4px;flex:1;text-decoration:none;padding:8px 0;">
-    <span style="font-size:20px">🤝</span>
-    <span style="font-size:10px;font-weight:700;color:var(--muted)">المساعدون</span>
-  </a>
-  <a href="profile.html" style="display:flex;flex-direction:column;align-items:center;gap:4px;flex:1;text-decoration:none;padding:8px 0;">
-    <span style="font-size:20px">👤</span>
-    <span style="font-size:10px;font-weight:700;color:var(--muted)">حسابي</span>
-  </a>
+  <button class="bnav-item active" id="tab-home" onclick="setTab('home'); window.scrollTo({top:0,behavior:'smooth'})">
+    <div class="bni">🏠</div><div class="bnl">الرئيسية</div>
+  </button>
+  <button class="bnav-item" id="tab-trips" onclick="setTab('trips'); document.getElementById('trips').scrollIntoView({behavior:'smooth'})">
+    <div class="bni">✈️</div><div class="bnl">الرحلات</div>
+  </button>
+  <button class="bnav-item" id="tab-agents" onclick="setTab('agents'); document.getElementById('agents').scrollIntoView({behavior:'smooth'})">
+    <div class="bni">🤝</div><div class="bnl">المساعدون</div>
+  </button>
+  <button class="bnav-item" id="tab-profile" onclick="goToProfile()">
+    <div class="bni">👤</div><div class="bnl">حسابي</div>
+  </button>
 </nav>
 
 <div class="toast" id="toast"></div>
@@ -474,42 +433,12 @@ async function checkSession() {
       <span style="font-size:13px;color:rgba(255,255,255,0.6);font-weight:600">مرحباً 👋</span>
       <button class="nav-btn nav-btn-primary" onclick="window.location.href='profile.html'">ملفي الشخصي</button>
     `;
-    // جلب عدد الإشعارات غير المقروءة
-    const { count } = await sb
-      .from('notifications')
-      .select('*', { count: 'exact', head: true })
-      .eq('user_id', session.user.id)
-      .eq('is_read', false);
-    if (count > 0) {
-      const badge = document.getElementById('notifBadge');
-      if(badge){ badge.textContent = count > 9 ? '9+' : count; badge.style.display = 'flex'; }
-    }
   }
 }
 
 // ══════════════════
-// QUICK FLIGHT SEARCH
+// INIT
 // ══════════════════
-function swapQuick(){
-  const f=document.getElementById('quickFrom');
-  const t=document.getElementById('quickTo');
-  [f.value,t.value]=[t.value,f.value];
-}
-
-function quickFlightSearch(){
-  const from=document.getElementById('quickFrom').value.trim()||'الكويت';
-  const to=document.getElementById('quickTo').value.trim();
-  const date=document.getElementById('quickDate').value;
-  if(!to){window.location.href='flights.html';return;}
-  const url=`https://www.skyscanner.com/transport/flights/${encodeURIComponent(from)}/${encodeURIComponent(to)}/${date?date.replace(/-/g,''):''}/?adults=1`;
-  window.open(url,'_blank');
-}
-
-// set today as default date
-document.addEventListener('DOMContentLoaded',()=>{
-  const qd=document.getElementById('quickDate');
-  if(qd) qd.value=new Date().toISOString().split('T')[0];
-});
 checkSession();
 fetchTrips();
 renderAgents();
