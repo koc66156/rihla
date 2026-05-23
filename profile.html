@@ -251,6 +251,8 @@ body{font-family:'Tajawal',sans-serif;background:var(--dk);color:white;min-heigh
   </div>
 
   <!-- LOGOUT -->
+  <a id="viewPublicBtn" href="#" style="display:flex;align-items:center;justify-content:center;gap:8px;text-align:center;padding:14px;font-size:14px;color:var(--or);font-weight:700;text-decoration:none;margin:0 20px 10px;background:rgba(255,92,26,0.08);border-radius:14px;border:1px solid rgba(255,92,26,0.2);">👁️ عرض ملفي كما يراه الآخرون</a>
+  <a href="user.html" id="addPostBtn" style="display:flex;align-items:center;justify-content:center;gap:8px;text-align:center;padding:14px;font-size:14px;color:var(--tl);font-weight:700;text-decoration:none;margin:0 20px 10px;background:rgba(0,201,177,0.08);border-radius:14px;border:1px solid rgba(0,201,177,0.2);">📝 أضف منشور رحلة</a>
   <button class="logout-btn" onclick="doLogout()">🚪 تسجيل الخروج</button>
   <div style="height:20px"></div>
 
@@ -259,8 +261,9 @@ body{font-family:'Tajawal',sans-serif;background:var(--dk);color:white;min-heigh
 <!-- BOTTOM NAV -->
 <nav class="botnav">
   <a href="index.html" class="bnav-item"><div class="bni">🏠</div><div class="bnl">الرئيسية</div></a>
-  <a href="index.html#trips" class="bnav-item"><div class="bni">✈️</div><div class="bnl">الرحلات</div></a>
-  <a href="index.html#agents" class="bnav-item"><div class="bni">🤝</div><div class="bnl">المساعدون</div></a>
+  <a href="trips.html" class="bnav-item"><div class="bni">✈️</div><div class="bnl">الرحلات</div></a>
+  <a href="flights.html" class="bnav-item"><div class="bni">🛫</div><div class="bnl">طيران</div></a>
+  <a href="agents.html" class="bnav-item"><div class="bni">🤝</div><div class="bnl">المساعدون</div></a>
   <a href="profile.html" class="bnav-item active"><div class="bni">👤</div><div class="bnl">حسابي</div></a>
 </nav>
 
@@ -349,6 +352,7 @@ async function init(){
   currentUser=session.user;
   await loadProfile();
   document.getElementById('mainContent').style.display='block';
+  document.getElementById('viewPublicBtn').href=`user.html?id=${currentUser.id}`;
 }
 
 // ── LOAD PROFILE ──
