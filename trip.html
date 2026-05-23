@@ -127,8 +127,8 @@ body{font-family:'Tajawal',sans-serif;background:var(--dk);color:white;min-heigh
 </div>
 
 <nav class="topnav">
-  <a href="/rihla/" class="nav-logo">Rihla</a>
-  <a href="/rihla/" class="nav-back">← الرحلات</a>
+  <a href="index.html" class="nav-logo">Rihla</a>
+  <a href="index.html" class="nav-back">← الرحلات</a>
 </nav>
 
 <div id="mainContent" style="display:none">
@@ -174,9 +174,9 @@ body{font-family:'Tajawal',sans-serif;background:var(--dk);color:white;min-heigh
 
 <!-- BOTTOM NAV -->
 <nav class="botnav">
-  <button class="bnav-item" onclick="window.location.href='/rihla/'"><div class="bni">🏠</div><div class="bnl">الرئيسية</div></button>
-  <button class="bnav-item" onclick="window.location.href='/rihla/#trips'"><div class="bni">✈️</div><div class="bnl">الرحلات</div></button>
-  <button class="bnav-item" onclick="window.location.href='/rihla/#agents'"><div class="bni">🤝</div><div class="bnl">المساعدون</div></button>
+  <button class="bnav-item" onclick="window.location.href='index.html'"><div class="bni">🏠</div><div class="bnl">الرئيسية</div></button>
+  <button class="bnav-item" onclick="window.location.href='index.html#trips'"><div class="bni">✈️</div><div class="bnl">الرحلات</div></button>
+  <button class="bnav-item" onclick="window.location.href='index.html#agents'"><div class="bni">🤝</div><div class="bnl">المساعدون</div></button>
   <button class="bnav-item" onclick="goToProfile()"><div class="bni">👤</div><div class="bnl">حسابي</div></button>
 </nav>
 
@@ -435,7 +435,7 @@ async function updateRequest(reqId, status){
 
 async function goToProfile(){
   const{data:{session}}=await sb.auth.getSession();
-  window.location.href=session?'/rihla/profile.html':'/rihla/auth.html';
+  window.location.href=session?'profile.html':'auth.html';
 }
 
 function showToast(msg){
