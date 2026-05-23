@@ -12,34 +12,21 @@
 :root{--or:#FF5C1A;--yl:#FFD000;--tl:#00C9B1;--dk:#0E0E0E;--muted:rgba(255,255,255,0.45);--card:rgba(255,255,255,0.05);--border:rgba(255,255,255,0.08);--nav-h:60px;--bot-h:68px;}
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
 body{font-family:'Tajawal',sans-serif;background:var(--dk);color:white;min-height:100vh;padding-bottom:calc(var(--bot-h)+20px);}
-.bg{position:fixed;inset:0;z-index:0;overflow:hidden;pointer-events:none;}
-.blob{position:absolute;border-radius:50%;filter:blur(80px);opacity:0.25;animation:drift 10s ease-in-out infinite alternate;}
-.b1{width:400px;height:400px;background:var(--tl);top:-100px;left:-100px;}
-.b2{width:300px;height:300px;background:var(--or);bottom:100px;right:-60px;animation-delay:-5s;}
-@keyframes drift{from{transform:translate(0,0);}to{transform:translate(20px,20px);}}
 
 /* NAV */
 .topnav{position:fixed;top:0;width:100%;z-index:1000;padding:0 20px;height:var(--nav-h);display:flex;align-items:center;justify-content:space-between;background:rgba(14,14,14,0.92);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);}
-.nav-logo{font-family:'Righteous',cursive;font-size:24px;background:linear-gradient(90deg,var(--or),var(--yl));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;cursor:pointer;}
-.nav-btn{padding:8px 18px;border-radius:24px;font-family:'Tajawal',sans-serif;font-size:13px;font-weight:800;border:none;cursor:pointer;background:var(--or);color:white;}
+.nav-logo{font-family:'Righteous',cursive;font-size:24px;background:linear-gradient(90deg,var(--or),var(--yl));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;cursor:pointer;border:none;background-color:transparent;}
+.reg-btn{padding:8px 18px;border-radius:24px;background:var(--tl);color:var(--dk);font-family:'Tajawal',sans-serif;font-size:13px;font-weight:800;border:none;cursor:pointer;}
 
-/* HERO */
-.page-hero{padding:calc(var(--nav-h)+32px) 20px 28px;position:relative;z-index:1;}
-.page-hero h1{font-size:28px;font-weight:900;margin-bottom:6px;}
-.page-hero p{font-size:14px;color:var(--muted);line-height:1.7;margin-bottom:20px;}
-
-/* REGISTER BANNER */
-.reg-banner{background:linear-gradient(135deg,rgba(0,201,177,0.12),rgba(255,92,26,0.08));border:1px solid rgba(0,201,177,0.2);border-radius:18px;padding:16px 18px;display:flex;align-items:center;gap:14px;margin-bottom:24px;cursor:pointer;transition:all .2s;}
-.reg-banner:hover{border-color:var(--tl);}
-.reg-banner .rbi{font-size:32px;flex-shrink:0;}
-.reg-banner .rbt strong{display:block;font-size:15px;font-weight:800;margin-bottom:3px;}
-.reg-banner .rbt span{font-size:12px;color:var(--muted);}
-.reg-banner .rba{padding:8px 16px;border-radius:12px;background:var(--tl);color:var(--dk);font-family:'Tajawal',sans-serif;font-size:13px;font-weight:800;border:none;cursor:pointer;flex-shrink:0;}
+/* MAIN */
+.main{padding:calc(var(--nav-h)+24px) 20px 0;}
+.page-title{font-size:26px;font-weight:900;margin-bottom:6px;}
+.page-sub{font-size:14px;color:var(--muted);margin-bottom:20px;}
 
 /* SEARCH */
-.search-box{display:flex;align-items:center;gap:10px;background:var(--card);border:1.5px solid var(--border);border-radius:16px;padding:12px 16px;margin-bottom:20px;}
+.search-box{display:flex;align-items:center;gap:10px;background:var(--card);border:1.5px solid var(--border);border-radius:16px;padding:12px 16px;margin-bottom:16px;}
 .search-box input{flex:1;background:transparent;border:none;font-family:'Tajawal',sans-serif;font-size:14px;color:white;outline:none;}
-.search-box input::placeholder{color:rgba(255,255,255,0.25);}
+.search-box input::placeholder{color:rgba(255,255,255,0.2);}
 
 /* FILTERS */
 .filter-row{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;margin-bottom:24px;}
@@ -47,103 +34,99 @@ body{font-family:'Tajawal',sans-serif;background:var(--dk);color:white;min-heigh
 .fchip{white-space:nowrap;padding:8px 16px;border-radius:20px;border:1.5px solid rgba(255,255,255,0.1);background:transparent;font-family:'Tajawal',sans-serif;font-size:12px;font-weight:700;cursor:pointer;color:rgba(255,255,255,0.6);transition:all .2s;}
 .fchip.active,.fchip:hover{background:var(--tl);color:var(--dk);border-color:var(--tl);}
 
-/* AGENTS GRID */
-.agents-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;position:relative;z-index:1;padding:0 20px;}
+/* GRID */
+.agents-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;}
 
-/* AGENT CARD */
-.acard{background:var(--card);border:1px solid var(--border);border-radius:22px;overflow:hidden;transition:all .3s;cursor:pointer;}
-.acard:hover{transform:translateY(-6px);border-color:var(--tl);box-shadow:0 16px 40px rgba(0,201,177,0.12);}
-.acard-cover{height:80px;position:relative;}
-.acard-cover-pattern{position:absolute;inset:0;opacity:0.4;background-image:radial-gradient(rgba(255,255,255,0.15) 1px,transparent 1px);background-size:16px 16px;}
-.acard-av{position:absolute;bottom:-24px;right:18px;width:52px;height:52px;border-radius:16px;border:3px solid var(--dk);display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:900;}
-.verified-badge{position:absolute;top:10px;left:10px;background:rgba(0,201,177,0.9);color:var(--dk);padding:3px 10px;border-radius:10px;font-size:10px;font-weight:800;}
-.acard-body{padding:32px 18px 18px;}
-.acard-name{font-size:17px;font-weight:900;margin-bottom:4px;}
-.acard-rating{display:flex;align-items:center;gap:6px;margin-bottom:10px;}
-.stars{color:var(--yl);font-size:14px;}
-.rating-num{font-size:13px;font-weight:700;}
-.rating-count{font-size:12px;color:var(--muted);}
-.acard-bio{font-size:13px;color:var(--muted);line-height:1.6;margin-bottom:14px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
-.acard-services{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px;}
-.svc-tag{padding:4px 10px;border-radius:10px;background:rgba(0,201,177,0.1);color:var(--tl);font-size:11px;font-weight:700;}
-.acard-footer{display:flex;gap:8px;}
-.contact-btn{flex:1;padding:10px;border-radius:12px;background:var(--tl);color:var(--dk);border:none;font-family:'Tajawal',sans-serif;font-size:13px;font-weight:800;cursor:pointer;transition:all .2s;}
-.contact-btn:hover{background:#00b09c;}
-.review-btn{padding:10px 14px;border-radius:12px;background:rgba(255,208,0,0.12);color:var(--yl);border:1px solid rgba(255,208,0,0.2);font-family:'Tajawal',sans-serif;font-size:13px;font-weight:800;cursor:pointer;transition:all .2s;}
-.review-btn:hover{background:rgba(255,208,0,0.2);}
+/* CARD */
+.acard{background:var(--card);border:1px solid var(--border);border-radius:20px;overflow:hidden;transition:all .3s;cursor:pointer;}
+.acard:hover{transform:translateY(-5px);border-color:var(--tl);box-shadow:0 14px 36px rgba(0,201,177,0.1);}
+.acard-cover{height:72px;position:relative;}
+.acard-av{position:absolute;bottom:-22px;right:16px;width:48px;height:48px;border-radius:14px;border:3px solid var(--dk);display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:900;}
+.verified{position:absolute;top:8px;left:8px;background:rgba(0,201,177,0.9);color:var(--dk);padding:2px 8px;border-radius:8px;font-size:10px;font-weight:800;}
+.acard-body{padding:30px 16px 16px;}
+.acard-name{font-size:16px;font-weight:900;margin-bottom:4px;}
+.acard-rating{display:flex;align-items:center;gap:6px;margin-bottom:8px;}
+.stars{color:var(--yl);font-size:13px;}
+.rnum{font-size:12px;font-weight:700;}
+.rcnt{font-size:11px;color:var(--muted);}
+.acard-bio{font-size:12px;color:var(--muted);line-height:1.6;margin-bottom:12px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+.acard-svcs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px;}
+.svc{padding:4px 10px;border-radius:9px;background:rgba(0,201,177,0.1);color:var(--tl);font-size:11px;font-weight:700;}
+.acard-foot{display:flex;gap:8px;}
+.contact-btn{flex:1;padding:10px;border-radius:12px;background:var(--tl);color:var(--dk);border:none;font-family:'Tajawal',sans-serif;font-size:13px;font-weight:800;cursor:pointer;}
+.rate-btn{padding:10px 12px;border-radius:12px;background:rgba(255,208,0,0.1);color:var(--yl);border:1px solid rgba(255,208,0,0.2);font-family:'Tajawal',sans-serif;font-size:12px;font-weight:800;cursor:pointer;}
 
 /* EMPTY */
-.empty-state{text-align:center;padding:60px 20px;grid-column:1/-1;}
-.empty-state .eicon{font-size:56px;margin-bottom:16px;}
-.empty-state h3{font-size:20px;font-weight:800;margin-bottom:8px;}
-.empty-state p{font-size:14px;color:var(--muted);}
+.empty{text-align:center;padding:60px 20px;grid-column:1/-1;}
+.empty .ei{font-size:52px;margin-bottom:14px;}
+.empty h3{font-size:18px;font-weight:800;margin-bottom:8px;}
+.empty p{font-size:13px;color:var(--muted);}
 
-/* ═══ AGENT DETAIL MODAL ═══ */
-.modal-overlay{position:fixed;inset:0;z-index:2000;background:rgba(0,0,0,0.75);backdrop-filter:blur(8px);display:flex;align-items:flex-end;justify-content:center;opacity:0;pointer-events:none;transition:opacity .3s;}
-.modal-overlay.open{opacity:1;pointer-events:all;}
-.modal{background:#161616;border-radius:28px 28px 0 0;width:100%;max-width:520px;max-height:90vh;overflow-y:auto;transform:translateY(100%);transition:transform .4s cubic-bezier(.34,1.2,.64,1);}
-.modal-overlay.open .modal{transform:translateY(0);}
-.modal::-webkit-scrollbar{display:none;}
-.modal-handle{width:40px;height:4px;border-radius:2px;background:rgba(255,255,255,0.15);margin:16px auto 0;}
+/* MODAL */
+.overlay{position:fixed;inset:0;z-index:2000;background:rgba(0,0,0,0.75);backdrop-filter:blur(8px);display:flex;align-items:flex-end;justify-content:center;opacity:0;pointer-events:none;transition:opacity .3s;}
+.overlay.open{opacity:1;pointer-events:all;}
+.sheet{background:#161616;border-radius:24px 24px 0 0;width:100%;max-width:520px;max-height:88vh;overflow-y:auto;transform:translateY(100%);transition:transform .4s cubic-bezier(.34,1.2,.64,1);}
+.overlay.open .sheet{transform:translateY(0);}
+.sheet::-webkit-scrollbar{display:none;}
+.handle{width:36px;height:4px;border-radius:2px;background:rgba(255,255,255,0.12);margin:14px auto;}
+.sheet-body{padding:0 20px 32px;}
+.sheet-title{font-size:20px;font-weight:900;margin-bottom:4px;}
+.sheet-sub{font-size:13px;color:var(--muted);margin-bottom:22px;}
 
-/* MODAL COVER */
-.modal-cover{height:120px;position:relative;margin-bottom:32px;}
-.modal-cover-pattern{position:absolute;inset:0;opacity:0.4;background-image:radial-gradient(rgba(255,255,255,0.15) 1px,transparent 1px);background-size:16px 16px;}
-.modal-av{position:absolute;bottom:-28px;right:20px;width:64px;height:64px;border-radius:18px;border:3px solid #161616;display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:900;}
-
-.modal-body{padding:0 20px 24px;}
-.modal-name{font-size:22px;font-weight:900;margin-bottom:6px;}
-.modal-rating{display:flex;align-items:center;gap:8px;margin-bottom:14px;}
-.modal-bio{font-size:14px;color:rgba(255,255,255,0.7);line-height:1.7;margin-bottom:20px;}
-
-.modal-section{margin-bottom:20px;}
-.modal-section h4{font-size:12px;font-weight:800;letter-spacing:2px;color:var(--muted);margin-bottom:12px;}
-
-.services-grid{display:flex;gap:8px;flex-wrap:wrap;}
-.svc-pill{padding:8px 16px;border-radius:14px;background:rgba(0,201,177,0.1);color:var(--tl);font-size:13px;font-weight:700;border:1px solid rgba(0,201,177,0.2);}
-
-.contact-options{display:flex;flex-direction:column;gap:10px;}
-.contact-opt{display:flex;align-items:center;gap:12px;padding:14px 16px;background:var(--card);border-radius:14px;border:1px solid var(--border);cursor:pointer;transition:all .2s;text-decoration:none;color:white;}
-.contact-opt:hover{border-color:var(--tl);}
-.contact-opt .coi{font-size:22px;}
-.contact-opt .cot strong{display:block;font-size:14px;font-weight:800;}
-.contact-opt .cot span{font-size:12px;color:var(--muted);}
-.contact-opt .coa{margin-right:auto;font-size:12px;color:var(--tl);font-weight:700;}
+/* AGENT DETAIL */
+.detail-cover{height:100px;border-radius:16px;margin-bottom:36px;position:relative;}
+.detail-av{position:absolute;bottom:-24px;right:16px;width:56px;height:56px;border-radius:16px;border:3px solid #161616;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:900;}
+.detail-name{font-size:20px;font-weight:900;margin-bottom:6px;}
+.detail-rating{display:flex;align-items:center;gap:8px;margin-bottom:14px;}
+.detail-bio{font-size:14px;color:rgba(255,255,255,0.7);line-height:1.7;margin-bottom:18px;}
+.sec-label{font-size:11px;font-weight:800;letter-spacing:2px;color:var(--muted);margin-bottom:10px;}
+.svcs-wrap{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px;}
+.svc-big{padding:8px 16px;border-radius:12px;background:rgba(0,201,177,0.1);color:var(--tl);font-size:13px;font-weight:700;border:1px solid rgba(0,201,177,0.2);}
+.contact-links{display:flex;flex-direction:column;gap:10px;margin-bottom:18px;}
+.clink{display:flex;align-items:center;gap:12px;padding:14px 16px;background:var(--card);border-radius:14px;border:1px solid var(--border);text-decoration:none;color:white;transition:all .2s;}
+.clink:hover{border-color:var(--tl);}
+.clink .ci{font-size:20px;}
+.clink .ct strong{display:block;font-size:14px;font-weight:800;}
+.clink .ct span{font-size:12px;color:var(--muted);}
+.clink .ca{margin-right:auto;font-size:12px;color:var(--tl);font-weight:700;}
 
 /* REVIEWS */
-.reviews-list{display:flex;flex-direction:column;gap:12px;}
-.review-item{background:var(--card);border-radius:16px;padding:16px;border:1px solid var(--border);}
-.review-header{display:flex;align-items:center;gap:10px;margin-bottom:8px;}
-.rev-av{width:36px;height:36px;border-radius:12px;background:rgba(255,92,26,0.15);display:flex;align-items:center;justify-content:center;font-size:14px;}
-.rev-info strong{display:block;font-size:13px;font-weight:800;}
+.reviews-wrap{display:flex;flex-direction:column;gap:10px;margin-bottom:16px;}
+.rev-item{background:var(--card);border-radius:14px;padding:14px;border:1px solid var(--border);}
+.rev-head{display:flex;align-items:center;gap:8px;margin-bottom:6px;}
+.rev-av{width:32px;height:32px;border-radius:10px;background:rgba(255,92,26,0.15);display:flex;align-items:center;justify-content:center;font-size:13px;}
+.rev-info strong{font-size:13px;font-weight:800;}
 .rev-info span{font-size:11px;color:var(--muted);}
-.rev-stars{margin-right:auto;color:var(--yl);font-size:14px;}
-.rev-comment{font-size:13px;color:rgba(255,255,255,0.7);line-height:1.6;}
-.no-reviews{font-size:13px;color:var(--muted);text-align:center;padding:20px;}
+.rev-stars{margin-right:auto;color:var(--yl);font-size:13px;}
+.rev-text{font-size:13px;color:rgba(255,255,255,0.65);line-height:1.6;}
+.add-rev-btn{width:100%;padding:12px;border-radius:14px;background:rgba(255,208,0,0.1);color:var(--yl);border:1.5px solid rgba(255,208,0,0.2);font-family:'Tajawal',sans-serif;font-size:14px;font-weight:800;cursor:pointer;margin-bottom:8px;}
 
-/* ═══ REGISTER AGENT MODAL ═══ */
-.field{margin-bottom:16px;}
-.field label{display:block;font-size:13px;font-weight:800;color:rgba(255,255,255,0.6);margin-bottom:7px;}
-.field input,.field textarea,.field select{width:100%;padding:13px 16px;border-radius:14px;border:1.5px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.06);font-family:'Tajawal',sans-serif;font-size:14px;color:white;outline:none;transition:border-color .2s;}
+/* FORM */
+.field{margin-bottom:14px;}
+.field label{display:block;font-size:12px;font-weight:800;color:rgba(255,255,255,0.55);margin-bottom:6px;letter-spacing:.5px;}
+.field input,.field textarea,.field select{width:100%;padding:13px 15px;border-radius:13px;border:1.5px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.06);font-family:'Tajawal',sans-serif;font-size:14px;color:white;outline:none;transition:border-color .2s;}
 .field input:focus,.field textarea:focus,.field select:focus{border-color:var(--tl);}
 .field input::placeholder,.field textarea::placeholder{color:rgba(255,255,255,0.2);}
-.field textarea{resize:vertical;min-height:90px;}
-.services-check{display:flex;gap:8px;flex-wrap:wrap;}
-.svc-check{padding:8px 14px;border-radius:12px;border:1.5px solid rgba(255,255,255,0.1);background:transparent;font-family:'Tajawal',sans-serif;font-size:12px;font-weight:700;cursor:pointer;color:rgba(255,255,255,0.6);transition:all .2s;}
-.svc-check.selected{background:rgba(0,201,177,0.15);color:var(--tl);border-color:rgba(0,201,177,0.3);}
+.field textarea{resize:vertical;min-height:85px;}
+.field select option{background:#222;}
+.svcs-check{display:flex;gap:8px;flex-wrap:wrap;}
+.sc{padding:8px 13px;border-radius:11px;border:1.5px solid rgba(255,255,255,0.1);background:transparent;font-family:'Tajawal',sans-serif;font-size:12px;font-weight:700;cursor:pointer;color:rgba(255,255,255,0.55);transition:all .2s;}
+.sc.on{background:rgba(0,201,177,0.15);color:var(--tl);border-color:rgba(0,201,177,0.3);}
+.main-btn{width:100%;padding:14px;border-radius:15px;border:none;font-family:'Tajawal',sans-serif;font-size:16px;font-weight:900;cursor:pointer;transition:all .2s;margin-top:6px;}
+.tl-btn{background:linear-gradient(135deg,var(--tl),#00a896);color:var(--dk);}
+.or-btn{background:linear-gradient(135deg,var(--or),#ff8c42);color:white;}
+.main-btn:disabled{opacity:0.6;cursor:not-allowed;}
 
-.save-btn{width:100%;padding:14px;border-radius:16px;background:linear-gradient(135deg,var(--tl),#00a896);color:var(--dk);border:none;font-family:'Tajawal',sans-serif;font-size:17px;font-weight:900;cursor:pointer;margin-top:8px;transition:all .2s;}
-.save-btn:disabled{opacity:0.6;cursor:not-allowed;}
-
-/* RATING MODAL */
-.stars-input{display:flex;gap:8px;justify-content:center;margin:16px 0;}
-.star-btn{font-size:36px;cursor:pointer;transition:transform .2s;background:none;border:none;padding:4px;}
-.star-btn:hover,.star-btn.active{transform:scale(1.2);}
+/* STARS */
+.stars-row{display:flex;gap:10px;justify-content:center;margin:14px 0;}
+.sbtn{font-size:34px;cursor:pointer;background:none;border:none;transition:transform .15s;}
+.sbtn:hover,.sbtn.on{transform:scale(1.2);}
+.star-lbl{text-align:center;font-size:13px;color:var(--muted);margin-bottom:14px;}
 
 /* BOTTOM NAV */
 .botnav{position:fixed;bottom:0;width:100%;z-index:1000;height:var(--bot-h);background:rgba(14,14,14,0.95);backdrop-filter:blur(20px);border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-around;}
-.bnav-item{display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;padding:8px 16px;border-radius:14px;flex:1;border:none;background:transparent;}
-.bnav-item.active .bni,.bnav-item.active .bnl{color:var(--tl);}
+.bni-wrap{display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;padding:8px 16px;border-radius:14px;flex:1;border:none;background:transparent;}
+.bni-wrap.active .bni,.bni-wrap.active .bnl{color:var(--tl);}
 .bni{font-size:22px;}
 .bnl{font-size:11px;font-weight:700;color:var(--muted);}
 
@@ -154,126 +137,76 @@ body{font-family:'Tajawal',sans-serif;background:var(--dk);color:white;min-heigh
 </head>
 <body>
 
-<div class="bg"><div class="blob b1"></div><div class="blob b2"></div></div>
-
 <!-- NAV -->
 <nav class="topnav">
-  <div class="nav-logo" onclick="window.location.href='index.html'">Rihla</div>
-  <button class="nav-btn" onclick="openRegisterModal()">+ سجّل كمساعد</button>
+  <button class="nav-logo" onclick="window.location.href='index.html'">Rihla</button>
+  <button class="reg-btn" id="regBtn" onclick="openRegister()">+ سجّل كمساعد</button>
 </nav>
 
-<!-- HERO -->
-<div class="page-hero">
-  <h1>🤝 مساعدو السفريات</h1>
-  <p>محترفون كويتيون يساعدونك في حجز الطيران والفنادق والتأشيرات</p>
+<!-- MAIN -->
+<div class="main">
+  <div class="page-title">🤝 مساعدو السفريات</div>
+  <div class="page-sub">محترفون كويتيون يساعدونك في الحجز والتأشيرات</div>
 
-  <!-- REGISTER BANNER -->
-  <div class="reg-banner" id="regBanner" onclick="openRegisterModal()" style="display:none">
-    <div class="rbi">🌟</div>
-    <div class="rbt">
-      <strong>هل أنت مساعد سفريات؟</strong>
-      <span>انضم وعرض خدماتك لآلاف المسافرين</span>
-    </div>
-    <button class="rba">سجّل الآن</button>
-  </div>
-
-  <!-- SEARCH -->
   <div class="search-box">
     <span>🔍</span>
-    <input type="text" id="searchInput" placeholder="ابحث عن مساعد..." oninput="filterAgents()">
+    <input type="text" id="searchInput" placeholder="ابحث عن مساعد..." oninput="applyFilter()">
   </div>
 
-  <!-- FILTERS -->
   <div class="filter-row">
     <button class="fchip active" onclick="setFilter('الكل',this)">الكل</button>
-    <button class="fchip" onclick="setFilter('تذاكر طيران',this)">✈️ تذاكر طيران</button>
+    <button class="fchip" onclick="setFilter('تذاكر طيران',this)">✈️ تذاكر</button>
     <button class="fchip" onclick="setFilter('فنادق',this)">🏨 فنادق</button>
     <button class="fchip" onclick="setFilter('تأشيرات',this)">📋 تأشيرات</button>
-    <button class="fchip" onclick="setFilter('باقات سفر',this)">🌍 باقات سفر</button>
+    <button class="fchip" onclick="setFilter('باقات سفر',this)">🌍 باقات</button>
   </div>
-</div>
 
-<!-- AGENTS GRID -->
-<div class="agents-grid" id="agentsGrid">
-  <div class="empty-state" style="grid-column:1/-1">
-    <div class="eicon">⏳</div>
-    <h3>جاري التحميل...</h3>
+  <div class="agents-grid" id="grid">
+    <div class="empty" style="grid-column:1/-1">
+      <div class="ei">⏳</div>
+      <h3>جاري التحميل...</h3>
+    </div>
   </div>
 </div>
 
 <!-- BOTTOM NAV -->
 <nav class="botnav">
-  <button class="bnav-item" onclick="window.location.href='index.html'"><div class="bni">🏠</div><div class="bnl">الرئيسية</div></button>
-  <button class="bnav-item" onclick="window.location.href='index.html'"><div class="bni">✈️</div><div class="bnl">الرحلات</div></button>
-  <button class="bnav-item active"><div class="bni">🤝</div><div class="bnl">المساعدون</div></button>
-  <button class="bnav-item" onclick="goToProfile()"><div class="bni">👤</div><div class="bnl">حسابي</div></button>
+  <button class="bni-wrap" onclick="window.location.href='index.html'"><div class="bni">🏠</div><div class="bnl">الرئيسية</div></button>
+  <button class="bni-wrap" onclick="window.location.href='index.html'"><div class="bni">✈️</div><div class="bnl">الرحلات</div></button>
+  <button class="bni-wrap active"><div class="bni">🤝</div><div class="bnl">المساعدون</div></button>
+  <button class="bni-wrap" onclick="goToProfile()"><div class="bni">👤</div><div class="bnl">حسابي</div></button>
 </nav>
 
-<!-- AGENT DETAIL MODAL -->
-<div class="modal-overlay" id="agentModal" onclick="closeAgentModal(event)">
-  <div class="modal">
-    <div class="modal-handle"></div>
-    <div class="modal-cover" id="modalCover">
-      <div class="modal-cover-pattern"></div>
-      <div class="modal-av" id="modalAv"></div>
-    </div>
-    <div class="modal-body">
-      <div class="modal-name" id="modalName"></div>
-      <div class="modal-rating" id="modalRating"></div>
-      <div class="modal-bio" id="modalBio"></div>
-      <div class="modal-section">
-        <h4>الخدمات المقدمة</h4>
-        <div class="services-grid" id="modalServices"></div>
-      </div>
-      <div class="modal-section">
-        <h4>تواصل معه</h4>
-        <div class="contact-options" id="modalContact"></div>
-      </div>
-      <div class="modal-section">
-        <h4>التقييمات</h4>
-        <div id="modalReviews"></div>
-        <button id="addReviewBtn" style="display:none;width:100%;margin-top:12px;padding:12px;border-radius:14px;background:rgba(255,208,0,0.12);color:var(--yl);border:1.5px solid rgba(255,208,0,0.2);font-family:'Tajawal',sans-serif;font-size:14px;font-weight:800;cursor:pointer;" onclick="openRatingModal()">⭐ أضف تقييمك</button>
-      </div>
-    </div>
+<!-- AGENT DETAIL OVERLAY -->
+<div class="overlay" id="detailOverlay" onclick="closeOverlay('detailOverlay',event)">
+  <div class="sheet">
+    <div class="handle"></div>
+    <div class="sheet-body" id="detailBody"></div>
   </div>
 </div>
 
-<!-- REGISTER AGENT MODAL -->
-<div class="modal-overlay" id="registerModal" onclick="closeRegisterModal(event)">
-  <div class="modal">
-    <div class="modal-handle"></div>
-    <div style="padding:20px 20px 0">
-      <div style="font-size:22px;font-weight:900;margin-bottom:6px">🌟 سجّل كمساعد سفريات</div>
-      <div style="font-size:13px;color:var(--muted);margin-bottom:24px">أنشئ ملفك واعرض خدماتك لآلاف المسافرين</div>
-    </div>
-    <div style="padding:0 20px 32px">
-      <div class="field">
-        <label>اسمك الكامل</label>
-        <input type="text" id="agName" placeholder="اسمك كما تريد أن يظهر">
-      </div>
-      <div class="field">
-        <label>نبذة عنك</label>
-        <textarea id="agBio" placeholder="أخبر المسافرين عن خبرتك وتخصصك..."></textarea>
-      </div>
+<!-- REGISTER OVERLAY -->
+<div class="overlay" id="regOverlay" onclick="closeOverlay('regOverlay',event)">
+  <div class="sheet">
+    <div class="handle"></div>
+    <div class="sheet-body">
+      <div class="sheet-title">🌟 سجّل كمساعد سفريات</div>
+      <div class="sheet-sub">أنشئ ملفك واعرض خدماتك لآلاف المسافرين</div>
+      <div class="field"><label>الاسم الكامل</label><input type="text" id="agName" placeholder="اسمك كما تريد أن يظهر"></div>
+      <div class="field"><label>نبذة عنك</label><textarea id="agBio" placeholder="أخبر المسافرين عن خبرتك..."></textarea></div>
       <div class="field">
         <label>الخدمات التي تقدمها</label>
-        <div class="services-check" id="servicesCheck">
-          <button class="svc-check" onclick="toggleSvc(this,'تذاكر طيران')">✈️ تذاكر طيران</button>
-          <button class="svc-check" onclick="toggleSvc(this,'فنادق')">🏨 فنادق</button>
-          <button class="svc-check" onclick="toggleSvc(this,'تأشيرات')">📋 تأشيرات</button>
-          <button class="svc-check" onclick="toggleSvc(this,'باقات سفر')">🌍 باقات سفر</button>
-          <button class="svc-check" onclick="toggleSvc(this,'رحلات عائلية')">👨‍👩‍👧 رحلات عائلية</button>
-          <button class="svc-check" onclick="toggleSvc(this,'سياحة طبية')">🏥 سياحة طبية</button>
+        <div class="svcs-check">
+          <button class="sc" onclick="toggleSvc(this,'تذاكر طيران')">✈️ تذاكر طيران</button>
+          <button class="sc" onclick="toggleSvc(this,'فنادق')">🏨 فنادق</button>
+          <button class="sc" onclick="toggleSvc(this,'تأشيرات')">📋 تأشيرات</button>
+          <button class="sc" onclick="toggleSvc(this,'باقات سفر')">🌍 باقات سفر</button>
+          <button class="sc" onclick="toggleSvc(this,'رحلات عائلية')">👨‍👩‍👧 رحلات عائلية</button>
+          <button class="sc" onclick="toggleSvc(this,'سياحة طبية')">🏥 سياحة طبية</button>
         </div>
       </div>
-      <div class="field">
-        <label>واتساب (اختياري)</label>
-        <input type="tel" id="agWhatsapp" placeholder="+965XXXXXXXX">
-      </div>
-      <div class="field">
-        <label>إنستغرام (اختياري)</label>
-        <input type="text" id="agInstagram" placeholder="@username">
-      </div>
+      <div class="field"><label>واتساب (اختياري)</label><input type="tel" id="agWa" placeholder="+96512345678"></div>
+      <div class="field"><label>إنستغرام (اختياري)</label><input type="text" id="agIg" placeholder="@username"></div>
       <div class="field">
         <label>سنوات الخبرة</label>
         <select id="agExp">
@@ -283,31 +216,28 @@ body{font-family:'Tajawal',sans-serif;background:var(--dk);color:white;min-heigh
           <option value="6">أكثر من ٥ سنوات</option>
         </select>
       </div>
-      <button class="save-btn" id="saveAgentBtn" onclick="saveAgent()">🚀 إنشاء الملف</button>
+      <button class="main-btn tl-btn" id="saveAgBtn" onclick="saveAgent()">🚀 إنشاء الملف</button>
     </div>
   </div>
 </div>
 
-<!-- RATING MODAL -->
-<div class="modal-overlay" id="ratingModal" onclick="closeRatingModal(event)">
-  <div class="modal">
-    <div class="modal-handle"></div>
-    <div style="padding:20px 20px 32px">
-      <div style="font-size:20px;font-weight:900;margin-bottom:6px;text-align:center">⭐ أضف تقييمك</div>
-      <div style="font-size:13px;color:var(--muted);margin-bottom:16px;text-align:center">تقييمك يساعد المسافرين على الاختيار</div>
-      <div class="stars-input" id="starsInput">
-        <button class="star-btn" onclick="setStar(1)">⭐</button>
-        <button class="star-btn" onclick="setStar(2)">⭐</button>
-        <button class="star-btn" onclick="setStar(3)">⭐</button>
-        <button class="star-btn" onclick="setStar(4)">⭐</button>
-        <button class="star-btn" onclick="setStar(5)">⭐</button>
+<!-- RATING OVERLAY -->
+<div class="overlay" id="ratingOverlay" onclick="closeOverlay('ratingOverlay',event)">
+  <div class="sheet">
+    <div class="handle"></div>
+    <div class="sheet-body">
+      <div class="sheet-title" style="text-align:center">⭐ أضف تقييمك</div>
+      <div class="sheet-sub" style="text-align:center">تقييمك يساعد المسافرين على الاختيار</div>
+      <div class="stars-row" id="starsRow">
+        <button class="sbtn" onclick="setStar(1)">☆</button>
+        <button class="sbtn" onclick="setStar(2)">☆</button>
+        <button class="sbtn" onclick="setStar(3)">☆</button>
+        <button class="sbtn" onclick="setStar(4)">☆</button>
+        <button class="sbtn" onclick="setStar(5)">☆</button>
       </div>
-      <div style="text-align:center;font-size:14px;color:var(--muted);margin-bottom:16px" id="starLabel">اضغط على النجوم</div>
-      <div class="field">
-        <label>تعليقك (اختياري)</label>
-        <textarea id="reviewComment" placeholder="شارك تجربتك مع هذا المساعد..."></textarea>
-      </div>
-      <button class="save-btn" id="saveReviewBtn" onclick="saveReview()">إرسال التقييم ⭐</button>
+      <div class="star-lbl" id="starLbl">اضغط على النجوم لتقييم</div>
+      <div class="field"><label>تعليقك (اختياري)</label><textarea id="revComment" placeholder="شارك تجربتك مع هذا المساعد..."></textarea></div>
+      <button class="main-btn or-btn" id="saveRevBtn" onclick="saveReview()">إرسال التقييم ⭐</button>
     </div>
   </div>
 </div>
@@ -315,6 +245,7 @@ body{font-family:'Tajawal',sans-serif;background:var(--dk);color:white;min-heigh
 <div class="toast" id="toast"></div>
 
 <script>
+// ══ SUPABASE ══
 const{createClient}=supabase;
 const sb=createClient(
   'https://ybjdagurvkweabujkeyz.supabase.co',
@@ -322,238 +253,224 @@ const sb=createClient(
 );
 
 const COLORS=[
-  {bg:'#BBDEFB',text:'#0D47A1'},{bg:'#F8BBD9',text:'#880E4F'},
-  {bg:'#C8E6C9',text:'#1B5E20'},{bg:'#FFE0B2',text:'#E65100'},
-  {bg:'#E1BEE7',text:'#6A1B9A'},{bg:'#FFF9C4',text:'#F57F17'},
+  {bg:'#BBDEFB',tx:'#0D47A1'},{bg:'#F8BBD9',tx:'#880E4F'},
+  {bg:'#C8E6C9',tx:'#1B5E20'},{bg:'#FFE0B2',tx:'#E65100'},
+  {bg:'#E1BEE7',tx:'#6A1B9A'},{bg:'#FFF9C4',tx:'#F57F17'},
 ];
 
-let allAgents=[], filteredAgents=[], activeFilter='الكل';
-let currentUser=null, selectedAgent=null, selectedStar=0, selectedServices=[];
+let allAgents=[], filtered=[], activeFilter='الكل';
+let currentUser=null, selAgent=null, selStar=0, selSvcs=[];
 
-// ── INIT ──
+// ══ INIT ══
 async function init(){
   const{data:{session}}=await sb.auth.getSession();
   currentUser=session?.user||null;
-
   if(currentUser){
-    document.getElementById('regBanner').style.display='flex';
-    // تحقق إذا مسجل مسبقاً كمساعد
     const{data:ag}=await sb.from('agents').select('id').eq('user_id',currentUser.id).single();
-    if(ag){
-      document.getElementById('regBanner').style.display='none';
-      document.querySelector('.nav-btn').textContent='✏️ تعديل ملفي';
-    }
+    if(ag) document.getElementById('regBtn').textContent='✏️ تعديل ملفي';
   }
-
   await fetchAgents();
 }
 
-// ── FETCH AGENTS ──
+// ══ FETCH ══
 async function fetchAgents(){
   const{data,error}=await sb.from('agents').select('*').order('rating_avg',{ascending:false});
-  if(error||!data){
-    document.getElementById('agentsGrid').innerHTML=`
-      <div class="empty-state">
-        <div class="eicon">🤝</div>
-        <h3>لا يوجد مساعدون بعد</h3>
-        <p>كن أول مساعد سفريات في رِحلة!</p>
-      </div>`;
+  const grid=document.getElementById('grid');
+  if(error){
+    grid.innerHTML=`<div class="empty" style="grid-column:1/-1"><div class="ei">⚠️</div><h3>تعذّر التحميل</h3><p>${error.message}</p></div>`;
     return;
   }
-  allAgents=data;
-  filteredAgents=data;
-  renderAgents();
+  allAgents=data||[];
+  filtered=allAgents;
+  render();
 }
 
-// ── RENDER AGENTS ──
-function renderAgents(){
-  const grid=document.getElementById('agentsGrid');
-  if(filteredAgents.length===0){
-    grid.innerHTML=`<div class="empty-state"><div class="eicon">🔍</div><h3>لا توجد نتائج</h3><p>جرب بحثاً مختلفاً</p></div>`;
+// ══ RENDER ══
+function render(){
+  const grid=document.getElementById('grid');
+  if(filtered.length===0){
+    grid.innerHTML=`<div class="empty" style="grid-column:1/-1"><div class="ei">🤝</div><h3>لا يوجد مساعدون بعد</h3><p>كن أول مساعد سفريات في رِحلة!</p></div>`;
     return;
   }
-  grid.innerHTML=filteredAgents.map((a,i)=>{
-    const col=COLORS[i%COLORS.length];
-    const initials=a.full_name.split(' ').map(w=>w[0]).join('').substring(0,2);
-    const stars='⭐'.repeat(Math.round(a.rating_avg||0));
-    const rating=a.rating_avg>0?a.rating_avg.toFixed(1):'جديد';
-    return`
-      <div class="acard" onclick="openAgent('${a.id}')">
-        <div class="acard-cover" style="background:linear-gradient(135deg,${col.bg}22,${col.text}33)">
-          <div class="acard-cover-pattern"></div>
-          ${a.is_verified?'<div class="verified-badge">✓ موثّق</div>':''}
-          <div class="acard-av" style="background:${col.bg};color:${col.text}">${initials}</div>
+  grid.innerHTML=filtered.map((a,i)=>{
+    const c=COLORS[i%COLORS.length];
+    const ini=a.full_name.split(' ').map(w=>w[0]).join('').substring(0,2);
+    const st='⭐'.repeat(Math.round(a.rating_avg||0))||'☆☆☆☆☆';
+    const rv=a.rating_avg>0?a.rating_avg.toFixed(1):'جديد';
+    return`<div class="acard" onclick="openDetail('${a.id}')">
+      <div class="acard-cover" style="background:linear-gradient(135deg,${c.bg}33,${c.tx}22)">
+        ${a.is_verified?'<div class="verified">✓ موثّق</div>':''}
+        <div class="acard-av" style="background:${c.bg};color:${c.tx}">${ini}</div>
+      </div>
+      <div class="acard-body">
+        <div class="acard-name">${a.full_name}</div>
+        <div class="acard-rating"><span class="stars">${st}</span><span class="rnum">${rv}</span><span class="rcnt">(${a.rating_count||0})</span></div>
+        <div class="acard-bio">${a.bio||'مساعد سفريات محترف'}</div>
+        <div class="acard-svcs">${(a.services||[]).map(s=>`<span class="svc">${s}</span>`).join('')}</div>
+        <div class="acard-foot">
+          <button class="contact-btn" onclick="event.stopPropagation();openDetail('${a.id}')">تواصل معه</button>
+          <button class="rate-btn" onclick="event.stopPropagation();openRating('${a.id}')">⭐ قيّم</button>
         </div>
-        <div class="acard-body">
-          <div class="acard-name">${a.full_name}</div>
-          <div class="acard-rating">
-            <span class="stars">${stars||'☆☆☆☆☆'}</span>
-            <span class="rating-num">${rating}</span>
-            <span class="rating-count">(${a.rating_count||0} تقييم)</span>
-          </div>
-          <div class="acard-bio">${a.bio||'مساعد سفريات محترف'}</div>
-          <div class="acard-services">${(a.services||[]).map(s=>`<span class="svc-tag">${s}</span>`).join('')}</div>
-          <div class="acard-footer">
-            <button class="contact-btn" onclick="event.stopPropagation();openAgent('${a.id}')">تواصل معه</button>
-            <button class="review-btn" onclick="event.stopPropagation();openAgent('${a.id}',true)">⭐ قيّم</button>
-          </div>
-        </div>
-      </div>`;
+      </div>
+    </div>`;
   }).join('');
 }
 
-// ── FILTER ──
+// ══ FILTER ══
 function setFilter(tag,el){
   activeFilter=tag;
   document.querySelectorAll('.fchip').forEach(c=>c.classList.remove('active'));
   el.classList.add('active');
   applyFilter();
 }
-
-function filterAgents(){applyFilter();}
-
 function applyFilter(){
   const q=document.getElementById('searchInput').value.toLowerCase();
-  filteredAgents=allAgents.filter(a=>{
-    const matchQ=!q||a.full_name.toLowerCase().includes(q)||a.bio?.toLowerCase().includes(q);
-    const matchF=activeFilter==='الكل'||(a.services||[]).includes(activeFilter);
-    return matchQ&&matchF;
+  filtered=allAgents.filter(a=>{
+    const mq=!q||a.full_name.toLowerCase().includes(q)||(a.bio||'').toLowerCase().includes(q);
+    const mf=activeFilter==='الكل'||(a.services||[]).includes(activeFilter);
+    return mq&&mf;
   });
-  renderAgents();
+  render();
 }
 
-// ── OPEN AGENT MODAL ──
-async function openAgent(id, openReview=false){
+// ══ OPEN DETAIL ══
+async function openDetail(id){
   const a=allAgents.find(x=>x.id===id);
   if(!a) return;
-  selectedAgent=a;
-
+  selAgent=a;
   const i=allAgents.indexOf(a)%COLORS.length;
-  const col=COLORS[i];
-  const initials=a.full_name.split(' ').map(w=>w[0]).join('').substring(0,2);
+  const c=COLORS[i];
+  const ini=a.full_name.split(' ').map(w=>w[0]).join('').substring(0,2);
+  const st='⭐'.repeat(Math.round(a.rating_avg||0))||'☆☆☆☆☆';
+  const rv=a.rating_avg>0?a.rating_avg.toFixed(1):'جديد';
 
-  // Cover
-  document.getElementById('modalCover').style.background=`linear-gradient(135deg,${col.bg}33,${col.text}44)`;
-  document.getElementById('modalAv').style.cssText=`background:${col.bg};color:${col.text};position:absolute;bottom:-28px;right:20px;width:64px;height:64px;border-radius:18px;border:3px solid #161616;display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:900;`;
-  document.getElementById('modalAv').textContent=initials;
-
-  // Info
-  document.getElementById('modalName').textContent=a.full_name+(a.is_verified?' ✓':'');
-  const stars='⭐'.repeat(Math.round(a.rating_avg||0));
-  document.getElementById('modalRating').innerHTML=`<span style="color:var(--yl);font-size:18px">${stars||'☆☆☆☆☆'}</span><span style="font-size:14px;font-weight:700">${a.rating_avg>0?a.rating_avg.toFixed(1):'جديد'}</span><span style="font-size:12px;color:var(--muted)">(${a.rating_count||0} تقييم)</span>`;
-  document.getElementById('modalBio').textContent=a.bio||'مساعد سفريات محترف';
-  document.getElementById('modalServices').innerHTML=(a.services||[]).map(s=>`<span class="svc-pill">${s}</span>`).join('');
-
-  // Contact
+  // Contact links
   let contacts='';
-  if(a.whatsapp) contacts+=`<a class="contact-opt" href="https://wa.me/${a.whatsapp.replace(/\D/g,'')}" target="_blank"><span class="coi">📱</span><div class="cot"><strong>واتساب</strong><span>${a.whatsapp}</span></div><span class="coa">فتح ←</span></a>`;
-  if(a.instagram) contacts+=`<a class="contact-opt" href="https://instagram.com/${a.instagram.replace('@','')}" target="_blank"><span class="coi">📸</span><div class="cot"><strong>إنستغرام</strong><span>${a.instagram}</span></div><span class="coa">فتح ←</span></a>`;
-  if(!contacts) contacts='<div style="font-size:13px;color:var(--muted);padding:12px">لم يضف معلومات تواصل بعد</div>';
-  document.getElementById('modalContact').innerHTML=contacts;
+  if(a.whatsapp) contacts+=`<a class="clink" href="https://wa.me/${a.whatsapp.replace(/\D/g,'')}" target="_blank"><span class="ci">📱</span><div class="ct"><strong>واتساب</strong><span>${a.whatsapp}</span></div><span class="ca">فتح ←</span></a>`;
+  if(a.instagram) contacts+=`<a class="clink" href="https://instagram.com/${a.instagram.replace('@','')}" target="_blank"><span class="ci">📸</span><div class="ct"><strong>إنستغرام</strong><span>${a.instagram}</span></div><span class="ca">فتح ←</span></a>`;
+  if(!contacts) contacts=`<div style="font-size:13px;color:var(--muted);padding:10px">لم يضف معلومات تواصل بعد</div>`;
 
   // Reviews
-  await loadReviews(a.id);
+  const{data:revs}=await sb.from('reviews').select('*').eq('target_id',id).eq('target_type','agent').order('created_at',{ascending:false}).limit(5);
+  let revsHtml='<div style="font-size:13px;color:var(--muted);padding:10px;text-align:center">لا توجد تقييمات بعد</div>';
+  if(revs&&revs.length>0){
+    revsHtml=`<div class="reviews-wrap">${revs.map(r=>`
+      <div class="rev-item">
+        <div class="rev-head">
+          <div class="rev-av">👤</div>
+          <div class="rev-info"><strong>مسافر</strong><span>${new Date(r.created_at).toLocaleDateString('ar-KW',{month:'long',year:'numeric'})}</span></div>
+          <div class="rev-stars">${'⭐'.repeat(r.rating)}</div>
+        </div>
+        ${r.comment?`<div class="rev-text">${r.comment}</div>`:''}
+      </div>`).join('')}</div>`;
+  }
 
-  // Show review btn if logged in and not the agent
-  const reviewBtn=document.getElementById('addReviewBtn');
-  reviewBtn.style.display=(currentUser&&currentUser.id!==a.user_id)?'block':'none';
+  const showRevBtn=currentUser&&currentUser.id!==a.user_id;
 
-  document.getElementById('agentModal').classList.add('open');
-  if(openReview&&currentUser) setTimeout(()=>openRatingModal(),400);
+  document.getElementById('detailBody').innerHTML=`
+    <div class="detail-cover" style="background:linear-gradient(135deg,${c.bg}33,${c.tx}22)">
+      <div class="detail-av" style="background:${c.bg};color:${c.tx}">${ini}</div>
+    </div>
+    <div class="detail-name">${a.full_name}${a.is_verified?' ✓':''}</div>
+    <div class="detail-rating">
+      <span style="color:var(--yl);font-size:17px">${st}</span>
+      <span style="font-size:13px;font-weight:700">${rv}</span>
+      <span style="font-size:12px;color:var(--muted)">(${a.rating_count||0} تقييم)</span>
+    </div>
+    <div class="detail-bio">${a.bio||'مساعد سفريات محترف'}</div>
+    <div class="sec-label">الخدمات</div>
+    <div class="svcs-wrap">${(a.services||[]).map(s=>`<span class="svc-big">${s}</span>`).join('')}</div>
+    <div class="sec-label">تواصل معه</div>
+    <div class="contact-links">${contacts}</div>
+    <div class="sec-label">التقييمات</div>
+    ${revsHtml}
+    ${showRevBtn?`<button class="add-rev-btn" onclick="closeOverlay('detailOverlay',{target:null});setTimeout(()=>openRating('${a.id}'),300)">⭐ أضف تقييمك</button>`:''}
+  `;
+  document.getElementById('detailOverlay').classList.add('open');
 }
 
-async function loadReviews(agentId){
-  const{data}=await sb.from('reviews').select('*').eq('target_id',agentId).eq('target_type','agent').order('created_at',{ascending:false}).limit(10);
-  const el=document.getElementById('modalReviews');
-  if(!data||data.length===0){el.innerHTML=`<div class="no-reviews">لا توجد تقييمات بعد — كن أول من يقيّم!</div>`;return;}
-  el.innerHTML=`<div class="reviews-list">${data.map(r=>`
-    <div class="review-item">
-      <div class="review-header">
-        <div class="rev-av">👤</div>
-        <div class="rev-info"><strong>مسافر</strong><span>${new Date(r.created_at).toLocaleDateString('ar-KW',{month:'long',year:'numeric'})}</span></div>
-        <div class="rev-stars">${'⭐'.repeat(r.rating)}</div>
-      </div>
-      ${r.comment?`<div class="rev-comment">${r.comment}</div>`:''}
-    </div>`).join('')}</div>`;
-}
-
-function closeAgentModal(e){if(e.target===document.getElementById('agentModal'))document.getElementById('agentModal').classList.remove('open');}
-
-// ── REGISTER AGENT ──
-let selectedServices=[];
-function toggleSvc(el,svc){
-  if(selectedServices.includes(svc)){selectedServices=selectedServices.filter(s=>s!==svc);el.classList.remove('selected');}
-  else{selectedServices.push(svc);el.classList.add('selected');}
-}
-
-function openRegisterModal(){
+// ══ REGISTER ══
+function openRegister(){
   if(!currentUser){window.location.href='auth.html';return;}
-  document.getElementById('registerModal').classList.add('open');
+  document.getElementById('regOverlay').classList.add('open');
 }
-function closeRegisterModal(e){if(e.target===document.getElementById('registerModal'))document.getElementById('registerModal').classList.remove('open');}
+
+function toggleSvc(el,svc){
+  if(selSvcs.includes(svc)){selSvcs=selSvcs.filter(s=>s!==svc);el.classList.remove('on');}
+  else{selSvcs.push(svc);el.classList.add('on');}
+}
 
 async function saveAgent(){
-  const btn=document.getElementById('saveAgentBtn');
-  btn.disabled=true;btn.textContent='جاري الحفظ...';
+  const btn=document.getElementById('saveAgBtn');
   const name=document.getElementById('agName').value.trim();
   const bio=document.getElementById('agBio').value.trim();
-  const whatsapp=document.getElementById('agWhatsapp').value.trim();
-  const instagram=document.getElementById('agInstagram').value.trim();
+  const wa=document.getElementById('agWa').value.trim();
+  const ig=document.getElementById('agIg').value.trim();
   const exp=parseInt(document.getElementById('agExp').value);
-  if(!name||selectedServices.length===0){showToast('⚠️ أدخل اسمك واختر خدمة واحدة على الأقل');btn.disabled=false;btn.textContent='🚀 إنشاء الملف';return;}
-  const{error}=await sb.from('agents').upsert({user_id:currentUser.id,full_name:name,bio,services:selectedServices,whatsapp,instagram,experience_years:exp});
+  if(!name){showToast('⚠️ أدخل اسمك');return;}
+  if(selSvcs.length===0){showToast('⚠️ اختر خدمة واحدة على الأقل');return;}
+  btn.disabled=true;btn.textContent='جاري الحفظ...';
+  const{error}=await sb.from('agents').upsert({user_id:currentUser.id,full_name:name,bio,services:selSvcs,whatsapp:wa,instagram:ig,experience_years:exp});
   btn.disabled=false;btn.textContent='🚀 إنشاء الملف';
   if(error){showToast('❌ '+error.message);return;}
-  document.getElementById('registerModal').classList.remove('open');
+  document.getElementById('regOverlay').classList.remove('open');
   showToast('🎉 تم إنشاء ملفك بنجاح!');
   await fetchAgents();
 }
 
-// ── RATING ──
-function openRatingModal(){selectedStar=0;updateStars();document.getElementById('ratingModal').classList.add('open');}
-function closeRatingModal(e){if(e.target===document.getElementById('ratingModal'))document.getElementById('ratingModal').classList.remove('open');}
+// ══ RATING ══
+function openRating(id){
+  if(!currentUser){window.location.href='auth.html';return;}
+  selAgent=allAgents.find(x=>x.id===id)||selAgent;
+  selStar=0;
+  updateStars();
+  document.getElementById('revComment').value='';
+  document.getElementById('starLbl').textContent='اضغط على النجوم لتقييم';
+  document.getElementById('ratingOverlay').classList.add('open');
+}
 
 function setStar(n){
-  selectedStar=n;
+  selStar=n;
   updateStars();
-  const labels=['','ضعيف 😞','مقبول 😐','جيد 🙂','جيد جداً 😊','ممتاز 🤩'];
-  document.getElementById('starLabel').textContent=labels[n];
+  const lbls=['','ضعيف 😞','مقبول 😐','جيد 🙂','جيد جداً 😊','ممتاز 🤩'];
+  document.getElementById('starLbl').textContent=lbls[n];
 }
 
 function updateStars(){
-  document.querySelectorAll('.star-btn').forEach((b,i)=>{
-    b.textContent=i<selectedStar?'⭐':'☆';
-    b.classList.toggle('active',i<selectedStar);
-  });
+  document.querySelectorAll('.sbtn').forEach((b,i)=>{b.textContent=i<selStar?'⭐':'☆';});
 }
 
 async function saveReview(){
-  if(!selectedStar){showToast('⚠️ اختر عدد النجوم أولاً');return;}
-  if(!currentUser){window.location.href='auth.html';return;}
-  const comment=document.getElementById('reviewComment').value.trim();
-  const btn=document.getElementById('saveReviewBtn');
+  if(!selStar){showToast('⚠️ اختر عدد النجوم');return;}
+  const btn=document.getElementById('saveRevBtn');
+  const comment=document.getElementById('revComment').value.trim();
   btn.disabled=true;btn.textContent='جاري الإرسال...';
   const{error}=await sb.from('reviews').upsert({
     reviewer_id:currentUser.id,
-    target_id:selectedAgent.id,
+    target_id:selAgent.id,
     target_type:'agent',
-    rating:selectedStar,
+    rating:selStar,
     comment
   });
   btn.disabled=false;btn.textContent='إرسال التقييم ⭐';
   if(error){showToast('❌ '+error.message);return;}
 
-  // حدّث متوسط التقييم
-  const{data:reviews}=await sb.from('reviews').select('rating').eq('target_id',selectedAgent.id).eq('target_type','agent');
-  if(reviews&&reviews.length>0){
-    const avg=reviews.reduce((s,r)=>s+r.rating,0)/reviews.length;
-    await sb.from('agents').update({rating_avg:avg,rating_count:reviews.length}).eq('id',selectedAgent.id);
+  // تحديث متوسط التقييم
+  const{data:revs}=await sb.from('reviews').select('rating').eq('target_id',selAgent.id).eq('target_type','agent');
+  if(revs&&revs.length>0){
+    const avg=revs.reduce((s,r)=>s+r.rating,0)/revs.length;
+    await sb.from('agents').update({rating_avg:avg,rating_count:revs.length}).eq('id',selAgent.id);
   }
 
-  document.getElementById('ratingModal').classList.remove('open');
+  document.getElementById('ratingOverlay').classList.remove('open');
   showToast('✅ شكراً على تقييمك!');
-  await loadReviews(selectedAgent.id);
   await fetchAgents();
+}
+
+// ══ HELPERS ══
+function closeOverlay(id,e){
+  if(!e||e.target===document.getElementById(id))
+    document.getElementById(id).classList.remove('open');
 }
 
 async function goToProfile(){
