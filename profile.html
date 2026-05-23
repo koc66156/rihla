@@ -409,13 +409,13 @@ async function init(){
   }
   currentUser=session.user;
 
-  const[{data:p},{data:ag}]=await Promise.all([
+  const[{data:p},{data:agArr}]=await Promise.all([
     sb.from('profiles').select('*').eq('id',currentUser.id).single(),
-    sb.from('agents').select('*').eq('user_id',currentUser.id).single()
+    sb.from('agents').select('*').eq('user_id',currentUser.id)
   ]);
 
   profile=p||{};
-  agentData=ag||null;
+  agentData=(agArr&&agArr.length>0)?agArr[0]:null;
   // المستخدم مساعد إذا كان في جدول agents أو account_type = agent
   isAgent=profile.account_type==='agent' || agentData!==null;
   // إذا كان في جدول agents لكن profile لم يتحدث، نحدثه
