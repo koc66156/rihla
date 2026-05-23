@@ -413,6 +413,9 @@ async function saveAgent(){
   const{error}=await sb.from('agents').upsert({user_id:currentUser.id,full_name:name,bio,services:selSvcs,whatsapp:wa,instagram:ig,experience_years:exp});
   btn.disabled=false;btn.textContent='🚀 إنشاء الملف';
   if(error){showToast('❌ '+error.message);return;}
+
+  // تحديث نوع الحساب في الملف الشخصي
+  await sb.from('profiles').upsert({id:currentUser.id,account_type:'agent',full_name:name});
   document.getElementById('regOverlay').classList.remove('open');
   showToast('🎉 تم إنشاء ملفك بنجاح!');
   await fetchAgents();
