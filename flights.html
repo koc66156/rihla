@@ -123,7 +123,7 @@ body{font-family:'Tajawal',sans-serif;background:var(--dk);color:white;min-heigh
 <!-- NAV -->
 <nav class="topnav">
   <button class="nav-logo" onclick="window.location.href='index.html'">Rihla</button>
-  <button class="nav-profile-btn" id="navProfileBtn" onclick="goToProfile()">دخول 👤</button>
+  <button class="nav-profile-btn" id="navProfileBtn" onclick="goToProfile()">تسجيل دخول 👤</button>
 </nav>
 
 <!-- HERO -->
@@ -385,18 +385,29 @@ function openGoogleFlights(){
 function toAr(n){return n.toString().replace(/\d/g,d=>'٠١٢٣٤٥٦٧٨٩'[d]);}
 
 async function goToProfile(){
-  try{const{data:{session}}=await sb.auth.getSession();window.location.href=session?'profile.html':'auth.html';}
-  catch(e){window.location.href='auth.html';}
+  try{
+    const{data:{session}}=await sb.auth.getSession();
+    window.location.href=session?'profile.html':'auth.html';
+  }catch(e){
+    window.location.href='auth.html';
+  }
 }
 async function initNav(){
   try{
     const{data:{session}}=await sb.auth.getSession();
     const btn=document.getElementById('navProfileBtn');
-    if(!btn||!session) return;
-    const{data:p}=await sb.from('profiles').select('full_name').eq('id',session.user.id).single();
-    const name=p?.full_name?.split(' ')[0]||'ملفي';
-    btn.textContent=name+' 👤';
-  }catch(e){}
+    if(!btn) return;
+    if(session){
+      const{data:p}=await sb.from('profiles').select('full_name').eq('id',session.user.id).single();
+      const name=p?.full_name?.split(' ')[0]||'ملفي';
+      btn.textContent=name+' 👤';
+    } else {
+      btn.textContent='تسجيل دخول 👤';
+    }
+  }catch(e){
+    const btn=document.getElementById('navProfileBtn');
+    if(btn) btn.textContent='تسجيل دخول 👤';
+  }
 }
 initNav();
 </script>
