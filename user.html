@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>رِحلة — الملف الشخصي</title>
+<meta name="theme-color" content="#FF5C1A">
+<link rel="manifest" href="manifest.json">
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&family=Righteous&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root{--or:#FF5C1A;--yl:#FFD000;--tl:#00C9B1;--dk:#0E0E0E;--muted:rgba(255,255,255,0.45);--card:rgba(255,255,255,0.05);--border:rgba(255,255,255,0.08);--nav-h:60px;--bot-h:68px;}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+body{font-family:'Tajawal',sans-serif;background:var(--dk);color:white;min-height:100vh;padding-bottom:calc(var(--bot-h)+20px);}
+
+/* NAV */
+.topnav{position:fixed;top:0;width:100%;z-index:1000;padding:0 20px;height:var(--nav-h);display:flex;align-items:center;justify-content:space-between;background:rgba(14,14,14,0.92);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);}
+.nav-logo{font-family:'Righteous',cursive;font-size:24px;background:linear-gradient(90deg,var(--or),var(--yl));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;cursor:pointer;border:none;background-color:transparent;}
+.nav-back{color:rgba(255,255,255,0.5);font-size:13px;font-weight:700;text-decoration:none;}
+
+/* COVER */
+.cover{height:180px;position:relative;overflow:hidden;margin-top:var(--nav-h);}
+.cover-gradient{position:absolute;inset:0;}
+.cover-pattern{position:absolute;inset:0;background-image:radial-gradient(rgba(255,255,255,0.08) 1px,transparent 1px);background-size:20px 20px;}
+
+/* PROFILE HEADER */
+.profile-header{padding:0 20px 20px;position:relative;}
+.avatar-wrap{margin-top:-44px;margin-bottom:12px;position:relative;display:inline-block;}
+.avatar{width:88px;height:88px;border-radius:24px;border:3px solid var(--dk);display:flex;align-items:center;justify-content:center;font-size:32px;font-weight:900;}
+.verified-badge{position:absolute;bottom:-4px;left:-4px;background:var(--tl);width:24px;height:24px;border-radius:50%;border:2px solid var(--dk);display:flex;align-items:center;justify-content:center;font-size:12px;}
+
+.profile-name{font-size:24px;font-weight:900;margin-bottom:4px;}
+.profile-type{display:inline-flex;align-items:center;gap:6px;padding:5px 14px;border-radius:14px;font-size:12px;font-weight:800;margin-bottom:12px;}
+.type-traveler{background:rgba(255,92,26,0.15);color:var(--or);}
+.type-agent{background:rgba(0,201,177,0.15);color:var(--tl);}
+.profile-bio{font-size:14px;color:rgba(255,255,255,0.7);line-height:1.7;margin-bottom:16px;}
+.profile-meta{display:flex;gap:16px;flex-wrap:wrap;margin-bottom:16px;}
+.meta-item{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--muted);}
+
+/* STATS */
+.stats-row{display:flex;border:1px solid var(--border);border-radius:18px;overflow:hidden;margin-bottom:24px;}
+.stat{flex:1;padding:16px 8px;text-align:center;border-left:1px solid var(--border);}
+.stat:last-child{border-left:none;}
+.stat .sv{font-size:22px;font-weight:900;background:linear-gradient(135deg,var(--or),var(--yl));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;display:block;}
+.stat .sl{font-size:11px;color:var(--muted);margin-top:2px;}
+
+/* COUNTRIES */
+.section{padding:0 20px 24px;}
+.sec-title{font-size:16px;font-weight:800;margin-bottom:14px;display:flex;align-items:center;gap:8px;}
+.countries-wrap{display:flex;gap:8px;flex-wrap:wrap;}
+.ctag{padding:6px 14px;border-radius:14px;background:var(--card);border:1px solid var(--border);font-size:13px;font-weight:600;}
+
+/* TABS */
+.tabs{display:flex;background:rgba(255,255,255,0.04);border-radius:16px;padding:4px;margin:0 20px 20px;}
+.tab{flex:1;padding:10px;border-radius:13px;border:none;background:transparent;font-family:'Tajawal',sans-serif;font-size:14px;font-weight:700;color:rgba(255,255,255,0.4);cursor:pointer;transition:all .2s;}
+.tab.active{background:var(--or);color:white;}
+
+/* POSTS */
+.posts-wrap{padding:0 20px;}
+.post-card{background:var(--card);border:1px solid var(--border);border-radius:20px;overflow:hidden;margin-bottom:16px;transition:all .3s;}
+.post-card:hover{border-color:rgba(255,92,26,0.3);}
+
+.post-images{position:relative;}
+.post-img-single{width:100%;height:220px;object-fit:cover;}
+.post-img-grid{display:grid;grid-template-columns:1fr 1fr;gap:2px;height:220px;}
+.post-img-grid img{width:100%;height:100%;object-fit:cover;}
+.post-img-grid img:first-child{grid-row:1/3;}
+.post-no-img{height:120px;display:flex;align-items:center;justify-content:center;font-size:48px;background:linear-gradient(135deg,rgba(255,92,26,0.15),rgba(255,208,0,0.08));}
+
+.post-body{padding:16px;}
+.post-dest{font-size:12px;color:var(--or);font-weight:700;margin-bottom:6px;display:flex;align-items:center;gap:5px;}
+.post-title{font-size:17px;font-weight:900;margin-bottom:8px;line-height:1.3;}
+.post-content{font-size:13px;color:rgba(255,255,255,0.65);line-height:1.7;margin-bottom:14px;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;}
+.post-footer{display:flex;align-items:center;justify-content:space-between;}
+.post-time{font-size:11px;color:var(--muted);}
+.like-btn{display:flex;align-items:center;gap:6px;padding:7px 16px;border-radius:12px;background:rgba(255,92,26,0.08);border:1px solid rgba(255,92,26,0.15);color:rgba(255,255,255,0.6);font-family:'Tajawal',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:all .2s;}
+.like-btn.liked{background:rgba(255,92,26,0.2);color:var(--or);border-color:rgba(255,92,26,0.3);}
+.like-btn:hover{border-color:var(--or);color:var(--or);}
+
+/* EMPTY */
+.empty{text-align:center;padding:48px 20px;}
+.empty .ei{font-size:52px;margin-bottom:14px;}
+.empty h3{font-size:18px;font-weight:800;margin-bottom:8px;}
+.empty p{font-size:13px;color:var(--muted);}
+
+/* ADD POST BTN (for own profile) */
+.add-post-btn{width:calc(100% - 40px);margin:0 20px 16px;padding:14px;border-radius:16px;background:linear-gradient(135deg,var(--or),#ff8c42);color:white;border:none;font-family:'Tajawal',sans-serif;font-size:15px;font-weight:800;cursor:pointer;display:none;}
+
+/* POST MODAL */
+.overlay{position:fixed;inset:0;z-index:2000;background:rgba(0,0,0,0.8);backdrop-filter:blur(8px);display:flex;align-items:flex-end;justify-content:center;opacity:0;pointer-events:none;transition:opacity .3s;}
+.overlay.open{opacity:1;pointer-events:all;}
+.sheet{background:#161616;border-radius:24px 24px 0 0;width:100%;max-width:520px;max-height:90vh;overflow-y:auto;transform:translateY(100%);transition:transform .4s cubic-bezier(.34,1.2,.64,1);}
+.overlay.open .sheet{transform:translateY(0);}
+.sheet::-webkit-scrollbar{display:none;}
+.handle{width:36px;height:4px;border-radius:2px;background:rgba(255,255,255,0.12);margin:14px auto;}
+.sheet-body{padding:0 20px 32px;}
+.sheet-title{font-size:20px;font-weight:900;margin-bottom:20px;}
+
+.field{margin-bottom:14px;}
+.field label{display:block;font-size:12px;font-weight:800;color:rgba(255,255,255,0.5);margin-bottom:6px;letter-spacing:.5px;}
+.field input,.field textarea{width:100%;padding:13px 15px;border-radius:13px;border:1.5px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.06);font-family:'Tajawal',sans-serif;font-size:14px;color:white;outline:none;transition:border-color .2s;}
+.field input:focus,.field textarea:focus{border-color:var(--or);}
+.field input::placeholder,.field textarea::placeholder{color:rgba(255,255,255,0.2);}
+.field textarea{resize:vertical;min-height:120px;}
+
+/* IMAGE UPLOAD */
+.img-upload{border:2px dashed rgba(255,255,255,0.15);border-radius:14px;padding:20px;text-align:center;cursor:pointer;transition:all .2s;margin-bottom:14px;}
+.img-upload:hover{border-color:var(--or);}
+.img-upload input{display:none;}
+.img-upload .ui{font-size:32px;margin-bottom:8px;}
+.img-upload p{font-size:13px;color:var(--muted);}
+.img-preview{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;}
+.img-preview-item{position:relative;width:80px;height:80px;border-radius:12px;overflow:hidden;}
+.img-preview-item img{width:100%;height:100%;object-fit:cover;}
+.img-preview-item .del{position:absolute;top:2px;left:2px;width:20px;height:20px;border-radius:50%;background:rgba(0,0,0,0.6);border:none;color:white;font-size:12px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+
+.submit-btn{width:100%;padding:14px;border-radius:15px;background:linear-gradient(135deg,var(--or),#ff8c42);color:white;border:none;font-family:'Tajawal',sans-serif;font-size:16px;font-weight:900;cursor:pointer;margin-top:8px;}
+.submit-btn:disabled{opacity:0.6;cursor:not-allowed;}
+
+/* TRIPS LIST */
+.trips-list{display:flex;flex-direction:column;gap:12px;}
+.trip-mini{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:16px;display:flex;gap:12px;align-items:center;cursor:pointer;transition:all .2s;}
+.trip-mini:hover{border-color:var(--or);}
+.trip-mini-img{width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;}
+.trip-mini-info{flex:1;}
+.trip-mini-name{font-size:14px;font-weight:800;margin-bottom:3px;}
+.trip-mini-meta{font-size:12px;color:var(--muted);}
+
+/* BOTTOM NAV */
+.botnav{position:fixed;bottom:0;width:100%;z-index:1000;height:var(--bot-h);background:rgba(14,14,14,0.95);backdrop-filter:blur(20px);border-top:1px solid var(--border);display:flex;align-items:center;}
+.botnav a{display:flex;flex-direction:column;align-items:center;gap:4px;flex:1;text-decoration:none;padding:8px 0;}
+.botnav a span:first-child{font-size:22px;}
+.botnav a span:last-child{font-size:11px;font-weight:700;color:var(--muted);}
+
+/* TOAST */
+.toast{position:fixed;bottom:calc(var(--bot-h)+16px);left:50%;transform:translateX(-50%) translateY(80px);background:#1a1a1a;color:white;padding:12px 22px;border-radius:22px;font-size:13px;font-weight:700;box-shadow:0 8px 24px rgba(0,0,0,0.4);transition:transform .4s cubic-bezier(.34,1.56,.64,1);z-index:9999;border:1px solid rgba(255,255,255,0.08);}
+.toast.show{transform:translateX(-50%) translateY(0);}
+</style>
+</head>
+<body>
+
+<nav class="topnav">
+  <button class="nav-logo" onclick="window.history.back()">Rihla</button>
+  <a class="nav-back" onclick="window.history.back()">← رجوع</a>
+</nav>
+
+<!-- COVER -->
+<div class="cover">
+  <div class="cover-gradient" id="coverGrad"></div>
+  <div class="cover-pattern"></div>
+</div>
+
+<!-- PROFILE HEADER -->
+<div class="profile-header">
+  <div class="avatar-wrap">
+    <div class="avatar" id="avatarEl"></div>
+  </div>
+  <div class="profile-name" id="profileName"></div>
+  <div class="profile-type" id="profileType"></div>
+  <div class="profile-bio" id="profileBio" style="display:none"></div>
+  <div class="profile-meta">
+    <div class="meta-item">📍 <span id="profileCountry">الكويت</span></div>
+    <div class="meta-item">📅 <span id="profileJoined"></span></div>
+  </div>
+</div>
+
+<!-- STATS -->
+<div class="stats-row" style="margin:0 20px 20px;">
+  <div class="stat"><span class="sv" id="statPosts">٠</span><div class="sl">منشور</div></div>
+  <div class="stat"><span class="sv" id="statTrips">٠</span><div class="sl">رحلة</div></div>
+  <div class="stat"><span class="sv" id="statCountries">٠</span><div class="sl">دولة</div></div>
+</div>
+
+<!-- COUNTRIES -->
+<div class="section" id="countriesSection" style="display:none">
+  <div class="sec-title">🌍 الدول المزارة</div>
+  <div class="countries-wrap" id="countriesWrap"></div>
+</div>
+
+<!-- ADD POST BTN -->
+<button class="add-post-btn" id="addPostBtn" onclick="openPostModal()">📝 أضف منشور رحلة</button>
+
+<!-- TABS -->
+<div class="tabs">
+  <button class="tab active" onclick="setTab('posts',this)">📸 المنشورات</button>
+  <button class="tab" onclick="setTab('trips',this)">✈️ الرحلات</button>
+</div>
+
+<!-- POSTS -->
+<div id="postsWrap" class="posts-wrap"></div>
+
+<!-- TRIPS -->
+<div id="tripsWrap" class="trips-list" style="display:none;padding:0 20px;"></div>
+
+<!-- BOTTOM NAV -->
+<nav class="botnav">
+  <a href="index.html"><span>🏠</span><span>الرئيسية</span></a>
+  <a href="trips.html"><span>✈️</span><span>الرحلات</span></a>
+  <a href="flights.html"><span>🛫</span><span>طيران</span></a>
+  <a href="agents.html"><span>🤝</span><span>المساعدون</span></a>
+  <a href="profile.html"><span>👤</span><span>حسابي</span></a>
+</nav>
+
+<!-- POST MODAL -->
+<div class="overlay" id="postOverlay" onclick="closeOverlay(event)">
+  <div class="sheet">
+    <div class="handle"></div>
+    <div class="sheet-body">
+      <div class="sheet-title">📝 شارك تجربتك</div>
+      <div class="field"><label>عنوان المنشور</label><input type="text" id="postTitle" placeholder="مثال: رحلتي إلى طوكيو 🗼"></div>
+      <div class="field"><label>الوجهة</label><input type="text" id="postDest" placeholder="مثال: طوكيو، اليابان"></div>
+      <div class="field"><label>اكتب تجربتك</label><textarea id="postContent" placeholder="شارك أجمل لحظاتك ونصائحك للمسافرين..."></textarea></div>
+
+      <!-- IMAGE UPLOAD -->
+      <div class="img-upload" onclick="document.getElementById('imgInput').click()">
+        <input type="file" id="imgInput" accept="image/*" multiple onchange="previewImages(this)">
+        <div class="ui">📸</div>
+        <p>اضغط لإضافة صور (حتى ٤ صور)</p>
+      </div>
+      <div class="img-preview" id="imgPreview"></div>
+
+      <button class="submit-btn" id="postSubmitBtn" onclick="submitPost()">🚀 نشر المنشور</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const{createClient}=supabase;
+const sb=createClient(
+  'https://ybjdagurvkweabujkeyz.supabase.co',
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InliamRhZ3Vydmt3ZWFidWprZXl6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkzNjQyMDAsImV4cCI6MjA5NDk0MDIwMH0.CIK7sew_-kBlC_t_szCjKjjnFNg695kwSryuRshQ9nI'
+);
+
+const GRADIENTS=[
+  'linear-gradient(135deg,#FF5C1A,#FFD000)',
+  'linear-gradient(135deg,#1A6BFF,#00C9B1)',
+  'linear-gradient(135deg,#7C3AED,#FF5C1A)',
+  'linear-gradient(135deg,#00838F,#4DD0E1)',
+  'linear-gradient(135deg,#558B2F,#8BC34A)',
+];
+
+let currentUser=null, profileUser=null, selectedImages=[], currentTab='posts';
+let myLikes=new Set();
+
+function getUserId(){
+  return new URLSearchParams(window.location.search).get('id');
+}
+
+// ── INIT ──
+async function init(){
+  const{data:{session}}=await sb.auth.getSession();
+  currentUser=session?.user||null;
+
+  const userId=getUserId()||currentUser?.id;
+  if(!userId){window.location.href='auth.html';return;}
+
+  // جلب الملف الشخصي
+  const{data:profile}=await sb.from('profiles').select('*').eq('id',userId).single();
+  profileUser={id:userId,...(profile||{})};
+
+  renderProfile(profile,userId);
+
+  // جلب إعجاباتي
+  if(currentUser){
+    const{data:likes}=await sb.from('post_likes').select('post_id').eq('user_id',currentUser.id);
+    if(likes) likes.forEach(l=>myLikes.add(l.post_id));
+  }
+
+  // إظهار زر إضافة منشور إذا كان ملفي
+  if(currentUser?.id===userId){
+    document.getElementById('addPostBtn').style.display='block';
+  }
+
+  await loadPosts(userId);
+  await loadTrips(userId);
+}
+
+// ── RENDER PROFILE ──
+function renderProfile(profile,userId){
+  const name=profile?.full_name||'مستخدم رِحلة';
+  const initials=name.split(' ').map(w=>w[0]).join('').substring(0,2);
+  const colorIdx=userId.charCodeAt(0)%GRADIENTS.length;
+  const grad=GRADIENTS[colorIdx];
+
+  document.getElementById('coverGrad').style.background=grad;
+  document.getElementById('avatarEl').style.background=grad;
+  document.getElementById('avatarEl').textContent=initials;
+  document.getElementById('profileName').textContent=name;
+
+  const typeEl=document.getElementById('profileType');
+  if(profile?.account_type==='agent'){
+    typeEl.className='profile-type type-agent';
+    typeEl.textContent='🤝 مساعد سفريات';
+  }else{
+    typeEl.className='profile-type type-traveler';
+    typeEl.textContent='✈️ مسافر';
+  }
+
+  if(profile?.bio){
+    document.getElementById('profileBio').textContent=profile.bio;
+    document.getElementById('profileBio').style.display='block';
+  }
+
+  document.getElementById('profileCountry').textContent=profile?.country||'الكويت';
+  const joined=new Date(profile?.created_at||Date.now());
+  document.getElementById('profileJoined').textContent=`عضو منذ ${joined.toLocaleDateString('ar-KW',{year:'numeric',month:'long'})}`;
+
+  // دول مزارة
+  const countries=profile?.visited_countries||[];
+  if(countries.length>0){
+    document.getElementById('countriesSection').style.display='block';
+    document.getElementById('countriesWrap').innerHTML=countries.map(c=>`<span class="ctag">${c}</span>`).join('');
+    document.getElementById('statCountries').textContent=toAr(countries.length);
+  }
+}
+
+// ── LOAD POSTS ──
+async function loadPosts(userId){
+  const{data,error}=await sb.from('posts').select('*').eq('user_id',userId).order('created_at',{ascending:false});
+  document.getElementById('statPosts').textContent=toAr(data?.length||0);
+  renderPosts(data||[]);
+}
+
+function renderPosts(posts){
+  const wrap=document.getElementById('postsWrap');
+  if(posts.length===0){
+    wrap.innerHTML=`<div class="empty"><div class="ei">📸</div><h3>لا توجد منشورات بعد</h3><p>شارك تجارب رحلاتك مع المجتمع</p></div>`;
+    return;
+  }
+  wrap.innerHTML=posts.map(p=>{
+    const imgs=p.images||[];
+    let imgHtml='';
+    if(imgs.length===0){
+      imgHtml=`<div class="post-no-img">📸</div>`;
+    }else if(imgs.length===1){
+      imgHtml=`<div class="post-images"><img class="post-img-single" src="${imgs[0]}" alt="" loading="lazy"></div>`;
+    }else{
+      imgHtml=`<div class="post-images"><div class="post-img-grid">${imgs.slice(0,3).map(i=>`<img src="${i}" alt="" loading="lazy">`).join('')}</div></div>`;
+    }
+    const liked=myLikes.has(p.id);
+    const time=new Date(p.created_at).toLocaleDateString('ar-KW',{day:'numeric',month:'long',year:'numeric'});
+    return`
+      <div class="post-card">
+        ${imgHtml}
+        <div class="post-body">
+          ${p.destination?`<div class="post-dest">📍 ${p.destination}</div>`:''}
+          <div class="post-title">${p.title}</div>
+          ${p.content?`<div class="post-content">${p.content}</div>`:''}
+          <div class="post-footer">
+            <div class="post-time">${time}</div>
+            <button class="like-btn ${liked?'liked':''}" id="like-${p.id}" onclick="toggleLike('${p.id}',${p.likes||0})">
+              ${liked?'❤️':'🤍'} ${toAr(p.likes||0)}
+            </button>
+          </div>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+// ── LOAD TRIPS ──
+async function loadTrips(userId){
+  const{data}=await sb.from('trips').select('*').eq('user_id',userId).eq('status','active').order('created_at',{ascending:false});
+  document.getElementById('statTrips').textContent=toAr(data?.length||0);
+  const wrap=document.getElementById('tripsWrap');
+  if(!data||data.length===0){
+    wrap.innerHTML=`<div class="empty"><div class="ei">✈️</div><h3>لا توجد رحلات</h3><p>لم ينشر هذا العضو أي رحلة بعد</p></div>`;
+    return;
+  }
+  wrap.innerHTML=data.map(t=>{
+    const date=new Date(t.date).toLocaleDateString('ar-KW',{day:'numeric',month:'long'});
+    return`<div class="trip-mini" onclick="window.location.href='trip.html?id=${t.id}'">
+      <div class="trip-mini-img">${t.emoji||'✈️'}</div>
+      <div class="trip-mini-info">
+        <div class="trip-mini-name">${t.title}</div>
+        <div class="trip-mini-meta">📅 ${date} · ${t.country}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ── LIKE ──
+async function toggleLike(postId,currentLikes){
+  if(!currentUser){showToast('سجّل دخولك للإعجاب بالمنشورات');return;}
+  const btn=document.getElementById(`like-${postId}`);
+  const isLiked=myLikes.has(postId);
+
+  if(isLiked){
+    myLikes.delete(postId);
+    await sb.from('post_likes').delete().eq('post_id',postId).eq('user_id',currentUser.id);
+    await sb.from('posts').update({likes:Math.max(0,currentLikes-1)}).eq('id',postId);
+    btn.className='like-btn';
+    btn.innerHTML=`🤍 ${toAr(Math.max(0,currentLikes-1))}`;
+  }else{
+    myLikes.add(postId);
+    await sb.from('post_likes').insert({post_id:postId,user_id:currentUser.id});
+    await sb.from('posts').update({likes:currentLikes+1}).eq('id',postId);
+    btn.className='like-btn liked';
+    btn.innerHTML=`❤️ ${toAr(currentLikes+1)}`;
+  }
+}
+
+// ── POST MODAL ──
+function openPostModal(){document.getElementById('postOverlay').classList.add('open');}
+function closeOverlay(e){if(e.target===document.getElementById('postOverlay'))document.getElementById('postOverlay').classList.remove('open');}
+
+// ── IMAGE PREVIEW ──
+let imageFiles=[];
+function previewImages(input){
+  const files=Array.from(input.files).slice(0,4);
+  imageFiles=files;
+  const preview=document.getElementById('imgPreview');
+  preview.innerHTML=files.map((f,i)=>{
+    const url=URL.createObjectURL(f);
+    return`<div class="img-preview-item"><img src="${url}"><button class="del" onclick="removeImg(${i})">✕</button></div>`;
+  }).join('');
+}
+
+function removeImg(idx){
+  imageFiles.splice(idx,1);
+  const preview=document.getElementById('imgPreview');
+  preview.innerHTML=imageFiles.map((f,i)=>{
+    const url=URL.createObjectURL(f);
+    return`<div class="img-preview-item"><img src="${url}"><button class="del" onclick="removeImg(${i})">✕</button></div>`;
+  }).join('');
+}
+
+// ── SUBMIT POST ──
+async function submitPost(){
+  const title=document.getElementById('postTitle').value.trim();
+  const dest=document.getElementById('postDest').value.trim();
+  const content=document.getElementById('postContent').value.trim();
+  if(!title){showToast('⚠️ أدخل عنوان المنشور');return;}
+
+  const btn=document.getElementById('postSubmitBtn');
+  btn.disabled=true;btn.textContent='جاري النشر...';
+
+  // رفع الصور
+  let imageUrls=[];
+  for(const file of imageFiles){
+    const ext=file.name.split('.').pop();
+    const path=`${currentUser.id}/${Date.now()}.${ext}`;
+    const{data,error}=await sb.storage.from('posts').upload(path,file,{upsert:true});
+    if(!error){
+      const{data:url}=sb.storage.from('posts').getPublicUrl(path);
+      imageUrls.push(url.publicUrl);
+    }
+  }
+
+  const{error}=await sb.from('posts').insert({
+    user_id:currentUser.id,
+    title,
+    destination:dest,
+    content,
+    images:imageUrls,
+    likes:0
+  });
+
+  btn.disabled=false;btn.textContent='🚀 نشر المنشور';
+
+  if(error){showToast('❌ '+error.message);return;}
+
+  document.getElementById('postOverlay').classList.remove('open');
+  document.getElementById('postTitle').value='';
+  document.getElementById('postDest').value='';
+  document.getElementById('postContent').value='';
+  document.getElementById('imgPreview').innerHTML='';
+  imageFiles=[];
+
+  showToast('🎉 تم نشر منشورك بنجاح!');
+  await loadPosts(currentUser.id);
+}
+
+// ── TABS ──
+function setTab(tab,el){
+  currentTab=tab;
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('postsWrap').style.display=tab==='posts'?'block':'none';
+  document.getElementById('tripsWrap').style.display=tab==='trips'?'flex':'none';
+}
+
+// ── HELPERS ──
+function toAr(n){return n.toString().replace(/\d/g,d=>'٠١٢٣٤٥٦٧٨٩'[d]);}
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),3500);
+}
+
+init();
+</script>
+</body>
+</html>
