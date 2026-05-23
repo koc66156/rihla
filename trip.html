@@ -7,34 +7,7 @@
 <meta name="theme-color" content="#FF5C1A">
 <link rel="manifest" href="manifest.json">
 <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&family=Righteous&display=swap" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2">
-async function goToProfile(){
-  try{
-    const{data:{session}}=await sb.auth.getSession();
-    window.location.href=session?'profile.html':'auth.html';
-  }catch(e){
-    window.location.href='auth.html';
-  }
-}
-async function initNav(){
-  try{
-    const{data:{session}}=await sb.auth.getSession();
-    const btn=document.getElementById('navProfileBtn');
-    if(!btn) return;
-    if(session){
-      const{data:p}=await sb.from('profiles').select('full_name').eq('id',session.user.id).single();
-      const name=p?.full_name?.split(' ')[0]||'ملفي';
-      btn.textContent=name+' 👤';
-    } else {
-      btn.textContent='تسجيل دخول 👤';
-    }
-  }catch(e){
-    const btn=document.getElementById('navProfileBtn');
-    if(btn) btn.textContent='تسجيل دخول 👤';
-  }
-}
-initNav();
-</script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 :root{--or:#FF5C1A;--yl:#FFD000;--tl:#00C9B1;--dk:#0E0E0E;--muted:rgba(255,255,255,0.45);--card:rgba(255,255,255,0.05);--border:rgba(255,255,255,0.08);--nav-h:60px;--bot-h:68px;}
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
@@ -238,6 +211,31 @@ const sb=createClient(
   'https://ybjdagurvkweabujkeyz.supabase.co',
   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InliamRhZ3Vydmt3ZWFidWprZXl6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkzNjQyMDAsImV4cCI6MjA5NDk0MDIwMH0.CIK7sew_-kBlC_t_szCjKjjnFNg695kwSryuRshQ9nI'
 );
+// ── NAV FUNCTIONS ──
+async function goToProfile(){
+  try{
+    const{data:{session}}=await sb.auth.getSession();
+    window.location.href=session?'profile.html':'auth.html';
+  }catch(e){window.location.href='auth.html';}
+}
+async function initNav(){
+  try{
+    const{data:{session}}=await sb.auth.getSession();
+    const btn=document.getElementById('navProfileBtn');
+    if(!btn) return;
+    if(session){
+      const{data:p}=await sb.from('profiles').select('full_name').eq('id',session.user.id).single();
+      btn.textContent=(p?.full_name?.split(' ')[0]||'ملفي')+' 👤';
+    }else{
+      btn.textContent='تسجيل دخول 👤';
+    }
+  }catch(e){
+    const btn=document.getElementById('navProfileBtn');
+    if(btn) btn.textContent='تسجيل دخول 👤';
+  }
+}
+initNav();
+
 
 const GRADIENTS={
   '✈️':'linear-gradient(135deg,#1A6BFF,#00C9B1)',
