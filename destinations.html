@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>رِحلة — دليل الوجهات</title>
+<meta name="theme-color" content="#FF5C1A">
+<link rel="manifest" href="manifest.json">
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&family=Righteous&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root{--or:#FF5C1A;--yl:#FFD000;--tl:#00C9B1;--dk:#0E0E0E;--muted:rgba(255,255,255,0.45);--card:rgba(255,255,255,0.05);--border:rgba(255,255,255,0.08);--nav-h:60px;--bot-h:68px;}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+body{font-family:'Tajawal',sans-serif;background:var(--dk);color:white;min-height:100vh;padding-bottom:calc(var(--bot-h)+20px);}
+
+/* NAV */
+.topnav{position:fixed;top:0;width:100%;z-index:1000;padding:0 20px;height:var(--nav-h);display:flex;align-items:center;justify-content:space-between;background:rgba(14,14,14,0.92);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);}
+.nav-logo{font-family:'Righteous',cursive;font-size:24px;background:linear-gradient(90deg,var(--or),var(--yl));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;cursor:pointer;border:none;background-color:transparent;}
+
+/* HERO */
+.hero{padding:calc(var(--nav-h)+28px) 20px 0;}
+.hero h1{font-size:28px;font-weight:900;margin-bottom:6px;}
+.hero h1 span{background:linear-gradient(135deg,var(--or),var(--yl));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.hero p{font-size:14px;color:var(--muted);margin-bottom:20px;line-height:1.7;}
+
+/* SEARCH */
+.search-box{display:flex;align-items:center;gap:10px;background:var(--card);border:1.5px solid var(--border);border-radius:16px;padding:13px 16px;margin-bottom:16px;}
+.search-box input{flex:1;background:transparent;border:none;font-family:'Tajawal',sans-serif;font-size:14px;color:white;outline:none;}
+.search-box input::placeholder{color:rgba(255,255,255,0.2);}
+
+/* FILTERS */
+.filter-row{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;margin-bottom:24px;}
+.filter-row::-webkit-scrollbar{display:none;}
+.fchip{white-space:nowrap;padding:8px 16px;border-radius:20px;border:1.5px solid rgba(255,255,255,0.1);background:transparent;font-family:'Tajawal',sans-serif;font-size:12px;font-weight:700;cursor:pointer;color:rgba(255,255,255,0.6);transition:all .2s;}
+.fchip.active,.fchip:hover{background:var(--or);color:white;border-color:var(--or);}
+
+/* GRID */
+.dest-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;padding:0 20px;}
+
+/* DEST CARD */
+.dest-card{border-radius:22px;overflow:hidden;cursor:pointer;transition:all .3s;border:1px solid var(--border);}
+.dest-card:hover{transform:translateY(-6px);box-shadow:0 16px 40px rgba(0,0,0,0.3);border-color:rgba(255,255,255,0.2);}
+.dest-cover{height:160px;position:relative;display:flex;align-items:center;justify-content:center;font-size:64px;}
+.dest-cover-overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,0.6) 0%,transparent 60%);}
+.dest-badge{position:absolute;top:12px;right:12px;background:rgba(0,0,0,0.4);backdrop-filter:blur(8px);padding:5px 12px;border-radius:12px;font-size:11px;font-weight:700;color:white;}
+.dest-tags{position:absolute;bottom:12px;right:12px;display:flex;gap:5px;}
+.dtag{padding:3px 9px;border-radius:8px;background:rgba(255,255,255,0.15);backdrop-filter:blur(8px);font-size:10px;font-weight:700;color:white;}
+.dest-body{padding:16px;background:rgba(255,255,255,0.04);}
+.dest-name{font-size:18px;font-weight:900;margin-bottom:3px;}
+.dest-country{font-size:12px;color:var(--muted);margin-bottom:10px;}
+.dest-meta{display:flex;gap:12px;}
+.dmeta{font-size:11px;color:var(--muted);display:flex;align-items:center;gap:4px;}
+
+/* EMPTY */
+.empty{text-align:center;padding:60px 20px;grid-column:1/-1;}
+.empty .ei{font-size:52px;margin-bottom:14px;}
+.empty h3{font-size:18px;font-weight:800;margin-bottom:8px;}
+.empty p{font-size:13px;color:var(--muted);}
+
+/* ═══ DETAIL OVERLAY ═══ */
+.overlay{position:fixed;inset:0;z-index:2000;background:rgba(0,0,0,0.8);backdrop-filter:blur(10px);display:flex;align-items:flex-end;justify-content:center;opacity:0;pointer-events:none;transition:opacity .3s;}
+.overlay.open{opacity:1;pointer-events:all;}
+.sheet{background:#111;border-radius:28px 28px 0 0;width:100%;max-width:600px;max-height:92vh;overflow-y:auto;transform:translateY(100%);transition:transform .4s cubic-bezier(.34,1.2,.64,1);}
+.overlay.open .sheet{transform:translateY(0);}
+.sheet::-webkit-scrollbar{width:3px;}
+.sheet::-webkit-scrollbar-thumb{background:rgba(255,92,26,0.3);border-radius:3px;}
+
+/* SHEET COVER */
+.sheet-cover{height:200px;position:relative;display:flex;align-items:center;justify-content:center;font-size:80px;flex-shrink:0;}
+.sheet-cover-overlay{position:absolute;inset:0;background:linear-gradient(to top,#111 0%,transparent 50%);}
+.sheet-close{position:absolute;top:16px;left:16px;width:36px;height:36px;border-radius:50%;background:rgba(0,0,0,0.5);border:none;color:white;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(8px);}
+
+/* SHEET BODY */
+.sheet-body{padding:0 20px 32px;}
+.sheet-name{font-size:28px;font-weight:900;margin-bottom:4px;}
+.sheet-country{font-size:14px;color:var(--muted);margin-bottom:16px;}
+
+/* INFO GRID */
+.info-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px;}
+.info-box{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px;}
+.info-box .il{font-size:10px;font-weight:800;color:var(--muted);letter-spacing:1px;margin-bottom:5px;}
+.info-box .iv{font-size:13px;font-weight:700;line-height:1.4;}
+
+/* VISA BOX */
+.visa-box{background:rgba(0,201,177,0.08);border:1px solid rgba(0,201,177,0.2);border-radius:14px;padding:16px;margin-bottom:20px;display:flex;gap:12px;align-items:flex-start;}
+.visa-box .vi{font-size:24px;flex-shrink:0;}
+.visa-box .vt strong{display:block;font-size:13px;font-weight:800;color:var(--tl);margin-bottom:4px;}
+.visa-box .vt span{font-size:13px;color:rgba(255,255,255,0.7);line-height:1.6;}
+
+/* SECTION */
+.sec{margin-bottom:20px;}
+.sec-title{font-size:14px;font-weight:800;margin-bottom:12px;display:flex;align-items:center;gap:8px;}
+.sec-title.green{color:#4CAF50;}
+.sec-title.red{color:#EF5350;}
+.sec-title.yellow{color:var(--yl);}
+.sec-title.blue{color:var(--tl);}
+
+/* LIST ITEMS */
+.list-item{display:flex;align-items:flex-start;gap:10px;padding:10px 14px;background:var(--card);border-radius:12px;margin-bottom:8px;font-size:13px;line-height:1.6;}
+.list-item .li-icon{font-size:16px;flex-shrink:0;margin-top:1px;}
+.list-item.green-item{background:rgba(76,175,80,0.08);border:1px solid rgba(76,175,80,0.15);}
+.list-item.red-item{background:rgba(239,83,80,0.08);border:1px solid rgba(239,83,80,0.15);}
+.list-item.yellow-item{background:rgba(255,208,0,0.08);border:1px solid rgba(255,208,0,0.15);}
+.list-item.blue-item{background:rgba(0,201,177,0.08);border:1px solid rgba(0,201,177,0.15);}
+
+/* TRIPS IN DEST */
+.dest-trips{display:flex;flex-direction:column;gap:10px;}
+.dest-trip{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px;display:flex;gap:12px;align-items:center;cursor:pointer;transition:all .2s;}
+.dest-trip:hover{border-color:var(--or);}
+.dt-emoji{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;}
+.dt-info{flex:1;}
+.dt-name{font-size:13px;font-weight:800;margin-bottom:3px;}
+.dt-meta{font-size:11px;color:var(--muted);}
+.dt-join{padding:7px 14px;border-radius:10px;background:var(--or);color:white;border:none;font-family:'Tajawal',sans-serif;font-size:12px;font-weight:800;cursor:pointer;}
+
+/* BOTTOM NAV */
+.botnav{position:fixed;bottom:0;width:100%;z-index:1000;height:var(--bot-h);background:rgba(14,14,14,0.95);backdrop-filter:blur(20px);border-top:1px solid var(--border);display:flex;align-items:center;}
+.botnav a{display:flex;flex-direction:column;align-items:center;gap:4px;flex:1;text-decoration:none;padding:8px 0;}
+.botnav a span:first-child{font-size:20px;}
+.botnav a span:last-child{font-size:10px;font-weight:700;color:var(--muted);}
+.botnav a.active span{color:var(--or);}
+
+/* TOAST */
+.toast{position:fixed;bottom:calc(var(--bot-h)+16px);left:50%;transform:translateX(-50%) translateY(80px);background:#1a1a1a;color:white;padding:12px 22px;border-radius:22px;font-size:13px;font-weight:700;box-shadow:0 8px 24px rgba(0,0,0,0.4);transition:transform .4s cubic-bezier(.34,1.56,.64,1);z-index:9999;border:1px solid rgba(255,255,255,0.08);}
+.toast.show{transform:translateX(-50%) translateY(0);}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="topnav">
+  <button class="nav-logo" onclick="window.location.href='index.html'">Rihla</button>
+  <span style="font-size:13px;color:var(--muted);font-weight:600">🗺️ دليل الوجهات</span>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <h1>اكتشف <span>وجهات العالم</span> 🌍</h1>
+  <p>دليل شامل للمسافر العربي — أين تذهب وأين تتجنب في كل دولة</p>
+
+  <div class="search-box">
+    <span>🔍</span>
+    <input type="text" id="searchInput" placeholder="ابحث عن وجهة أو دولة..." oninput="applyFilter()">
+  </div>
+
+  <div class="filter-row">
+    <button class="fchip active" onclick="setFilter('الكل',this)">🌍 الكل</button>
+    <button class="fchip" onclick="setFilter('ثقافة',this)">🏛️ ثقافة</button>
+    <button class="fchip" onclick="setFilter('شاطئ',this)">🌊 شاطئ</button>
+    <button class="fchip" onclick="setFilter('مغامرة',this)">🔥 مغامرة</button>
+    <button class="fchip" onclick="setFilter('طعام',this)">🍜 طعام</button>
+    <button class="fchip" onclick="setFilter('تسوق',this)">🛍️ تسوق</button>
+    <button class="fchip" onclick="setFilter('عائلي',this)">👨‍👩‍👧 عائلي</button>
+  </div>
+</div>
+
+<!-- GRID -->
+<div class="dest-grid" id="grid">
+  <div class="empty" style="grid-column:1/-1">
+    <div class="ei">⏳</div>
+    <h3>جاري تحميل الوجهات...</h3>
+  </div>
+</div>
+
+<!-- BOTTOM NAV -->
+<nav class="botnav">
+  <a href="index.html"><span>🏠</span><span>الرئيسية</span></a>
+  <a href="trips.html"><span>✈️</span><span>الرحلات</span></a>
+  <a href="flights.html"><span>🛫</span><span>طيران</span></a>
+  <a href="agents.html"><span>🤝</span><span>المساعدون</span></a>
+  <a href="profile.html"><span>👤</span><span>حسابي</span></a>
+</nav>
+
+<!-- DETAIL OVERLAY -->
+<div class="overlay" id="detailOverlay" onclick="closeDetail(event)">
+  <div class="sheet" id="detailSheet">
+    <div class="sheet-cover" id="sheetCover">
+      <button class="sheet-close" onclick="document.getElementById('detailOverlay').classList.remove('open')">✕</button>
+      <div class="sheet-cover-overlay"></div>
+    </div>
+    <div class="sheet-body" id="sheetBody"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const{createClient}=supabase;
+const sb=createClient(
+  'https://ybjdagurvkweabujkeyz.supabase.co',
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InliamRhZ3Vydmt3ZWFidWprZXl6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkzNjQyMDAsImV4cCI6MjA5NDk0MDIwMH0.CIK7sew_-kBlC_t_szCjKjjnFNg695kwSryuRshQ9nI'
+);
+
+let all=[], filtered=[], activeFilter='الكل';
+
+// ══ INIT ══
+async function init(){
+  const{data,error}=await sb.from('destinations').select('*').order('visits',{ascending:false});
+  const grid=document.getElementById('grid');
+  if(error||!data){
+    grid.innerHTML=`<div class="empty"><div class="ei">⚠️</div><h3>تعذّر التحميل</h3><p>${error?.message||''}</p></div>`;
+    return;
+  }
+  all=data;filtered=data;
+  render();
+}
+
+// ══ RENDER ══
+function render(){
+  const grid=document.getElementById('grid');
+  if(filtered.length===0){
+    grid.innerHTML=`<div class="empty"><div class="ei">🔍</div><h3>لا توجد نتائج</h3><p>جرب بحثاً مختلفاً</p></div>`;
+    return;
+  }
+  grid.innerHTML=filtered.map(d=>`
+    <div class="dest-card" onclick="openDetail('${d.id}')">
+      <div class="dest-cover" style="background:${d.cover_gradient}">
+        <span style="position:relative;z-index:1">${d.emoji}</span>
+        <div class="dest-cover-overlay"></div>
+        <div class="dest-badge">${d.best_time||''}</div>
+        <div class="dest-tags">
+          ${(d.tags||[]).slice(0,2).map(t=>`<span class="dtag">${t}</span>`).join('')}
+        </div>
+      </div>
+      <div class="dest-body">
+        <div class="dest-name">${d.name}</div>
+        <div class="dest-country">${d.country}</div>
+        <div class="dest-meta">
+          <div class="dmeta">💰 ${d.daily_cost||'—'}</div>
+          <div class="dmeta">🗣️ ${d.language||'—'}</div>
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+// ══ OPEN DETAIL ══
+async function openDetail(id){
+  const d=all.find(x=>x.id===id);
+  if(!d) return;
+
+  // Cover
+  const cover=document.getElementById('sheetCover');
+  cover.style.background=d.cover_gradient;
+  cover.innerHTML=`
+    <span style="position:relative;z-index:1;font-size:80px">${d.emoji}</span>
+    <button class="sheet-close" onclick="document.getElementById('detailOverlay').classList.remove('open')">✕</button>
+    <div class="sheet-cover-overlay"></div>`;
+
+  // جلب رحلات هذه الوجهة
+  const{data:trips}=await sb.from('trips').select('id,title,emoji,date,duration,seats,seats_taken,country')
+    .ilike('country',`%${d.country}%`).eq('status','active').limit(5);
+
+  // Body
+  document.getElementById('sheetBody').innerHTML=`
+    <div class="sheet-name">${d.name} ${d.emoji}</div>
+    <div class="sheet-country">📍 ${d.country}</div>
+
+    ${d.description?`<p style="font-size:14px;color:rgba(255,255,255,0.7);line-height:1.8;margin-bottom:20px">${d.description}</p>`:''}
+
+    <!-- INFO GRID -->
+    <div class="info-grid">
+      <div class="info-box"><div class="il">⏰ أفضل وقت</div><div class="iv">${d.best_time||'—'}</div></div>
+      <div class="info-box"><div class="il">💰 التكلفة اليومية</div><div class="iv">${d.daily_cost||'—'}</div></div>
+      <div class="info-box"><div class="il">💵 العملة</div><div class="iv">${d.currency||'—'}</div></div>
+      <div class="info-box"><div class="il">🗣️ اللغة</div><div class="iv">${d.language||'—'}</div></div>
+    </div>
+
+    <!-- VISA -->
+    <div class="visa-box">
+      <div class="vi">🛂</div>
+      <div class="vt">
+        <strong>معلومات التأشيرة للكويتيين</strong>
+        <span>${d.visa_info||'تحقق من السفارة'}</span>
+      </div>
+    </div>
+
+    <!-- MUST VISIT -->
+    ${d.must_visit?.length?`
+    <div class="sec">
+      <div class="sec-title green">✅ أماكن يجب زيارتها</div>
+      ${d.must_visit.map(i=>`<div class="list-item green-item"><span class="li-icon">📍</span><span>${i}</span></div>`).join('')}
+    </div>`:''}
+
+    <!-- AVOID -->
+    ${d.avoid?.length?`
+    <div class="sec">
+      <div class="sec-title red">❌ أماكن وأمور يُنصح بتجنبها</div>
+      ${d.avoid.map(i=>`<div class="list-item red-item"><span class="li-icon">⚠️</span><span>${i}</span></div>`).join('')}
+    </div>`:''}
+
+    <!-- TIPS -->
+    ${d.tips?.length?`
+    <div class="sec">
+      <div class="sec-title yellow">💡 نصائح مهمة</div>
+      ${d.tips.map(i=>`<div class="list-item yellow-item"><span class="li-icon">💡</span><span>${i}</span></div>`).join('')}
+    </div>`:''}
+
+    <!-- WARNINGS -->
+    ${d.warnings?.length?`
+    <div class="sec">
+      <div class="sec-title red">🚨 تحذيرات وتنبيهات</div>
+      ${d.warnings.map(i=>`<div class="list-item red-item"><span class="li-icon">🚨</span><span>${i}</span></div>`).join('')}
+    </div>`:''}
+
+    <!-- TRIPS -->
+    ${trips&&trips.length>0?`
+    <div class="sec">
+      <div class="sec-title blue">✈️ رحلات متاحة لهذه الوجهة</div>
+      <div class="dest-trips">
+        ${trips.map(t=>{
+          const left=(t.seats||5)-(t.seats_taken||0);
+          const dt=new Date(t.date).toLocaleDateString('ar-KW',{day:'numeric',month:'long'});
+          return`<div class="dest-trip" onclick="window.location.href='trip.html?id=${t.id}'">
+            <div class="dt-emoji">${t.emoji||'✈️'}</div>
+            <div class="dt-info">
+              <div class="dt-name">${t.title}</div>
+              <div class="dt-meta">📅 ${dt} · ${t.duration||''}</div>
+            </div>
+            <button class="dt-join">انضم</button>
+          </div>`;
+        }).join('')}
+      </div>
+    </div>`:`
+    <div class="sec">
+      <div class="sec-title blue">✈️ رحلات لهذه الوجهة</div>
+      <div style="text-align:center;padding:20px;background:var(--card);border-radius:14px;border:1px dashed var(--border)">
+        <div style="font-size:32px;margin-bottom:10px">✈️</div>
+        <div style="font-size:13px;color:var(--muted);margin-bottom:12px">لا توجد رحلات متاحة الآن</div>
+        <button onclick="window.location.href='post-trip.html'" style="padding:10px 20px;border-radius:12px;background:var(--or);color:white;border:none;font-family:'Tajawal',sans-serif;font-size:13px;font-weight:800;cursor:pointer">+ انشر رحلة</button>
+      </div>
+    </div>`}
+
+    <!-- SEARCH FLIGHTS -->
+    <button onclick="window.location.href='flights.html'" style="width:100%;padding:14px;border-radius:14px;background:rgba(0,201,177,0.1);color:var(--tl);border:1.5px solid rgba(0,201,177,0.2);font-family:'Tajawal',sans-serif;font-size:15px;font-weight:800;cursor:pointer;margin-top:8px;">
+      🛫 ابحث عن رحلة طيران لـ${d.name}
+    </button>
+  `;
+
+  document.getElementById('detailOverlay').classList.add('open');
+
+  // زيادة عداد الزيارات
+  await sb.from('destinations').update({visits:(d.visits||0)+1}).eq('id',id);
+}
+
+function closeDetail(e){
+  if(e.target===document.getElementById('detailOverlay'))
+    document.getElementById('detailOverlay').classList.remove('open');
+}
+
+// ══ FILTER ══
+function setFilter(tag,el){
+  activeFilter=tag;
+  document.querySelectorAll('.fchip').forEach(c=>c.classList.remove('active'));
+  el.classList.add('active');
+  applyFilter();
+}
+
+function applyFilter(){
+  const q=document.getElementById('searchInput').value.toLowerCase();
+  filtered=all.filter(d=>{
+    const mq=!q||d.name.toLowerCase().includes(q)||d.country.toLowerCase().includes(q);
+    const mf=activeFilter==='الكل'||(d.tags||[]).includes(activeFilter);
+    return mq&&mf;
+  });
+  render();
+}
+
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),3500);
+}
+
+init();
+</script>
+</body>
+</html>
