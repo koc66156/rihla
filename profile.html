@@ -3,21 +3,20 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>رِحلة — الملف الشخصي</title>
+<title>رِحلة — ملفي الشخصي</title>
 <meta name="theme-color" content="#FF5C1A">
 <link rel="manifest" href="manifest.json">
 <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&family=Righteous&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
-:root{--or:#FF5C1A;--yl:#FFD000;--tl:#00C9B1;--dk:#0E0E0E;--muted:rgba(255,255,255,0.45);--card:rgba(255,255,255,0.05);--border:rgba(255,255,255,0.08);--nav-h:60px;--bot-h:68px;}
+:root{--or:#FF5C1A;--yl:#FFD000;--tl:#00C9B1;--dk:#0E0E0E;--muted:rgba(255,255,255,0.45);--card:rgba(255,255,255,0.05);--border:rgba(255,255,255,0.08);--nav-h:56px;--bot-h:64px;}
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
-body{font-family:'Tajawal',sans-serif;background:var(--dk);color:white;min-height:100vh;padding-bottom:calc(var(--bot-h)+32px);}
+body{font-family:'Tajawal',sans-serif;background:var(--dk);color:white;min-height:100vh;padding-bottom:calc(var(--bot-h)+24px);}
 
 /* NAV */
-.topnav{position:fixed;top:0;width:100%;z-index:1000;padding:0 20px;height:var(--nav-h);display:flex;align-items:center;justify-content:space-between;background:rgba(14,14,14,0.9);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);}
-.nav-logo{font-family:'Righteous',cursive;font-size:24px;background:linear-gradient(90deg,var(--or),var(--yl));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;border:none;background-color:transparent;cursor:pointer;}
-.nav-action{padding:8px 16px;border-radius:20px;background:rgba(255,255,255,0.07);border:1px solid var(--border);color:white;font-family:'Tajawal',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:all .2s;}
-.nav-action:hover{border-color:var(--or);color:var(--or);}
+.topnav{position:fixed;top:0;width:100%;z-index:1000;height:var(--nav-h);padding:0 16px;display:flex;align-items:center;justify-content:space-between;background:rgba(14,14,14,0.95);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);}
+.nav-logo{font-family:'Righteous',cursive;font-size:22px;background:linear-gradient(90deg,var(--or),var(--yl));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;border:none;background-color:transparent;cursor:pointer;padding:0;}
+.nav-edit{padding:7px 14px;border-radius:18px;background:rgba(255,255,255,0.07);border:1px solid var(--border);color:rgba(255,255,255,0.7);font-family:'Tajawal',sans-serif;font-size:12px;font-weight:700;cursor:pointer;}
 
 /* LOADING */
 .loading{position:fixed;inset:0;z-index:2000;background:var(--dk);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;}
@@ -34,159 +33,183 @@ body{font-family:'Tajawal',sans-serif;background:var(--dk);color:white;min-heigh
 .auth-btn{padding:14px 32px;border-radius:28px;background:var(--or);color:white;font-family:'Tajawal',sans-serif;font-size:16px;font-weight:800;border:none;cursor:pointer;}
 
 /* COVER */
-.cover{height:200px;position:relative;margin-top:var(--nav-h);overflow:hidden;}
+.cover{height:180px;position:relative;margin-top:var(--nav-h);overflow:hidden;}
 .cover-bg{position:absolute;inset:0;}
 .cover-pattern{position:absolute;inset:0;background-image:radial-gradient(rgba(255,255,255,0.07) 1px,transparent 1px);background-size:18px 18px;}
-.cover-edit{position:absolute;top:14px;left:14px;background:rgba(0,0,0,0.4);border:none;color:white;padding:7px 14px;border-radius:20px;font-family:'Tajawal',sans-serif;font-size:12px;font-weight:700;cursor:pointer;backdrop-filter:blur(8px);display:none;}
-.cover-edit.show{display:block;}
 
 /* AVATAR */
-.avatar-section{padding:0 20px;position:relative;}
-.avatar-wrap{margin-top:-48px;display:inline-block;position:relative;}
-.avatar{width:96px;height:96px;border-radius:26px;border:4px solid var(--dk);display:flex;align-items:center;justify-content:center;font-size:36px;font-weight:900;position:relative;}
+.avatar-section{padding:0 16px;}
+.avatar-wrap{margin-top:-44px;display:inline-block;}
+.avatar{width:88px;height:88px;border-radius:24px;border:4px solid var(--dk);display:flex;align-items:center;justify-content:center;font-size:34px;font-weight:900;}
 
 /* INFO */
-.info-section{padding:14px 20px 0;}
-.profile-name{font-size:26px;font-weight:900;margin-bottom:6px;}
-.profile-type{display:inline-flex;align-items:center;gap:6px;padding:5px 14px;border-radius:14px;font-size:12px;font-weight:800;margin-bottom:12px;}
+.info{padding:12px 16px 16px;}
+.profile-name{font-size:24px;font-weight:900;margin-bottom:5px;}
+.profile-type{display:inline-flex;align-items:center;gap:6px;padding:5px 13px;border-radius:13px;font-size:12px;font-weight:800;margin-bottom:10px;}
 .tt{background:rgba(255,92,26,0.15);color:var(--or);}
 .ta{background:rgba(0,201,177,0.15);color:var(--tl);}
-.profile-bio{font-size:14px;color:rgba(255,255,255,0.65);line-height:1.7;margin-bottom:14px;}
-.profile-meta{display:flex;gap:16px;flex-wrap:wrap;margin-bottom:18px;}
+.profile-bio{font-size:13px;color:rgba(255,255,255,0.65);line-height:1.7;margin-bottom:12px;}
+.profile-meta{display:flex;gap:14px;flex-wrap:wrap;}
 .meta-item{display:flex;align-items:center;gap:5px;font-size:12px;color:var(--muted);}
 
+/* AGENT RATING BANNER */
+.rating-banner{margin:0 16px 16px;background:linear-gradient(135deg,rgba(255,208,0,0.1),rgba(255,92,26,0.05));border:1px solid rgba(255,208,0,0.2);border-radius:16px;padding:16px;display:flex;align-items:center;gap:14px;}
+.rb-stars{font-size:24px;}
+.rb-info strong{display:block;font-size:20px;font-weight:900;color:var(--yl);}
+.rb-info span{font-size:12px;color:var(--muted);}
+.rb-badge{margin-right:auto;background:rgba(255,208,0,0.15);border:1px solid rgba(255,208,0,0.25);padding:6px 14px;border-radius:12px;font-size:12px;font-weight:800;color:var(--yl);}
+
 /* STATS */
-.stats{display:flex;margin:0 20px 20px;background:var(--card);border:1px solid var(--border);border-radius:18px;overflow:hidden;}
-.stat{flex:1;padding:16px 8px;text-align:center;border-left:1px solid var(--border);}
+.stats{display:flex;margin:0 16px 16px;background:var(--card);border:1px solid var(--border);border-radius:16px;overflow:hidden;}
+.stat{flex:1;padding:14px 6px;text-align:center;border-left:1px solid var(--border);}
 .stat:last-child{border-left:none;}
-.stat .sv{font-size:22px;font-weight:900;background:linear-gradient(135deg,var(--or),var(--yl));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;display:block;}
-.stat .sl{font-size:11px;color:var(--muted);margin-top:2px;}
+.stat .sv{font-size:20px;font-weight:900;background:linear-gradient(135deg,var(--or),var(--yl));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;display:block;}
+.stat .sl{font-size:10px;color:var(--muted);margin-top:2px;}
 
 /* COUNTRIES */
-.countries-section{margin:0 20px 20px;background:var(--card);border:1px solid var(--border);border-radius:18px;padding:16px;}
-.countries-title{font-size:14px;font-weight:800;margin-bottom:12px;display:flex;align-items:center;gap:6px;}
-.flags-wrap{display:flex;gap:8px;flex-wrap:wrap;}
-.flag-tag{padding:6px 12px;border-radius:12px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);font-size:13px;font-weight:600;}
-.add-country{padding:6px 12px;border-radius:12px;border:1.5px dashed rgba(255,92,26,0.3);background:transparent;color:var(--or);font-family:'Tajawal',sans-serif;font-size:12px;font-weight:700;cursor:pointer;transition:all .2s;}
-.add-country:hover{background:rgba(255,92,26,0.08);}
+.countries-wrap{margin:0 16px 16px;background:var(--card);border:1px solid var(--border);border-radius:16px;padding:14px;}
+.cw-title{font-size:13px;font-weight:800;margin-bottom:10px;display:flex;align-items:center;gap:6px;}
+.flags{display:flex;gap:7px;flex-wrap:wrap;}
+.flag-tag{padding:5px 11px;border-radius:11px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);font-size:12px;font-weight:600;}
+.add-flag{padding:5px 11px;border-radius:11px;border:1.5px dashed rgba(255,92,26,0.3);background:transparent;color:var(--or);font-family:'Tajawal',sans-serif;font-size:11px;font-weight:700;cursor:pointer;}
 
 /* ACTION BTNS */
-.action-btns{display:flex;gap:10px;margin:0 20px 20px;}
-.action-btn{flex:1;padding:12px;border-radius:14px;font-family:'Tajawal',sans-serif;font-size:13px;font-weight:800;border:none;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:6px;}
-.ab-edit{background:rgba(255,255,255,0.07);color:white;border:1px solid var(--border);}
-.ab-edit:hover{border-color:rgba(255,255,255,0.3);}
-.ab-post{background:rgba(255,92,26,0.12);color:var(--or);border:1px solid rgba(255,92,26,0.2);}
-.ab-post:hover{background:rgba(255,92,26,0.2);}
+.action-row{display:flex;gap:8px;margin:0 16px 16px;}
+.abtn{flex:1;padding:11px;border-radius:13px;font-family:'Tajawal',sans-serif;font-size:13px;font-weight:800;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:5px;transition:all .2s;}
+.ab-edit{background:rgba(255,255,255,0.06);color:rgba(255,255,255,0.8);border:1px solid var(--border);}
+.ab-post{background:rgba(255,92,26,0.1);color:var(--or);border:1px solid rgba(255,92,26,0.2);}
+.ab-agent{background:rgba(0,201,177,0.1);color:var(--tl);border:1px solid rgba(0,201,177,0.2);}
 
 /* TABS */
-.tabs{display:flex;margin:0 20px 16px;background:rgba(255,255,255,0.04);border-radius:16px;padding:4px;}
-.tab{flex:1;padding:10px 6px;border-radius:13px;border:none;background:transparent;font-family:'Tajawal',sans-serif;font-size:13px;font-weight:700;color:rgba(255,255,255,0.4);cursor:pointer;transition:all .2s;}
+.tabs{display:flex;margin:0 16px 16px;background:rgba(255,255,255,0.04);border-radius:14px;padding:3px;}
+.tab{flex:1;padding:9px 4px;border-radius:12px;border:none;background:transparent;font-family:'Tajawal',sans-serif;font-size:12px;font-weight:700;color:rgba(255,255,255,0.4);cursor:pointer;transition:all .2s;white-space:nowrap;}
 .tab.active{background:var(--or);color:white;}
 
 /* POSTS */
-.posts-wrap{padding:0 20px;}
-.post-card{background:var(--card);border:1px solid var(--border);border-radius:20px;overflow:hidden;margin-bottom:16px;transition:all .2s;}
-.post-card:hover{border-color:rgba(255,92,26,0.3);}
-.post-img-single{width:100%;height:220px;object-fit:cover;}
-.post-img-grid{display:grid;grid-template-columns:1fr 1fr;gap:2px;height:200px;}
+.posts-wrap{padding:0 16px;}
+.post-card{background:var(--card);border:1px solid var(--border);border-radius:18px;overflow:hidden;margin-bottom:14px;}
+.post-img-single{width:100%;height:200px;object-fit:cover;}
+.post-img-grid{display:grid;grid-template-columns:1fr 1fr;gap:2px;height:180px;}
 .post-img-grid img{width:100%;height:100%;object-fit:cover;}
-.post-no-img{height:100px;display:flex;align-items:center;justify-content:center;font-size:40px;background:linear-gradient(135deg,rgba(255,92,26,0.1),rgba(255,208,0,0.06));}
-.post-body{padding:16px;}
-.post-dest{font-size:12px;color:var(--or);font-weight:700;margin-bottom:5px;}
-.post-title{font-size:16px;font-weight:900;margin-bottom:7px;line-height:1.3;}
-.post-text{font-size:13px;color:rgba(255,255,255,0.6);line-height:1.7;margin-bottom:12px;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;}
+.post-no-img{height:90px;display:flex;align-items:center;justify-content:center;font-size:36px;background:linear-gradient(135deg,rgba(255,92,26,0.1),rgba(255,208,0,0.06));}
+.post-body{padding:14px;}
+.post-dest{font-size:11px;color:var(--or);font-weight:700;margin-bottom:4px;}
+.post-title{font-size:15px;font-weight:900;margin-bottom:6px;}
+.post-text{font-size:12px;color:rgba(255,255,255,0.6);line-height:1.7;margin-bottom:10px;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;}
 .post-foot{display:flex;align-items:center;justify-content:space-between;}
-.post-time{font-size:11px;color:var(--muted);}
-.like-btn{display:flex;align-items:center;gap:5px;padding:6px 14px;border-radius:11px;background:rgba(255,92,26,0.07);border:1px solid rgba(255,92,26,0.12);color:rgba(255,255,255,0.55);font-family:'Tajawal',sans-serif;font-size:12px;font-weight:700;cursor:pointer;transition:all .2s;}
-.like-btn.liked{background:rgba(255,92,26,0.18);color:var(--or);border-color:rgba(255,92,26,0.28);}
+.post-time{font-size:10px;color:var(--muted);}
+.like-btn{display:flex;align-items:center;gap:5px;padding:6px 12px;border-radius:10px;background:rgba(255,92,26,0.07);border:1px solid rgba(255,92,26,0.12);color:rgba(255,255,255,0.5);font-family:'Tajawal',sans-serif;font-size:12px;font-weight:700;cursor:pointer;}
+.like-btn.liked{background:rgba(255,92,26,0.18);color:var(--or);}
 
 /* TRIPS */
-.trips-wrap{padding:0 20px;display:flex;flex-direction:column;gap:12px;}
-.trip-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:16px;display:flex;gap:12px;align-items:center;cursor:pointer;transition:all .2s;}
-.trip-card:hover{border-color:var(--or);transform:translateX(-3px);}
-.trip-emoji{width:48px;height:48px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;}
+.trips-wrap{padding:0 16px;display:flex;flex-direction:column;gap:10px;}
+.trip-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px;display:flex;gap:10px;align-items:center;cursor:pointer;transition:all .2s;}
+.trip-card:hover{border-color:var(--or);}
+.trip-em{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;}
 .trip-info{flex:1;}
-.trip-name{font-size:14px;font-weight:800;margin-bottom:4px;}
-.trip-meta{font-size:12px;color:var(--muted);}
-.trip-seats{padding:4px 10px;border-radius:9px;font-size:11px;font-weight:700;}
+.trip-name{font-size:13px;font-weight:800;margin-bottom:3px;}
+.trip-meta{font-size:11px;color:var(--muted);}
+.trip-seats{padding:4px 9px;border-radius:8px;font-size:10px;font-weight:700;flex-shrink:0;}
 
-/* REVIEWS TAB */
-.reviews-wrap{padding:0 20px;display:flex;flex-direction:column;gap:12px;}
-.rev-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:16px;}
-.rev-head{display:flex;align-items:center;gap:10px;margin-bottom:8px;}
-.rev-av{width:36px;height:36px;border-radius:12px;background:rgba(255,92,26,0.15);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;}
-.rev-info strong{display:block;font-size:13px;font-weight:800;}
-.rev-info span{font-size:11px;color:var(--muted);}
-.rev-stars{margin-right:auto;color:var(--yl);font-size:14px;}
-.rev-text{font-size:13px;color:rgba(255,255,255,0.65);line-height:1.6;}
+/* ACTIVITY (للمسافر) */
+.activity-wrap{padding:0 16px;display:flex;flex-direction:column;gap:10px;}
+.activity-summary{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:18px;}
+.act-title{font-size:13px;font-weight:800;color:var(--muted);margin-bottom:14px;letter-spacing:1px;}
+.act-stats{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.act-stat{background:rgba(255,255,255,0.04);border-radius:12px;padding:14px;text-align:center;}
+.act-stat .av{font-size:22px;font-weight:900;background:linear-gradient(135deg,var(--or),var(--yl));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;display:block;margin-bottom:4px;}
+.act-stat .al{font-size:11px;color:var(--muted);}
+.act-desc{margin-top:14px;font-size:12px;color:var(--muted);line-height:1.7;padding:12px;background:rgba(0,201,177,0.06);border-radius:12px;border:1px solid rgba(0,201,177,0.12);}
+
+/* AGENT SERVICES TAB */
+.services-wrap{padding:0 16px;}
+.agent-profile-card{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:20px;margin-bottom:14px;}
+.apc-title{font-size:14px;font-weight:800;color:var(--muted);margin-bottom:14px;letter-spacing:1px;}
+.svcs-grid{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;}
+.svc-pill{padding:8px 16px;border-radius:14px;background:rgba(0,201,177,0.1);color:var(--tl);font-size:13px;font-weight:700;border:1px solid rgba(0,201,177,0.2);}
+.contact-links{display:flex;flex-direction:column;gap:8px;}
+.clink{display:flex;align-items:center;gap:12px;padding:13px 14px;background:rgba(255,255,255,0.04);border-radius:13px;border:1px solid var(--border);text-decoration:none;color:white;transition:all .2s;}
+.clink:hover{border-color:var(--tl);}
+.clink .ci{font-size:20px;}
+.clink .ct strong{display:block;font-size:13px;font-weight:800;}
+.clink .ct span{font-size:11px;color:var(--muted);}
+.clink .ca{margin-right:auto;font-size:11px;color:var(--tl);font-weight:700;}
+.no-contact{font-size:13px;color:var(--muted);text-align:center;padding:16px;}
+
+/* REVIEWS (لمساعد السفر) */
+.reviews-wrap{padding:0 16px;display:flex;flex-direction:column;gap:10px;}
+.rev-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px;}
+.rev-head{display:flex;align-items:center;gap:8px;margin-bottom:7px;}
+.rev-av{width:32px;height:32px;border-radius:10px;background:rgba(255,92,26,0.15);display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;}
+.rev-info strong{display:block;font-size:12px;font-weight:800;}
+.rev-info span{font-size:10px;color:var(--muted);}
+.rev-stars{margin-right:auto;color:var(--yl);font-size:13px;}
+.rev-text{font-size:12px;color:rgba(255,255,255,0.65);line-height:1.6;}
+.no-reviews{text-align:center;padding:32px 20px;background:var(--card);border-radius:14px;border:1px dashed var(--border);}
+.no-reviews .ei{font-size:40px;margin-bottom:10px;}
+.no-reviews p{font-size:13px;color:var(--muted);}
 
 /* EMPTY */
-.empty{text-align:center;padding:48px 20px;}
-.empty .ei{font-size:48px;margin-bottom:14px;}
-.empty h3{font-size:17px;font-weight:800;margin-bottom:7px;}
-.empty p{font-size:13px;color:var(--muted);}
+.empty{text-align:center;padding:40px 16px;}
+.empty .ei{font-size:44px;margin-bottom:12px;}
+.empty h3{font-size:16px;font-weight:800;margin-bottom:6px;}
+.empty p{font-size:12px;color:var(--muted);}
 
 /* LOGOUT */
-.logout-btn{width:calc(100% - 40px);margin:20px 20px 0;padding:14px;border-radius:16px;background:rgba(229,57,53,0.08);border:1.5px solid rgba(229,57,53,0.18);color:#ff6b6b;font-family:'Tajawal',sans-serif;font-size:15px;font-weight:800;cursor:pointer;transition:all .2s;}
-.logout-btn:hover{background:rgba(229,57,53,0.16);}
+.logout-btn{width:calc(100% - 32px);margin:16px 16px 0;padding:13px;border-radius:14px;background:rgba(229,57,53,0.07);border:1.5px solid rgba(229,57,53,0.15);color:#ff6b6b;font-family:'Tajawal',sans-serif;font-size:14px;font-weight:800;cursor:pointer;}
 
-/* EDIT MODAL */
-.overlay{position:fixed;inset:0;z-index:2000;background:rgba(0,0,0,0.75);backdrop-filter:blur(8px);display:flex;align-items:flex-end;justify-content:center;opacity:0;pointer-events:none;transition:opacity .3s;}
+/* OVERLAYS */
+.overlay{position:fixed;inset:0;z-index:2000;background:rgba(0,0,0,0.8);backdrop-filter:blur(8px);display:flex;align-items:flex-end;justify-content:center;opacity:0;pointer-events:none;transition:opacity .3s;}
 .overlay.open{opacity:1;pointer-events:all;}
-.sheet{background:#161616;border-radius:24px 24px 0 0;width:100%;max-width:520px;max-height:88vh;overflow-y:auto;transform:translateY(100%);transition:transform .4s cubic-bezier(.34,1.2,.64,1);}
+.sheet{background:#161616;border-radius:22px 22px 0 0;width:100%;max-width:520px;max-height:88vh;overflow-y:auto;transform:translateY(100%);transition:transform .4s cubic-bezier(.34,1.2,.64,1);}
 .overlay.open .sheet{transform:translateY(0);}
 .sheet::-webkit-scrollbar{display:none;}
-.handle{width:36px;height:4px;border-radius:2px;background:rgba(255,255,255,0.1);margin:14px auto;}
-.sheet-body{padding:0 20px 32px;}
-.sheet-title{font-size:20px;font-weight:900;margin-bottom:20px;}
-.field{margin-bottom:14px;}
-.field label{display:block;font-size:12px;font-weight:800;color:rgba(255,255,255,0.5);margin-bottom:6px;letter-spacing:.5px;}
-.field input,.field textarea,.field select{width:100%;padding:13px 15px;border-radius:13px;border:1.5px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.06);font-family:'Tajawal',sans-serif;font-size:14px;color:white;outline:none;transition:border-color .2s;}
+.handle{width:36px;height:4px;border-radius:2px;background:rgba(255,255,255,0.1);margin:12px auto;}
+.sheet-body{padding:0 18px 28px;}
+.sheet-title{font-size:19px;font-weight:900;margin-bottom:18px;}
+.field{margin-bottom:13px;}
+.field label{display:block;font-size:11px;font-weight:800;color:rgba(255,255,255,0.5);margin-bottom:5px;letter-spacing:.5px;}
+.field input,.field textarea,.field select{width:100%;padding:12px 14px;border-radius:12px;border:1.5px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.06);font-family:'Tajawal',sans-serif;font-size:14px;color:white;outline:none;transition:border-color .2s;}
 .field input:focus,.field textarea:focus,.field select:focus{border-color:var(--or);}
 .field input::placeholder,.field textarea::placeholder{color:rgba(255,255,255,0.2);}
-.field textarea{resize:vertical;min-height:90px;}
+.field textarea{resize:vertical;min-height:85px;}
 .field select option{background:#222;}
-.save-btn{width:100%;padding:14px;border-radius:15px;background:linear-gradient(135deg,var(--or),#ff8c42);color:white;border:none;font-family:'Tajawal',sans-serif;font-size:16px;font-weight:900;cursor:pointer;margin-top:6px;}
+.save-btn{width:100%;padding:13px;border-radius:13px;border:none;font-family:'Tajawal',sans-serif;font-size:15px;font-weight:900;cursor:pointer;margin-top:6px;}
+.sb-or{background:linear-gradient(135deg,var(--or),#ff8c42);color:white;}
+.sb-tl{background:linear-gradient(135deg,var(--tl),#00a896);color:var(--dk);}
 .save-btn:disabled{opacity:0.6;cursor:not-allowed;}
-
-/* POST MODAL */
-.img-upload{border:2px dashed rgba(255,255,255,0.12);border-radius:14px;padding:18px;text-align:center;cursor:pointer;transition:all .2s;margin-bottom:12px;}
-.img-upload:hover{border-color:var(--or);}
+.svcs-check{display:flex;gap:7px;flex-wrap:wrap;}
+.sc{padding:7px 12px;border-radius:10px;border:1.5px solid rgba(255,255,255,0.1);background:transparent;font-family:'Tajawal',sans-serif;font-size:12px;font-weight:700;cursor:pointer;color:rgba(255,255,255,0.55);transition:all .2s;}
+.sc.on{background:rgba(0,201,177,0.15);color:var(--tl);border-color:rgba(0,201,177,0.3);}
+.img-upload{border:2px dashed rgba(255,255,255,0.12);border-radius:12px;padding:16px;text-align:center;cursor:pointer;margin-bottom:10px;}
 .img-upload input{display:none;}
-.img-preview{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;}
-.img-prev-item{position:relative;width:76px;height:76px;border-radius:11px;overflow:hidden;}
-.img-prev-item img{width:100%;height:100%;object-fit:cover;}
-.img-prev-item button{position:absolute;top:2px;left:2px;width:18px;height:18px;border-radius:50%;background:rgba(0,0,0,0.65);border:none;color:white;font-size:11px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
-
-/* COUNTRIES MODAL */
-.countries-list{display:flex;flex-direction:column;gap:6px;max-height:300px;overflow-y:auto;}
-.country-opt{display:flex;align-items:center;justify-content:space-between;padding:12px 14px;border-radius:13px;background:rgba(255,255,255,0.04);cursor:pointer;transition:all .2s;border:1px solid transparent;}
-.country-opt:hover{background:rgba(255,92,26,0.07);border-color:rgba(255,92,26,0.18);}
-.country-opt.sel{background:rgba(255,92,26,0.1);border-color:rgba(255,92,26,0.25);}
-.country-opt .cn{font-size:14px;font-weight:600;}
-.country-opt .ck{color:var(--or);font-size:16px;display:none;}
+.img-preview{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:10px;}
+.img-prev{position:relative;width:72px;height:72px;border-radius:10px;overflow:hidden;}
+.img-prev img{width:100%;height:100%;object-fit:cover;}
+.img-prev button{position:absolute;top:2px;left:2px;width:18px;height:18px;border-radius:50%;background:rgba(0,0,0,0.65);border:none;color:white;font-size:11px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+.csearch{width:100%;padding:10px 13px;border-radius:12px;border:1.5px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.06);font-family:'Tajawal',sans-serif;font-size:13px;color:white;outline:none;margin-bottom:10px;}
+.countries-list{display:flex;flex-direction:column;gap:5px;max-height:280px;overflow-y:auto;}
+.country-opt{display:flex;align-items:center;justify-content:space-between;padding:11px 13px;border-radius:12px;background:rgba(255,255,255,0.04);cursor:pointer;transition:all .2s;border:1px solid transparent;}
+.country-opt.sel{background:rgba(255,92,26,0.08);border-color:rgba(255,92,26,0.2);}
+.country-opt .cn{font-size:13px;font-weight:600;}
+.country-opt .ck{color:var(--or);font-size:14px;display:none;}
 .country-opt.sel .ck{display:block;}
-.csearch{width:100%;padding:11px 14px;border-radius:13px;border:1.5px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.06);font-family:'Tajawal',sans-serif;font-size:14px;color:white;outline:none;margin-bottom:12px;}
-.csearch::placeholder{color:rgba(255,255,255,0.2);}
 
 /* BOTTOM NAV */
-.botnav{position:fixed;bottom:0;width:100%;z-index:1000;height:var(--bot-h);background:rgba(14,14,14,0.95);backdrop-filter:blur(20px);border-top:1px solid var(--border);display:flex;align-items:center;}
-.botnav a{display:flex;flex-direction:column;align-items:center;gap:4px;flex:1;text-decoration:none;padding:8px 0;}
-.botnav a span:first-child{font-size:20px;}
-.botnav a span:last-child{font-size:10px;font-weight:700;color:var(--muted);}
-.botnav a.active span{color:var(--or);}
+.botnav{position:fixed;bottom:0;width:100%;z-index:1000;height:var(--bot-h);background:rgba(14,14,14,0.97);backdrop-filter:blur(20px);border-top:1px solid var(--border);display:flex;align-items:center;padding-bottom:env(safe-area-inset-bottom);}
+.bitem{display:flex;flex-direction:column;align-items:center;gap:3px;flex:1;text-decoration:none;padding:6px 0;}
+.bitem .bi{font-size:20px;line-height:1;}
+.bitem .bl{font-size:10px;font-weight:700;color:rgba(255,255,255,0.4);}
 
 /* TOAST */
-.toast{position:fixed;bottom:calc(var(--bot-h)+16px);left:50%;transform:translateX(-50%) translateY(80px);background:#1a1a1a;color:white;padding:12px 22px;border-radius:22px;font-size:13px;font-weight:700;box-shadow:0 8px 24px rgba(0,0,0,0.4);transition:transform .4s cubic-bezier(.34,1.56,.64,1);z-index:9999;border:1px solid rgba(255,255,255,0.08);}
+.toast{position:fixed;bottom:calc(var(--bot-h)+14px);left:50%;transform:translateX(-50%) translateY(80px);background:#1a1a1a;color:white;padding:11px 20px;border-radius:20px;font-size:13px;font-weight:700;box-shadow:0 8px 24px rgba(0,0,0,0.4);transition:transform .4s cubic-bezier(.34,1.56,.64,1);z-index:9999;border:1px solid rgba(255,255,255,0.08);}
 .toast.show{transform:translateX(-50%) translateY(0);}
 </style>
 </head>
 <body>
 
-<!-- LOADING -->
 <div class="loading" id="loading"><div class="spinner"></div><p style="font-size:13px;color:rgba(255,255,255,0.4)">جاري التحميل...</p></div>
 
-<!-- NOT LOGGED -->
 <div class="not-logged" id="notLogged">
   <div class="ni">👤</div>
   <h2>سجّل دخولك أولاً</h2>
@@ -194,20 +217,17 @@ body{font-family:'Tajawal',sans-serif;background:var(--dk);color:white;min-heigh
   <button class="auth-btn" onclick="window.location.href='auth.html'">تسجيل / دخول ✈️</button>
 </div>
 
-<!-- NAV -->
 <nav class="topnav">
   <button class="nav-logo" onclick="window.location.href='index.html'">Rihla</button>
-  <button class="nav-action" id="editNavBtn" onclick="openEditModal()" style="display:none">تعديل الملف ✏️</button>
+  <button class="nav-edit" onclick="openEditModal()">✏️ تعديل</button>
 </nav>
 
-<!-- MAIN -->
 <div id="mainContent" style="display:none">
 
   <!-- COVER -->
   <div class="cover">
     <div class="cover-bg" id="coverBg"></div>
     <div class="cover-pattern"></div>
-    <button class="cover-edit" id="coverEditBtn" onclick="openEditModal()">✏️ تعديل</button>
   </div>
 
   <!-- AVATAR -->
@@ -218,7 +238,7 @@ body{font-family:'Tajawal',sans-serif;background:var(--dk);color:white;min-heigh
   </div>
 
   <!-- INFO -->
-  <div class="info-section">
+  <div class="info">
     <div class="profile-name" id="profileName"></div>
     <div class="profile-type" id="profileType"></div>
     <div class="profile-bio" id="profileBio" style="display:none"></div>
@@ -228,52 +248,51 @@ body{font-family:'Tajawal',sans-serif;background:var(--dk);color:white;min-heigh
     </div>
   </div>
 
-  <!-- STATS -->
-  <div class="stats">
-    <div class="stat"><span class="sv" id="statPosts">٠</span><div class="sl">منشور</div></div>
-    <div class="stat"><span class="sv" id="statTrips">٠</span><div class="sl">رحلة</div></div>
-    <div class="stat"><span class="sv" id="statCountries">٠</span><div class="sl">دولة</div></div>
-    <div class="stat"><span class="sv" id="statRating">—</span><div class="sl">تقييم</div></div>
+  <!-- AGENT RATING BANNER (للمساعد فقط) -->
+  <div class="rating-banner" id="ratingBanner" style="display:none">
+    <div class="rb-stars" id="rbStars">☆☆☆☆☆</div>
+    <div class="rb-info">
+      <strong id="rbAvg">—</strong>
+      <span id="rbCount">لا توجد تقييمات بعد</span>
+    </div>
+    <div class="rb-badge" id="rbBadge">مساعد سفريات</div>
   </div>
 
+  <!-- STATS -->
+  <div class="stats" id="statsRow"></div>
+
   <!-- COUNTRIES -->
-  <div class="countries-section" id="countriesSection">
-    <div class="countries-title">🌍 الدول التي زرتها</div>
-    <div class="flags-wrap" id="flagsWrap">
-      <button class="add-country" onclick="openCountriesModal()">+ أضف دولة</button>
+  <div class="countries-wrap">
+    <div class="cw-title">🌍 الدول التي زرتها</div>
+    <div class="flags" id="flagsWrap">
+      <button class="add-flag" onclick="openCountriesModal()">+ أضف دولة</button>
     </div>
   </div>
 
   <!-- ACTION BTNS -->
-  <div class="action-btns">
-    <button class="action-btn ab-edit" onclick="openEditModal()">✏️ تعديل الملف</button>
-    <button class="action-btn ab-post" onclick="openPostModal()">📝 منشور جديد</button>
-  </div>
+  <div class="action-row" id="actionRow"></div>
 
   <!-- TABS -->
-  <div class="tabs">
-    <button class="tab active" onclick="setTab('posts',this)">📸 المنشورات</button>
-    <button class="tab" onclick="setTab('trips',this)">✈️ رحلاتي</button>
-    <button class="tab" onclick="setTab('reviews',this)">⭐ تقييماتي</button>
-  </div>
+  <div class="tabs" id="tabsRow"></div>
 
   <!-- CONTENT -->
   <div id="postsWrap" class="posts-wrap"></div>
   <div id="tripsWrap" class="trips-wrap" style="display:none"></div>
+  <div id="activityWrap" class="activity-wrap" style="display:none"></div>
+  <div id="servicesWrap" class="services-wrap" style="display:none"></div>
   <div id="reviewsWrap" class="reviews-wrap" style="display:none"></div>
 
-  <!-- LOGOUT -->
   <button class="logout-btn" onclick="doLogout()">🚪 تسجيل الخروج</button>
 
 </div>
 
 <!-- BOTTOM NAV -->
 <nav class="botnav">
-  <a href="index.html"><span>🏠</span><span>الرئيسية</span></a>
-  <a href="trips.html"><span>✈️</span><span>الرحلات</span></a>
-  <a href="flights.html"><span>🛫</span><span>طيران</span></a>
-  <a href="agents.html"><span>🤝</span><span>المساعدون</span></a>
-  <a href="profile.html" class="active"><span>👤</span><span>حسابي</span></a>
+  <a href="index.html" class="bitem"><div class="bi">🏠</div><div class="bl">الرئيسية</div></a>
+  <a href="trips.html" class="bitem"><div class="bi">✈️</div><div class="bl">الرحلات</div></a>
+  <a href="destinations.html" class="bitem"><div class="bi">🗺️</div><div class="bl">الوجهات</div></a>
+  <a href="flights.html" class="bitem"><div class="bi">🛫</div><div class="bl">طيران</div></a>
+  <a href="agents.html" class="bitem"><div class="bi">🤝</div><div class="bl">المساعدون</div></a>
 </nav>
 
 <!-- EDIT MODAL -->
@@ -292,7 +311,7 @@ body{font-family:'Tajawal',sans-serif;background:var(--dk);color:white;min-heigh
           <option>🇯🇴 الأردن</option><option>🇪🇬 مصر</option><option>🌍 أخرى</option>
         </select>
       </div>
-      <button class="save-btn" id="saveEditBtn" onclick="saveProfile()">حفظ التغييرات ✓</button>
+      <button class="save-btn sb-or" id="saveEditBtn" onclick="saveProfile()">حفظ التغييرات ✓</button>
     </div>
   </div>
 </div>
@@ -308,11 +327,36 @@ body{font-family:'Tajawal',sans-serif;background:var(--dk);color:white;min-heigh
       <div class="field"><label>اكتب تجربتك</label><textarea id="postContent" placeholder="شارك أجمل لحظاتك ونصائحك..."></textarea></div>
       <div class="img-upload" onclick="document.getElementById('imgInput').click()">
         <input type="file" id="imgInput" accept="image/*" multiple onchange="previewImgs(this)">
-        <div style="font-size:28px;margin-bottom:6px">📸</div>
-        <p style="font-size:13px;color:var(--muted)">اضغط لإضافة صور (حتى ٤ صور)</p>
+        <div style="font-size:26px;margin-bottom:5px">📸</div>
+        <p style="font-size:12px;color:var(--muted)">اضغط لإضافة صور (حتى ٤ صور)</p>
       </div>
       <div class="img-preview" id="imgPreview"></div>
-      <button class="save-btn" id="postBtn" onclick="submitPost()">🚀 نشر المنشور</button>
+      <button class="save-btn sb-or" id="postBtn" onclick="submitPost()">🚀 نشر المنشور</button>
+    </div>
+  </div>
+</div>
+
+<!-- AGENT EDIT MODAL -->
+<div class="overlay" id="agentOverlay" onclick="closeOverlay('agentOverlay',event)">
+  <div class="sheet">
+    <div class="handle"></div>
+    <div class="sheet-body">
+      <div class="sheet-title">🤝 تعديل ملف المساعد</div>
+      <div class="field"><label>نبذة عن خدماتك</label><textarea id="agBio" placeholder="أخبر المسافرين عن خبرتك وتخصصك..."></textarea></div>
+      <div class="field">
+        <label>الخدمات التي تقدمها</label>
+        <div class="svcs-check">
+          <button class="sc" onclick="toggleSvc(this,'تذاكر طيران')">✈️ تذاكر طيران</button>
+          <button class="sc" onclick="toggleSvc(this,'فنادق')">🏨 فنادق</button>
+          <button class="sc" onclick="toggleSvc(this,'تأشيرات')">📋 تأشيرات</button>
+          <button class="sc" onclick="toggleSvc(this,'باقات سفر')">🌍 باقات سفر</button>
+          <button class="sc" onclick="toggleSvc(this,'رحلات عائلية')">👨‍👩‍👧 رحلات عائلية</button>
+          <button class="sc" onclick="toggleSvc(this,'سياحة طبية')">🏥 سياحة طبية</button>
+        </div>
+      </div>
+      <div class="field"><label>واتساب</label><input type="tel" id="agWa" placeholder="+96512345678"></div>
+      <div class="field"><label>إنستغرام</label><input type="text" id="agIg" placeholder="@username"></div>
+      <button class="save-btn sb-tl" id="saveAgBtn" onclick="saveAgentProfile()">حفظ ملف المساعد ✓</button>
     </div>
   </div>
 </div>
@@ -325,7 +369,7 @@ body{font-family:'Tajawal',sans-serif;background:var(--dk);color:white;min-heigh
       <div class="sheet-title">🌍 الدول التي زرتها</div>
       <input class="csearch" type="text" placeholder="ابحث عن دولة..." oninput="filterCountries(this.value)">
       <div class="countries-list" id="countriesList"></div>
-      <button class="save-btn" style="margin-top:14px" onclick="saveCountries()">حفظ الدول ✓</button>
+      <button class="save-btn sb-or" style="margin-top:12px" onclick="saveCountries()">حفظ الدول ✓</button>
     </div>
   </div>
 </div>
@@ -339,14 +383,7 @@ const sb=createClient(
   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InliamRhZ3Vydmt3ZWFidWprZXl6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkzNjQyMDAsImV4cCI6MjA5NDk0MDIwMH0.CIK7sew_-kBlC_t_szCjKjjnFNg695kwSryuRshQ9nI'
 );
 
-const GRADS=[
-  'linear-gradient(135deg,#FF5C1A,#FFD000)',
-  'linear-gradient(135deg,#1A6BFF,#00C9B1)',
-  'linear-gradient(135deg,#7C3AED,#FF5C1A)',
-  'linear-gradient(135deg,#00838F,#4DD0E1)',
-  'linear-gradient(135deg,#558B2F,#FFD000)',
-];
-
+const GRADS=['linear-gradient(135deg,#FF5C1A,#FFD000)','linear-gradient(135deg,#1A6BFF,#00C9B1)','linear-gradient(135deg,#7C3AED,#FF5C1A)','linear-gradient(135deg,#00838F,#4DD0E1)','linear-gradient(135deg,#558B2F,#FFD000)'];
 const ALL_COUNTRIES=[
   {n:'تركيا',f:'🇹🇷'},{n:'اليابان',f:'🇯🇵'},{n:'فرنسا',f:'🇫🇷'},{n:'إيطاليا',f:'🇮🇹'},
   {n:'إسبانيا',f:'🇪🇸'},{n:'ألمانيا',f:'🇩🇪'},{n:'المملكة المتحدة',f:'🇬🇧'},{n:'الولايات المتحدة',f:'🇺🇸'},
@@ -354,11 +391,12 @@ const ALL_COUNTRIES=[
   {n:'إندونيسيا',f:'🇮🇩'},{n:'ماليزيا',f:'🇲🇾'},{n:'سنغافورة',f:'🇸🇬'},{n:'الهند',f:'🇮🇳'},
   {n:'الصين',f:'🇨🇳'},{n:'كوريا الجنوبية',f:'🇰🇷'},{n:'مصر',f:'🇪🇬'},{n:'المغرب',f:'🇲🇦'},
   {n:'كينيا',f:'🇰🇪'},{n:'جورجيا',f:'🇬🇪'},{n:'اليونان',f:'🇬🇷'},{n:'البرتغال',f:'🇵🇹'},
-  {n:'هولندا',f:'🇳🇱'},{n:'سويسرا',f:'🇨🇭'},{n:'النمسا',f:'🇦🇹'},{n:'البرازيل',f:'🇧🇷'},
-  {n:'الأرجنتين',f:'🇦🇷'},{n:'المكسيك',f:'🇲🇽'},{n:'أوزبكستان',f:'🇺🇿'},{n:'أذربيجان',f:'🇦🇿'},
+  {n:'هولندا',f:'🇳🇱'},{n:'سويسرا',f:'🇨🇭'},{n:'البرازيل',f:'🇧🇷'},{n:'أوزبكستان',f:'🇺🇿'},
 ];
 
-let currentUser=null, profile=null, selCountries=[], myLikes=new Set(), imgFiles=[], currentTab='posts';
+let currentUser=null, profile=null, agentData=null;
+let selCountries=[], myLikes=new Set(), imgFiles=[], selSvcs=[];
+let currentTab='posts', isAgent=false;
 
 // ══ INIT ══
 async function init(){
@@ -370,24 +408,31 @@ async function init(){
   }
   currentUser=session.user;
 
-  const{data:p}=await sb.from('profiles').select('*').eq('id',currentUser.id).single();
+  const[{data:p},{data:ag}]=await Promise.all([
+    sb.from('profiles').select('*').eq('id',currentUser.id).single(),
+    sb.from('agents').select('*').eq('user_id',currentUser.id).single()
+  ]);
+
   profile=p||{};
+  agentData=ag||null;
+  isAgent=profile.account_type==='agent';
   selCountries=profile.visited_countries||[];
 
-  renderProfile();
+  if(agentData?.services) selSvcs=[...agentData.services];
 
-  // جلب الإعجابات
   const{data:likes}=await sb.from('post_likes').select('post_id').eq('user_id',currentUser.id);
   if(likes) likes.forEach(l=>myLikes.add(l.post_id));
 
-  await loadPosts();
-  await loadTrips();
-  await loadReviews();
+  renderProfile();
+  renderTabs();
+  renderActionBtns();
+
+  await Promise.all([loadPosts(), loadTrips()]);
+  if(isAgent){await loadAgentReviews();}
+  else{await loadActivity();}
 
   document.getElementById('loading').classList.add('hide');
   document.getElementById('mainContent').style.display='block';
-  document.getElementById('editNavBtn').style.display='block';
-  document.getElementById('coverEditBtn').classList.add('show');
 }
 
 // ══ RENDER PROFILE ══
@@ -402,54 +447,100 @@ function renderProfile(){
   document.getElementById('profileName').textContent=name;
 
   const typeEl=document.getElementById('profileType');
-  if(profile?.account_type==='agent'){
-    typeEl.className='profile-type ta';typeEl.textContent='🤝 مساعد سفريات';
-  }else{
-    typeEl.className='profile-type tt';typeEl.textContent='✈️ مسافر';
-  }
+  if(isAgent){typeEl.className='profile-type ta';typeEl.textContent='🤝 مساعد سفريات';}
+  else{typeEl.className='profile-type tt';typeEl.textContent='✈️ مسافر';}
 
   if(profile?.bio){
     document.getElementById('profileBio').textContent=profile.bio;
     document.getElementById('profileBio').style.display='block';
   }
-
   document.getElementById('profileCountry').textContent=profile?.country||'الكويت';
   const joined=new Date(currentUser.created_at);
   document.getElementById('profileJoined').textContent=`عضو منذ ${joined.toLocaleDateString('ar-KW',{year:'numeric',month:'long'})}`;
-
-  // دول
   renderFlags();
-  document.getElementById('statCountries').textContent=toAr(selCountries.length);
 }
 
-// ══ FLAGS ══
-function renderFlags(){
-  const wrap=document.getElementById('flagsWrap');
-  const tags=selCountries.map(c=>{
-    const found=ALL_COUNTRIES.find(x=>x.n===c);
-    return`<span class="flag-tag">${found?found.f:''} ${c}</span>`;
-  }).join('');
-  wrap.innerHTML=tags+`<button class="add-country" onclick="openCountriesModal()">+ إضافة</button>`;
+// ══ RENDER TABS ══
+function renderTabs(){
+  const tabsRow=document.getElementById('tabsRow');
+  if(isAgent){
+    tabsRow.innerHTML=`
+      <button class="tab active" onclick="setTab('posts',this)">📸 المنشورات</button>
+      <button class="tab" onclick="setTab('trips',this)">✈️ رحلاتي</button>
+      <button class="tab" onclick="setTab('services',this)">🤝 خدماتي</button>
+      <button class="tab" onclick="setTab('reviews',this)">⭐ تقييماتي</button>`;
+  }else{
+    tabsRow.innerHTML=`
+      <button class="tab active" onclick="setTab('posts',this)">📸 المنشورات</button>
+      <button class="tab" onclick="setTab('trips',this)">✈️ رحلاتي</button>
+      <button class="tab" onclick="setTab('activity',this)">💬 نشاطي</button>`;
+  }
+}
+
+// ══ RENDER ACTION BTNS ══
+function renderActionBtns(){
+  const row=document.getElementById('actionRow');
+  if(isAgent){
+    row.innerHTML=`
+      <button class="abtn ab-post" onclick="openPostModal()">📝 منشور جديد</button>
+      <button class="abtn ab-agent" onclick="openAgentModal()">🤝 تعديل خدماتي</button>`;
+  }else{
+    row.innerHTML=`
+      <button class="abtn ab-post" onclick="openPostModal()">📝 منشور جديد</button>
+      <button class="abtn ab-edit" onclick="window.location.href='post-trip.html'">+ انشر رحلة</button>`;
+  }
+}
+
+// ══ STATS ══
+async function renderStats(posts, trips){
+  const statsRow=document.getElementById('statsRow');
+  if(isAgent && agentData){
+    const avg=agentData.rating_avg||0;
+    const cnt=agentData.rating_count||0;
+
+    // Rating banner
+    const banner=document.getElementById('ratingBanner');
+    banner.style.display='flex';
+    document.getElementById('rbStars').textContent='⭐'.repeat(Math.round(avg))||'☆☆☆☆☆';
+    document.getElementById('rbAvg').textContent=avg>0?avg.toFixed(1)+' / ٥':'لا تقييمات';
+    document.getElementById('rbCount').textContent=cnt>0?`${toAr(cnt)} تقييم من المسافرين`:'لا توجد تقييمات بعد';
+
+    statsRow.innerHTML=`
+      <div class="stat"><span class="sv">${toAr(posts)}</span><div class="sl">منشور</div></div>
+      <div class="stat"><span class="sv">${toAr(trips)}</span><div class="sl">رحلة</div></div>
+      <div class="stat"><span class="sv">${toAr(selCountries.length)}</span><div class="sl">دولة</div></div>
+      <div class="stat"><span class="sv">${avg>0?avg.toFixed(1):'—'}</span><div class="sl">تقييمي</div></div>`;
+  }else{
+    statsRow.innerHTML=`
+      <div class="stat"><span class="sv">${toAr(posts)}</span><div class="sl">منشور</div></div>
+      <div class="stat"><span class="sv">${toAr(trips)}</span><div class="sl">رحلة</div></div>
+      <div class="stat"><span class="sv">${toAr(selCountries.length)}</span><div class="sl">دولة</div></div>
+      <div class="stat"><span class="sv" id="statLikes">٠</span><div class="sl">إعجاب أعطيته</div></div>`;
+    // جلب عدد الإعجابات
+    const{count}=await sb.from('post_likes').select('*',{count:'exact',head:true}).eq('user_id',currentUser.id);
+    document.getElementById('statLikes').textContent=toAr(count||0);
+  }
 }
 
 // ══ LOAD POSTS ══
 async function loadPosts(){
   const{data}=await sb.from('posts').select('*').eq('user_id',currentUser.id).order('created_at',{ascending:false});
-  document.getElementById('statPosts').textContent=toAr(data?.length||0);
+  const posts=data||[];
+  const{data:trips}=await sb.from('trips').select('id').eq('user_id',currentUser.id);
+  renderStats(posts.length,(trips||[]).length);
+
   const wrap=document.getElementById('postsWrap');
-  if(!data||data.length===0){
+  if(posts.length===0){
     wrap.innerHTML=`<div class="empty"><div class="ei">📸</div><h3>لا توجد منشورات بعد</h3><p>شارك تجارب رحلاتك مع المجتمع</p></div>`;
     return;
   }
-  wrap.innerHTML=data.map(p=>{
+  wrap.innerHTML=posts.map(p=>{
     const imgs=p.images||[];
-    let imgHtml=imgs.length===0
-      ?`<div class="post-no-img">🌍</div>`
-      :imgs.length===1
-        ?`<img class="post-img-single" src="${imgs[0]}" loading="lazy">`
-        :`<div class="post-img-grid">${imgs.slice(0,4).map(i=>`<img src="${i}" loading="lazy">`).join('')}</div>`;
+    let imgHtml=imgs.length===0?`<div class="post-no-img">🌍</div>`:
+      imgs.length===1?`<img class="post-img-single" src="${imgs[0]}" loading="lazy">`:
+      `<div class="post-img-grid">${imgs.slice(0,4).map(i=>`<img src="${i}" loading="lazy">`).join('')}</div>`;
     const liked=myLikes.has(p.id);
-    const dt=new Date(p.created_at).toLocaleDateString('ar-KW',{day:'numeric',month:'long',year:'numeric'});
+    const dt=new Date(p.created_at).toLocaleDateString('ar-KW',{day:'numeric',month:'long'});
     return`<div class="post-card">
       ${imgHtml}
       <div class="post-body">
@@ -470,7 +561,6 @@ async function loadPosts(){
 // ══ LOAD TRIPS ══
 async function loadTrips(){
   const{data}=await sb.from('trips').select('*').eq('user_id',currentUser.id).order('created_at',{ascending:false});
-  document.getElementById('statTrips').textContent=toAr(data?.length||0);
   const wrap=document.getElementById('tripsWrap');
   if(!data||data.length===0){
     wrap.innerHTML=`<div class="empty"><div class="ei">✈️</div><h3>لا توجد رحلات</h3><p>انشر رحلتك الأولى!</p></div>`;
@@ -481,33 +571,76 @@ async function loadTrips(){
     const left=(t.seats||5)-(t.seats_taken||0);
     const sc=left<=2?'background:rgba(229,57,53,0.15);color:#ff6b6b':'background:rgba(0,201,177,0.12);color:var(--tl)';
     return`<div class="trip-card" onclick="window.location.href='trip.html?id=${t.id}'">
-      <div class="trip-emoji">${t.emoji||'✈️'}</div>
-      <div class="trip-info">
-        <div class="trip-name">${t.title}</div>
-        <div class="trip-meta">📅 ${dt} · ${t.country}</div>
-      </div>
+      <div class="trip-em">${t.emoji||'✈️'}</div>
+      <div class="trip-info"><div class="trip-name">${t.title}</div><div class="trip-meta">📅 ${dt} · ${t.country}</div></div>
       <span class="trip-seats" style="${sc}">${toAr(left)} أماكن</span>
     </div>`;
   }).join('');
 }
 
-// ══ LOAD REVIEWS ══
-async function loadReviews(){
-  const{data}=await sb.from('reviews').select('*').eq('target_id',currentUser.id).order('created_at',{ascending:false});
-  if(data&&data.length>0){
-    const avg=data.reduce((s,r)=>s+r.rating,0)/data.length;
-    document.getElementById('statRating').textContent=avg.toFixed(1)+'⭐';
+// ══ LOAD ACTIVITY (للمسافر) ══
+async function loadActivity(){
+  const[{count:likesGiven},{count:joinReqs}]=await Promise.all([
+    sb.from('post_likes').select('*',{count:'exact',head:true}).eq('user_id',currentUser.id),
+    sb.from('join_requests').select('*',{count:'exact',head:true}).eq('requester_id',currentUser.id)
+  ]);
+
+  document.getElementById('activityWrap').innerHTML=`
+    <div class="activity-summary">
+      <div class="act-title">ملخص نشاطك في رِحلة</div>
+      <div class="act-stats">
+        <div class="act-stat">
+          <span class="av">${toAr(likesGiven||0)}</span>
+          <div class="al">إعجاب أعطيته</div>
+        </div>
+        <div class="act-stat">
+          <span class="av">${toAr(joinReqs||0)}</span>
+          <div class="al">طلب انضمام أرسلته</div>
+        </div>
+      </div>
+      <div class="act-desc">
+        💡 نشاطك يعكس مدى تفاعلك مع مجتمع رِحلة — كلما تفاعلت أكثر زادت فرصة إيجاد رفيق السفر المثالي!
+      </div>
+    </div>`;
+}
+
+// ══ LOAD AGENT SERVICES ══
+function renderServices(){
+  const wrap=document.getElementById('servicesWrap');
+  if(!agentData){
+    wrap.innerHTML=`<div class="agent-profile-card">
+      <div class="apc-title">لم تُنشئ ملف مساعد بعد</div>
+      <button onclick="openAgentModal()" class="save-btn sb-tl" style="margin-top:8px">🤝 أنشئ ملفك كمساعد</button>
+    </div>`;
+    return;
   }
+  let contacts='';
+  if(agentData.whatsapp) contacts+=`<a class="clink" href="https://wa.me/${agentData.whatsapp.replace(/\D/g,'')}" target="_blank"><span class="ci">📱</span><div class="ct"><strong>واتساب</strong><span>${agentData.whatsapp}</span></div><span class="ca">فتح ←</span></a>`;
+  if(agentData.instagram) contacts+=`<a class="clink" href="https://instagram.com/${agentData.instagram.replace('@','')}" target="_blank"><span class="ci">📸</span><div class="ct"><strong>إنستغرام</strong><span>${agentData.instagram}</span></div><span class="ca">فتح ←</span></a>`;
+  if(!contacts) contacts=`<div class="no-contact">لم تضف معلومات تواصل بعد</div>`;
+
+  wrap.innerHTML=`<div class="agent-profile-card">
+    <div class="apc-title">الخدمات المقدمة</div>
+    <div class="svcs-grid">${(agentData.services||[]).map(s=>`<span class="svc-pill">${s}</span>`).join('')||'<span style="font-size:13px;color:var(--muted)">لم تحدد خدمات بعد</span>'}</div>
+    <div class="apc-title" style="margin-top:16px">معلومات التواصل</div>
+    <div class="contact-links">${contacts}</div>
+  </div>`;
+}
+
+// ══ LOAD AGENT REVIEWS ══
+async function loadAgentReviews(){
+  if(!agentData) return;
+  const{data}=await sb.from('reviews').select('*').eq('target_id',agentData.id).eq('target_type','agent').order('created_at',{ascending:false});
   const wrap=document.getElementById('reviewsWrap');
   if(!data||data.length===0){
-    wrap.innerHTML=`<div class="empty"><div class="ei">⭐</div><h3>لا توجد تقييمات بعد</h3><p>التقييمات تظهر هنا بعد سفرك مع الآخرين</p></div>`;
+    wrap.innerHTML=`<div class="no-reviews"><div class="ei">⭐</div><p>لا توجد تقييمات بعد — تعامل مع المسافرين لتحصل على تقييماتك!</p></div>`;
     return;
   }
   wrap.innerHTML=data.map(r=>{
     const dt=new Date(r.created_at).toLocaleDateString('ar-KW',{month:'long',year:'numeric'});
     return`<div class="rev-card">
       <div class="rev-head">
-        <div class="rev-av">👤</div>
+        <div class="rev-av">✈️</div>
         <div class="rev-info"><strong>مسافر</strong><span>${dt}</span></div>
         <div class="rev-stars">${'⭐'.repeat(r.rating)}</div>
       </div>
@@ -516,9 +649,21 @@ async function loadReviews(){
   }).join('');
 }
 
+// ══ TABS ══
+function setTab(tab,el){
+  currentTab=tab;
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('postsWrap').style.display=tab==='posts'?'block':'none';
+  document.getElementById('tripsWrap').style.display=tab==='trips'?'flex':'none';
+  document.getElementById('activityWrap').style.display=tab==='activity'?'flex':'none';
+  document.getElementById('servicesWrap').style.display=tab==='services'?'block':'none';
+  document.getElementById('reviewsWrap').style.display=tab==='reviews'?'flex':'none';
+  if(tab==='services') renderServices();
+}
+
 // ══ LIKE ══
 async function toggleLike(postId,cur){
-  if(!currentUser){showToast('سجّل دخولك للإعجاب');return;}
   const btn=document.getElementById(`lk-${postId}`);
   const liked=myLikes.has(postId);
   if(liked){
@@ -538,20 +683,15 @@ async function toggleLike(postId,cur){
 function openEditModal(){
   document.getElementById('editName').value=profile?.full_name||'';
   document.getElementById('editBio').value=profile?.bio||'';
-  document.getElementById('editCountry').value=profile?.country||'🇰🇼 الكويت';
   document.getElementById('editOverlay').classList.add('open');
 }
-
 async function saveProfile(){
   const btn=document.getElementById('saveEditBtn');
   btn.disabled=true;btn.textContent='جاري الحفظ...';
   const name=document.getElementById('editName').value.trim();
   const bio=document.getElementById('editBio').value.trim();
   const country=document.getElementById('editCountry').value.replace(/🇰🇼|🇸🇦|🇦🇪|🇶🇦|🇧🇭|🇴🇲|🇯🇴|🇪🇬|🌍/g,'').trim();
-  const{error}=await sb.from('profiles').upsert({
-    id:currentUser.id,full_name:name,bio,country,
-    account_type:profile?.account_type||'traveler'
-  });
+  const{error}=await sb.from('profiles').upsert({id:currentUser.id,full_name:name,bio,country,account_type:profile?.account_type||'traveler'});
   btn.disabled=false;btn.textContent='حفظ التغييرات ✓';
   if(error){showToast('❌ '+error.message);return;}
   profile={...profile,full_name:name,bio,country};
@@ -560,105 +700,107 @@ async function saveProfile(){
   showToast('✅ تم حفظ التغييرات!');
 }
 
+// ══ AGENT MODAL ══
+function openAgentModal(){
+  if(agentData){
+    document.getElementById('agBio').value=agentData.bio||'';
+    document.getElementById('agWa').value=agentData.whatsapp||'';
+    document.getElementById('agIg').value=agentData.instagram||'';
+    selSvcs=[...(agentData.services||[])];
+    document.querySelectorAll('.sc').forEach(el=>{
+      const svc=el.textContent.trim().replace(/^[^\s]+\s/,'');
+      el.classList.toggle('on',selSvcs.some(s=>el.onclick.toString().includes(s)));
+    });
+  }
+  document.getElementById('agentOverlay').classList.add('open');
+}
+function toggleSvc(el,svc){
+  if(selSvcs.includes(svc)){selSvcs=selSvcs.filter(s=>s!==svc);el.classList.remove('on');}
+  else{selSvcs.push(svc);el.classList.add('on');}
+}
+async function saveAgentProfile(){
+  const btn=document.getElementById('saveAgBtn');
+  btn.disabled=true;btn.textContent='جاري الحفظ...';
+  const bio=document.getElementById('agBio').value.trim();
+  const wa=document.getElementById('agWa').value.trim();
+  const ig=document.getElementById('agIg').value.trim();
+  const{data,error}=await sb.from('agents').upsert({user_id:currentUser.id,full_name:profile?.full_name||'',bio,services:selSvcs,whatsapp:wa,instagram:ig});
+  btn.disabled=false;btn.textContent='حفظ ملف المساعد ✓';
+  if(error){showToast('❌ '+error.message);return;}
+  const{data:ag}=await sb.from('agents').select('*').eq('user_id',currentUser.id).single();
+  agentData=ag;
+  document.getElementById('agentOverlay').classList.remove('open');
+  showToast('✅ تم تحديث ملف المساعد!');
+  renderServices();
+}
+
 // ══ POST ══
 function openPostModal(){document.getElementById('postOverlay').classList.add('open');}
-
 function previewImgs(input){
   imgFiles=Array.from(input.files).slice(0,4);
   document.getElementById('imgPreview').innerHTML=imgFiles.map((f,i)=>{
     const url=URL.createObjectURL(f);
-    return`<div class="img-prev-item"><img src="${url}"><button onclick="removeImg(${i})">✕</button></div>`;
+    return`<div class="img-prev"><img src="${url}"><button onclick="removeImg(${i})">✕</button></div>`;
   }).join('');
 }
-
 function removeImg(idx){
   imgFiles.splice(idx,1);
   document.getElementById('imgPreview').innerHTML=imgFiles.map((f,i)=>{
     const url=URL.createObjectURL(f);
-    return`<div class="img-prev-item"><img src="${url}"><button onclick="removeImg(${i})">✕</button></div>`;
+    return`<div class="img-prev"><img src="${url}"><button onclick="removeImg(${i})">✕</button></div>`;
   }).join('');
 }
-
 async function submitPost(){
   const title=document.getElementById('postTitle').value.trim();
-  const dest=document.getElementById('postDest').value.trim();
-  const content=document.getElementById('postContent').value.trim();
   if(!title){showToast('⚠️ أدخل عنوان المنشور');return;}
   const btn=document.getElementById('postBtn');
   btn.disabled=true;btn.textContent='جاري النشر...';
-
   let urls=[];
   for(const file of imgFiles){
     const ext=file.name.split('.').pop();
     const path=`${currentUser.id}/${Date.now()}.${ext}`;
     const{data,error}=await sb.storage.from('posts').upload(path,file,{upsert:true});
-    if(!error){
-      const{data:u}=sb.storage.from('posts').getPublicUrl(path);
-      urls.push(u.publicUrl);
-    }
+    if(!error){const{data:u}=sb.storage.from('posts').getPublicUrl(path);urls.push(u.publicUrl);}
   }
-
-  const{error}=await sb.from('posts').insert({
-    user_id:currentUser.id,title,destination:dest,content,images:urls,likes:0
-  });
+  const{error}=await sb.from('posts').insert({user_id:currentUser.id,title,destination:document.getElementById('postDest').value.trim(),content:document.getElementById('postContent').value.trim(),images:urls,likes:0});
   btn.disabled=false;btn.textContent='🚀 نشر المنشور';
   if(error){showToast('❌ '+error.message);return;}
-
   document.getElementById('postOverlay').classList.remove('open');
-  document.getElementById('postTitle').value='';
-  document.getElementById('postDest').value='';
-  document.getElementById('postContent').value='';
-  document.getElementById('imgPreview').innerHTML='';
-  imgFiles=[];
+  document.getElementById('postTitle').value='';document.getElementById('postDest').value='';document.getElementById('postContent').value='';
+  document.getElementById('imgPreview').innerHTML='';imgFiles=[];
   showToast('🎉 تم نشر منشورك!');
   await loadPosts();
 }
 
 // ══ COUNTRIES ══
-function openCountriesModal(){
-  renderCountriesList('');
-  document.getElementById('countriesOverlay').classList.add('open');
-}
-
+function openCountriesModal(){renderCountriesList('');document.getElementById('countriesOverlay').classList.add('open');}
 function filterCountries(q){renderCountriesList(q);}
-
 function renderCountriesList(q){
   const fl=ALL_COUNTRIES.filter(c=>!q||c.n.includes(q));
-  document.getElementById('countriesList').innerHTML=fl.map(c=>{
-    const sel=selCountries.includes(c.n);
-    return`<div class="country-opt ${sel?'sel':''}" onclick="toggleCountry('${c.n}',this)">
-      <span class="cn">${c.f} ${c.n}</span>
-      <span class="ck">✓</span>
-    </div>`;
-  }).join('');
+  document.getElementById('countriesList').innerHTML=fl.map(c=>`
+    <div class="country-opt ${selCountries.includes(c.n)?'sel':''}" onclick="toggleCountry('${c.n}',this)">
+      <span class="cn">${c.f} ${c.n}</span><span class="ck">✓</span>
+    </div>`).join('');
 }
-
 function toggleCountry(name,el){
   if(selCountries.includes(name)){selCountries=selCountries.filter(c=>c!==name);el.classList.remove('sel');}
   else{selCountries.push(name);el.classList.add('sel');}
 }
-
 async function saveCountries(){
-  const{error}=await sb.from('profiles').upsert({
-    id:currentUser.id,visited_countries:selCountries,
-    account_type:profile?.account_type||'traveler'
-  });
+  const{error}=await sb.from('profiles').upsert({id:currentUser.id,visited_countries:selCountries,account_type:profile?.account_type||'traveler'});
   if(error){showToast('❌ '+error.message);return;}
   document.getElementById('countriesOverlay').classList.remove('open');
   profile={...profile,visited_countries:selCountries};
   renderFlags();
-  document.getElementById('statCountries').textContent=toAr(selCountries.length);
   showToast(`✅ تم حفظ ${toAr(selCountries.length)} دول!`);
 }
-
-// ══ TABS ══
-function setTab(tab,el){
-  currentTab=tab;
-  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
-  el.classList.add('active');
-  document.getElementById('postsWrap').style.display=tab==='posts'?'block':'none';
-  document.getElementById('tripsWrap').style.display=tab==='trips'?'flex':'none';
-  document.getElementById('reviewsWrap').style.display=tab==='reviews'?'flex':'none';
+function renderFlags(){
+  const wrap=document.getElementById('flagsWrap');
+  const tags=selCountries.map(c=>{
+    const found=ALL_COUNTRIES.find(x=>x.n===c);
+    return`<span class="flag-tag">${found?found.f:''} ${c}</span>`;
+  }).join('');
+  wrap.innerHTML=tags+`<button class="add-flag" onclick="openCountriesModal()">+ إضافة</button>`;
 }
 
 // ══ LOGOUT ══
@@ -669,18 +811,9 @@ async function doLogout(){
 }
 
 // ══ HELPERS ══
-function closeOverlay(id,e){
-  if(e.target===document.getElementById(id))
-    document.getElementById(id).classList.remove('open');
-}
-
+function closeOverlay(id,e){if(e.target===document.getElementById(id))document.getElementById(id).classList.remove('open');}
 function toAr(n){return n.toString().replace(/\d/g,d=>'٠١٢٣٤٥٦٧٨٩'[d]);}
-
-function showToast(msg){
-  const t=document.getElementById('toast');
-  t.textContent=msg;t.classList.add('show');
-  setTimeout(()=>t.classList.remove('show'),3500);
-}
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3500);}
 
 init();
 </script>
