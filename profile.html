@@ -283,6 +283,7 @@ body{font-family:'Tajawal',sans-serif;background:var(--dk);color:white;min-heigh
   <div id="reviewsWrap" class="reviews-wrap" style="display:none"></div>
 
   <button class="logout-btn" onclick="doLogout()">🚪 تسجيل الخروج</button>
+  <div style="height:30px"></div>
 
 </div>
 
@@ -415,7 +416,13 @@ async function init(){
 
   profile=p||{};
   agentData=ag||null;
-  isAgent=profile.account_type==='agent';
+  // المستخدم مساعد إذا كان في جدول agents أو account_type = agent
+  isAgent=profile.account_type==='agent' || agentData!==null;
+  // إذا كان في جدول agents لكن profile لم يتحدث، نحدثه
+  if(agentData && profile.account_type!=='agent'){
+    await sb.from('profiles').upsert({id:currentUser.id,account_type:'agent'});
+    profile.account_type='agent';
+  }
   selCountries=profile.visited_countries||[];
 
   if(agentData?.services) selSvcs=[...agentData.services];
