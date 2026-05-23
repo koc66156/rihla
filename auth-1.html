@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>رِحلة — التسجيل والدخول</title>
+<meta name="theme-color" content="#FF5C1A">
+<link rel="manifest" href="manifest.json">
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&family=Righteous&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root{--or:#FF5C1A;--yl:#FFD000;--tl:#00C9B1;--dk:#0E0E0E;--lt:#F8F5EE;--muted:#888;--err:#E53935;--suc:#00C9B1;}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+body{font-family:'Tajawal',sans-serif;background:var(--dk);color:white;min-height:100vh;display:flex;flex-direction:column;}
+
+/* BG */
+.bg{position:fixed;inset:0;z-index:0;overflow:hidden;}
+.blob{position:absolute;border-radius:50%;filter:blur(80px);opacity:0.4;animation:drift 9s ease-in-out infinite alternate;}
+.b1{width:400px;height:400px;background:var(--or);top:-100px;right:-100px;}
+.b2{width:300px;height:300px;background:var(--tl);bottom:-80px;left:-80px;animation-delay:-4s;}
+.b3{width:200px;height:200px;background:var(--yl);top:50%;left:20%;animation-delay:-7s;opacity:0.25;}
+@keyframes drift{from{transform:translate(0,0)scale(1);}to{transform:translate(20px,15px)scale(1.1);}}
+
+/* LAYOUT */
+.page{position:relative;z-index:1;flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px 20px;}
+
+/* LOGO */
+.logo-wrap{text-align:center;margin-bottom:32px;}
+.logo{font-family:'Righteous',cursive;font-size:42px;background:linear-gradient(90deg,var(--or),var(--yl));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1;}
+.logo-ar{font-size:14px;font-weight:700;color:rgba(255,255,255,0.4);letter-spacing:4px;margin-top:4px;}
+
+/* CARD */
+.card{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:28px;padding:36px 28px;width:100%;max-width:440px;backdrop-filter:blur(20px);}
+
+/* TABS */
+.tabs{display:flex;background:rgba(255,255,255,0.06);border-radius:16px;padding:4px;margin-bottom:28px;}
+.tab{flex:1;padding:11px;border-radius:13px;border:none;background:transparent;font-family:'Tajawal',sans-serif;font-size:15px;font-weight:700;color:rgba(255,255,255,0.5);cursor:pointer;transition:all .25s;}
+.tab.active{background:var(--or);color:white;box-shadow:0 4px 16px rgba(255,92,26,0.35);}
+
+/* ACCOUNT TYPE */
+.type-label{font-size:13px;font-weight:800;color:rgba(255,255,255,0.6);margin-bottom:12px;letter-spacing:1px;}
+.type-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px;}
+.type-card{padding:16px 12px;border-radius:16px;border:2px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.04);cursor:pointer;text-align:center;transition:all .2s;}
+.type-card:hover{border-color:rgba(255,92,26,0.4);}
+.type-card.selected{border-color:var(--or);background:rgba(255,92,26,0.1);}
+.type-card .ticon{font-size:28px;margin-bottom:8px;}
+.type-card .tname{font-size:14px;font-weight:800;display:block;margin-bottom:3px;}
+.type-card .tdesc{font-size:11px;color:rgba(255,255,255,0.45);line-height:1.4;}
+
+/* FORM */
+.form-group{margin-bottom:16px;}
+.form-label{display:block;font-size:13px;font-weight:800;color:rgba(255,255,255,0.7);margin-bottom:8px;}
+.form-input{
+  width:100%;padding:14px 16px;border-radius:14px;
+  border:1.5px solid rgba(255,255,255,0.1);
+  background:rgba(255,255,255,0.06);
+  font-family:'Tajawal',sans-serif;font-size:15px;color:white;
+  outline:none;transition:all .2s;
+}
+.form-input::placeholder{color:rgba(255,255,255,0.25);}
+.form-input:focus{border-color:var(--or);background:rgba(255,92,26,0.08);box-shadow:0 0 0 3px rgba(255,92,26,0.15);}
+.form-input.error{border-color:var(--err);}
+
+.input-wrap{position:relative;}
+.toggle-pw{position:absolute;left:14px;top:50%;transform:translateY(-50%);background:none;border:none;color:rgba(255,255,255,0.4);cursor:pointer;font-size:18px;padding:4px;}
+
+/* STRENGTH */
+.pw-strength{margin-top:8px;display:flex;gap:4px;}
+.ps-bar{flex:1;height:3px;border-radius:3px;background:rgba(255,255,255,0.1);transition:background .3s;}
+.ps-bar.weak{background:var(--err);}
+.ps-bar.medium{background:var(--yl);}
+.ps-bar.strong{background:var(--tl);}
+.ps-label{font-size:11px;color:rgba(255,255,255,0.4);margin-top:5px;}
+
+/* ERROR MSG */
+.field-err{font-size:12px;color:var(--err);margin-top:5px;display:none;}
+.field-err.show{display:block;}
+
+/* SUBMIT */
+.submit-btn{
+  width:100%;padding:15px;border-radius:16px;border:none;
+  background:linear-gradient(135deg,var(--or),#ff8c42);
+  color:white;font-family:'Tajawal',sans-serif;
+  font-size:17px;font-weight:900;cursor:pointer;
+  transition:all .25s;margin-top:8px;
+  box-shadow:0 8px 24px rgba(255,92,26,0.3);
+  position:relative;overflow:hidden;
+}
+.submit-btn:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 12px 32px rgba(255,92,26,0.4);}
+.submit-btn:disabled{opacity:0.7;cursor:not-allowed;transform:none;}
+.submit-btn .btn-loader{display:none;width:20px;height:20px;border:2.5px solid rgba(255,255,255,0.3);border-top-color:white;border-radius:50%;animation:spin .7s linear infinite;margin:0 auto;}
+.submit-btn.loading .btn-text{display:none;}
+.submit-btn.loading .btn-loader{display:block;}
+@keyframes spin{to{transform:rotate(360deg);}}
+
+/* DIVIDER */
+.divider{display:flex;align-items:center;gap:12px;margin:20px 0;}
+.divider::before,.divider::after{content:'';flex:1;height:1px;background:rgba(255,255,255,0.1);}
+.divider span{font-size:12px;color:rgba(255,255,255,0.3);white-space:nowrap;}
+
+/* TERMS */
+.terms{font-size:12px;color:rgba(255,255,255,0.35);text-align:center;margin-top:16px;line-height:1.6;}
+.terms a{color:var(--or);text-decoration:none;}
+
+/* ALERT */
+.alert{padding:14px 16px;border-radius:14px;font-size:14px;font-weight:700;margin-bottom:16px;display:none;align-items:center;gap:10px;}
+.alert.show{display:flex;}
+.alert-err{background:rgba(229,57,53,0.15);border:1px solid rgba(229,57,53,0.3);color:#ff6b6b;}
+.alert-suc{background:rgba(0,201,177,0.12);border:1px solid rgba(0,201,177,0.3);color:var(--tl);}
+
+/* SUCCESS SCREEN */
+.success-screen{display:none;text-align:center;padding:20px 0;}
+.success-screen.show{display:block;}
+.success-icon{font-size:64px;margin-bottom:20px;animation:pop .5s cubic-bezier(.34,1.56,.64,1) both;}
+@keyframes pop{from{transform:scale(0);}to{transform:scale(1);}}
+.success-screen h2{font-size:24px;font-weight:900;margin-bottom:10px;}
+.success-screen p{font-size:14px;color:rgba(255,255,255,0.55);line-height:1.7;margin-bottom:28px;}
+.go-btn{display:inline-block;padding:14px 32px;border-radius:24px;background:var(--or);color:white;font-family:'Tajawal',sans-serif;font-size:16px;font-weight:800;border:none;cursor:pointer;transition:all .2s;text-decoration:none;}
+.go-btn:hover{transform:translateY(-2px);}
+
+/* FORGOT */
+.forgot-link{font-size:12px;color:rgba(255,92,26,0.8);text-align:left;display:block;margin-top:6px;cursor:pointer;text-decoration:none;}
+.forgot-link:hover{color:var(--or);}
+
+/* BACK LINK */
+.back-link{text-align:center;margin-top:20px;font-size:13px;color:rgba(255,255,255,0.4);}
+.back-link a{color:var(--or);text-decoration:none;font-weight:700;}
+</style>
+</head>
+<body>
+
+<div class="bg">
+  <div class="blob b1"></div>
+  <div class="blob b2"></div>
+  <div class="blob b3"></div>
+</div>
+
+<div class="page">
+  <div class="logo-wrap">
+    <div class="logo">Rihla</div>
+    <div class="logo-ar">رِحلة</div>
+  </div>
+
+  <div class="card">
+
+    <!-- TABS -->
+    <div class="tabs">
+      <button class="tab active" onclick="switchTab('signup')">تسجيل جديد</button>
+      <button class="tab" onclick="switchTab('login')">دخول</button>
+    </div>
+
+    <!-- ALERT -->
+    <div class="alert alert-err" id="alertErr">
+      <span>⚠️</span><span id="alertErrMsg"></span>
+    </div>
+    <div class="alert alert-suc" id="alertSuc">
+      <span>✅</span><span id="alertSucMsg"></span>
+    </div>
+
+    <!-- ══════════ SIGNUP FORM ══════════ -->
+    <div id="signupForm">
+
+      <!-- نوع الحساب -->
+      <div class="type-label">نوع حسابك</div>
+      <div class="type-grid">
+        <div class="type-card selected" id="type-traveler" onclick="selectType('traveler')">
+          <div class="ticon">✈️</div>
+          <span class="tname">مسافر</span>
+          <span class="tdesc">أبحث عن رفيق سفر وأنضم للرحلات</span>
+        </div>
+        <div class="type-card" id="type-agent" onclick="selectType('agent')">
+          <div class="ticon">🤝</div>
+          <span class="tname">مساعد سفريات</span>
+          <span class="tdesc">أقدم خدمات حجز وأعرض خدماتي</span>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">الاسم الكامل</label>
+        <input class="form-input" id="fullName" type="text" placeholder="مثال: سالم المطيري" oninput="clearErr('fullName')">
+        <span class="field-err" id="fullNameErr">الرجاء إدخال اسمك الكامل</span>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">البريد الإلكتروني</label>
+        <input class="form-input" id="signupEmail" type="email" placeholder="example@gmail.com" oninput="clearErr('signupEmail')">
+        <span class="field-err" id="signupEmailErr">الرجاء إدخال بريد إلكتروني صحيح</span>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">كلمة المرور</label>
+        <div class="input-wrap">
+          <input class="form-input" id="signupPw" type="password" placeholder="٨ أحرف على الأقل" oninput="checkStrength();clearErr('signupPw')">
+          <button class="toggle-pw" onclick="togglePw('signupPw',this)">👁</button>
+        </div>
+        <div class="pw-strength" id="pwStrength">
+          <div class="ps-bar" id="ps1"></div>
+          <div class="ps-bar" id="ps2"></div>
+          <div class="ps-bar" id="ps3"></div>
+          <div class="ps-bar" id="ps4"></div>
+        </div>
+        <div class="ps-label" id="psLabel"></div>
+        <span class="field-err" id="signupPwErr">كلمة المرور يجب أن تكون ٨ أحرف على الأقل</span>
+      </div>
+
+      <button class="submit-btn" id="signupBtn" onclick="doSignup()">
+        <span class="btn-text">إنشاء الحساب 🚀</span>
+        <div class="btn-loader"></div>
+      </button>
+
+      <p class="terms">بالتسجيل أنت توافق على <a href="#">شروط الاستخدام</a> و<a href="#">سياسة الخصوصية</a></p>
+    </div>
+
+    <!-- ══════════ LOGIN FORM ══════════ -->
+    <div id="loginForm" style="display:none">
+      <div class="form-group">
+        <label class="form-label">البريد الإلكتروني</label>
+        <input class="form-input" id="loginEmail" type="email" placeholder="example@gmail.com">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">كلمة المرور</label>
+        <div class="input-wrap">
+          <input class="form-input" id="loginPw" type="password" placeholder="كلمة المرور">
+          <button class="toggle-pw" onclick="togglePw('loginPw',this)">👁</button>
+        </div>
+        <a class="forgot-link" onclick="doForgot()">نسيت كلمة المرور؟</a>
+      </div>
+
+      <button class="submit-btn" id="loginBtn" onclick="doLogin()">
+        <span class="btn-text">دخول ✈️</span>
+        <div class="btn-loader"></div>
+      </button>
+    </div>
+
+    <!-- ══════════ SUCCESS ══════════ -->
+    <div class="success-screen" id="successScreen">
+      <div class="success-icon" id="successIcon">🎉</div>
+      <h2 id="successTitle">مرحباً بك في رِحلة!</h2>
+      <p id="successMsg">تم إنشاء حسابك بنجاح. تحقق من بريدك الإلكتروني لتفعيل الحساب ثم ابدأ رحلتك.</p>
+      <a href="index.html" class="go-btn">ابدأ الاستكشاف 🌍</a>
+    </div>
+
+  </div>
+
+  <div class="back-link">
+    <a href="index.html">← العودة للرئيسية</a>
+  </div>
+</div>
+
+<script>
+// ── SUPABASE INIT ──
+const { createClient } = supabase;
+const sb = createClient(
+  'https://ybjdagurvkweabujkeyz.supabase.co',
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InliamRhZ3Vydmt3ZWFidWprZXl6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkzNjQyMDAsImV4cCI6MjA5NDk0MDIwMH0.CIK7sew_-kBlC_t_szCjKjjnFNg695kwSryuRshQ9nI'
+);
+
+let selectedType = 'traveler';
+
+// ── TABS ──
+function switchTab(tab) {
+  hideAlerts();
+  document.querySelectorAll('.tab').forEach((t,i) => t.classList.toggle('active', (tab==='signup'&&i===0)||(tab==='login'&&i===1)));
+  document.getElementById('signupForm').style.display = tab==='signup'?'block':'none';
+  document.getElementById('loginForm').style.display  = tab==='login' ?'block':'none';
+  document.getElementById('successScreen').classList.remove('show');
+}
+
+// ── ACCOUNT TYPE ──
+function selectType(type) {
+  selectedType = type;
+  document.getElementById('type-traveler').classList.toggle('selected', type==='traveler');
+  document.getElementById('type-agent').classList.toggle('selected', type==='agent');
+}
+
+// ── PASSWORD STRENGTH ──
+function checkStrength() {
+  const pw = document.getElementById('signupPw').value;
+  const bars = [document.getElementById('ps1'),document.getElementById('ps2'),document.getElementById('ps3'),document.getElementById('ps4')];
+  const label = document.getElementById('psLabel');
+  bars.forEach(b => b.className='ps-bar');
+  if (!pw) { label.textContent=''; return; }
+  let score = 0;
+  if (pw.length >= 8) score++;
+  if (/[A-Z]/.test(pw)||/[a-z]/.test(pw)) score++;
+  if (/[0-9]/.test(pw)) score++;
+  if (/[^A-Za-z0-9]/.test(pw)) score++;
+  const cls = score<=1?'weak':score<=2?'weak':score===3?'medium':'strong';
+  const lbl = score<=2?'ضعيفة 🔴':score===3?'متوسطة 🟡':'قوية 🟢';
+  for(let i=0;i<score;i++) bars[i].classList.add(cls);
+  label.textContent = pw.length>0?`قوة كلمة المرور: ${lbl}`:'';
+}
+
+// ── TOGGLE PASSWORD ──
+function togglePw(id, btn) {
+  const inp = document.getElementById(id);
+  inp.type = inp.type==='password'?'text':'password';
+  btn.textContent = inp.type==='password'?'👁':'🙈';
+}
+
+// ── VALIDATION ──
+function validate(id, condition, errId) {
+  const valid = condition();
+  document.getElementById(id).classList.toggle('error', !valid);
+  document.getElementById(errId).classList.toggle('show', !valid);
+  return valid;
+}
+function clearErr(id) {
+  document.getElementById(id).classList.remove('error');
+  document.getElementById(id+'Err').classList.remove('show');
+}
+
+// ── ALERTS ──
+function showErr(msg) {
+  hideAlerts();
+  document.getElementById('alertErrMsg').textContent = msg;
+  document.getElementById('alertErr').classList.add('show');
+}
+function showSuc(msg) {
+  hideAlerts();
+  document.getElementById('alertSucMsg').textContent = msg;
+  document.getElementById('alertSuc').classList.add('show');
+}
+function hideAlerts() {
+  document.getElementById('alertErr').classList.remove('show');
+  document.getElementById('alertSuc').classList.remove('show');
+}
+
+// ── LOADING STATE ──
+function setLoading(btnId, loading) {
+  const btn = document.getElementById(btnId);
+  btn.classList.toggle('loading', loading);
+  btn.disabled = loading;
+}
+
+// ── ARABIC ERROR MESSAGES ──
+function arabicError(msg) {
+  if (msg.includes('already registered') || msg.includes('already been registered'))
+    return 'هذا البريد الإلكتروني مسجّل مسبقاً — جرّب تسجيل الدخول';
+  if (msg.includes('Invalid login') || msg.includes('Invalid email or password'))
+    return 'البريد الإلكتروني أو كلمة المرور غير صحيحة';
+  if (msg.includes('Email not confirmed'))
+    return 'الرجاء تفعيل حسابك من بريدك الإلكتروني أولاً';
+  if (msg.includes('Password should be'))
+    return 'كلمة المرور يجب أن تكون ٦ أحرف على الأقل';
+  if (msg.includes('Unable to validate'))
+    return 'البريد الإلكتروني غير صحيح';
+  if (msg.includes('rate limit'))
+    return 'تم تجاوز الحد المسموح — انتظر قليلاً وحاول مجدداً';
+  return 'حدث خطأ ما — حاول مجدداً';
+}
+
+// ── SIGNUP ──
+async function doSignup() {
+  hideAlerts();
+  const name  = document.getElementById('fullName').value.trim();
+  const email = document.getElementById('signupEmail').value.trim();
+  const pw    = document.getElementById('signupPw').value;
+
+  let valid = true;
+  if (!name)              valid = validate('fullName', ()=>false, 'fullNameErr') && valid;
+  if (!email.includes('@')) valid = validate('signupEmail', ()=>false, 'signupEmailErr') && valid;
+  if (pw.length < 8)      valid = validate('signupPw', ()=>false, 'signupPwErr') && valid;
+  if (!valid) return;
+
+  setLoading('signupBtn', true);
+
+  try {
+    const { data, error } = await sb.auth.signUp({
+      email, password: pw,
+      options: {
+        data: { full_name: name, account_type: selectedType }
+      }
+    });
+
+    if (error) throw error;
+
+    // أنشئ ملف شخصي في جدول profiles
+    if (data.user) {
+      await sb.from('profiles').insert({
+        id: data.user.id,
+        full_name: name,
+        account_type: selectedType,
+      });
+    }
+
+    // أظهر شاشة النجاح
+    document.getElementById('signupForm').style.display = 'none';
+    document.querySelectorAll('.tab').forEach(t=>t.style.display='none');
+    document.getElementById('successIcon').textContent = selectedType==='agent'?'🤝':'🎉';
+    document.getElementById('successTitle').textContent = `أهلاً ${name.split(' ')[0]}!`;
+    document.getElementById('successScreen').classList.add('show');
+
+  } catch(e) {
+    showErr(arabicError(e.message));
+  } finally {
+    setLoading('signupBtn', false);
+  }
+}
+
+// ── LOGIN ──
+async function doLogin() {
+  hideAlerts();
+  const email = document.getElementById('loginEmail').value.trim();
+  const pw    = document.getElementById('loginPw').value;
+  if (!email || !pw) { showErr('الرجاء إدخال البريد الإلكتروني وكلمة المرور'); return; }
+
+  setLoading('loginBtn', true);
+
+  try {
+    const { data, error } = await sb.auth.signInWithPassword({ email, password: pw });
+    if (error) throw error;
+
+    // جلب الاسم من الملف الشخصي
+    const { data: profile } = await sb.from('profiles').select('full_name').eq('id', data.user.id).single();
+    const name = profile?.full_name || 'صديقي';
+
+    document.getElementById('loginForm').style.display = 'none';
+    document.querySelectorAll('.tab').forEach(t=>t.style.display='none');
+    document.getElementById('successIcon').textContent = '✈️';
+    document.getElementById('successTitle').textContent = `أهلاً بعودتك ${name.split(' ')[0]}!`;
+    document.getElementById('successMsg').textContent = 'تم تسجيل دخولك بنجاح — يلا نسافر!';
+    document.getElementById('successScreen').classList.add('show');
+
+    // حفظ الجلسة والتوجيه بعد ثانيتين
+    setTimeout(() => { window.location.href = 'index.html'; }, 2000);
+
+  } catch(e) {
+    showErr(arabicError(e.message));
+  } finally {
+    setLoading('loginBtn', false);
+  }
+}
+
+// ── FORGOT PASSWORD ──
+async function doForgot() {
+  const email = document.getElementById('loginEmail').value.trim();
+  if (!email) { showErr('أدخل بريدك الإلكتروني أولاً ثم اضغط "نسيت كلمة المرور"'); return; }
+  const { error } = await sb.auth.resetPasswordForEmail(email);
+  if (error) { showErr(arabicError(error.message)); return; }
+  showSuc('تم إرسال رابط إعادة تعيين كلمة المرور إلى بريدك الإلكتروني ✉️');
+}
+
+// ── CHECK SESSION (إذا مسجل مسبقاً وجهه للرئيسية) ──
+sb.auth.getSession().then(({ data }) => {
+  if (data.session) window.location.href = 'index.html';
+});
+
+// Enter key support
+document.addEventListener('keydown', e => {
+  if (e.key !== 'Enter') return;
+  if (document.getElementById('loginForm').style.display !== 'none') doLogin();
+  else if (document.getElementById('signupForm').style.display !== 'none') doSignup();
+});
+</script>
+</body>
+</html>
