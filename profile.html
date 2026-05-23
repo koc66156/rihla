@@ -3,214 +3,225 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>رِحلة — ملفي الشخصي</title>
+<title>رِحلة — الملف الشخصي</title>
 <meta name="theme-color" content="#FF5C1A">
 <link rel="manifest" href="manifest.json">
 <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&family=Righteous&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
-:root{
-  --or:#FF5C1A;--yl:#FFD000;--tl:#00C9B1;--dk:#0E0E0E;
-  --lt:#F8F5EE;--muted:rgba(255,255,255,0.45);
-  --card:rgba(255,255,255,0.05);--border:rgba(255,255,255,0.08);
-  --nav-h:60px;--bot-h:68px;
-}
+:root{--or:#FF5C1A;--yl:#FFD000;--tl:#00C9B1;--dk:#0E0E0E;--muted:rgba(255,255,255,0.45);--card:rgba(255,255,255,0.05);--border:rgba(255,255,255,0.08);--nav-h:60px;--bot-h:68px;}
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
-body{font-family:'Tajawal',sans-serif;background:var(--dk);color:white;min-height:100vh;padding-bottom:calc(var(--bot-h) + 20px);}
+body{font-family:'Tajawal',sans-serif;background:var(--dk);color:white;min-height:100vh;padding-bottom:calc(var(--bot-h)+32px);}
 
-/* ── BLOBS ── */
-.bg{position:fixed;inset:0;z-index:0;overflow:hidden;pointer-events:none;}
-.blob{position:absolute;border-radius:50%;filter:blur(80px);opacity:0.3;animation:drift 10s ease-in-out infinite alternate;}
-.b1{width:400px;height:400px;background:var(--or);top:-100px;right:-100px;}
-.b2{width:300px;height:300px;background:var(--tl);bottom:100px;left:-80px;animation-delay:-5s;}
-@keyframes drift{from{transform:translate(0,0);}to{transform:translate(20px,20px);}}
+/* NAV */
+.topnav{position:fixed;top:0;width:100%;z-index:1000;padding:0 20px;height:var(--nav-h);display:flex;align-items:center;justify-content:space-between;background:rgba(14,14,14,0.9);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);}
+.nav-logo{font-family:'Righteous',cursive;font-size:24px;background:linear-gradient(90deg,var(--or),var(--yl));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;border:none;background-color:transparent;cursor:pointer;}
+.nav-action{padding:8px 16px;border-radius:20px;background:rgba(255,255,255,0.07);border:1px solid var(--border);color:white;font-family:'Tajawal',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:all .2s;}
+.nav-action:hover{border-color:var(--or);color:var(--or);}
 
-/* ── TOP NAV ── */
-.topnav{position:fixed;top:0;width:100%;z-index:1000;padding:0 20px;height:var(--nav-h);display:flex;align-items:center;justify-content:space-between;background:rgba(14,14,14,0.92);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);}
-.nav-logo{font-family:'Righteous',cursive;font-size:24px;background:linear-gradient(90deg,var(--or),var(--yl));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;text-decoration:none;}
-.nav-back{display:flex;align-items:center;gap:6px;color:rgba(255,255,255,0.5);font-size:13px;font-weight:700;text-decoration:none;transition:color .2s;}
-.nav-back:hover{color:var(--or);}
-
-/* ── LOADING ── */
-.loading-screen{position:fixed;inset:0;z-index:2000;background:var(--dk);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;transition:opacity .4s;}
-.loading-screen.hide{opacity:0;pointer-events:none;}
-.spinner{width:40px;height:40px;border:3px solid rgba(255,92,26,0.2);border-top-color:var(--or);border-radius:50%;animation:spin .7s linear infinite;}
+/* LOADING */
+.loading{position:fixed;inset:0;z-index:2000;background:var(--dk);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;}
+.loading.hide{display:none;}
+.spinner{width:36px;height:36px;border:3px solid rgba(255,92,26,0.15);border-top-color:var(--or);border-radius:50%;animation:spin .7s linear infinite;}
 @keyframes spin{to{transform:rotate(360deg);}}
-.loading-screen p{font-size:14px;color:var(--muted);}
 
-/* ── NOT LOGGED IN ── */
-.not-logged{display:none;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:40px 20px;text-align:center;}
+/* NOT LOGGED */
+.not-logged{display:none;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:40px;text-align:center;}
 .not-logged.show{display:flex;}
-.not-logged .icon{font-size:64px;margin-bottom:20px;}
-.not-logged h2{font-size:24px;font-weight:900;margin-bottom:10px;}
-.not-logged p{font-size:14px;color:var(--muted);margin-bottom:28px;line-height:1.7;}
-.auth-btn{padding:14px 32px;border-radius:28px;background:var(--or);color:white;font-family:'Tajawal',sans-serif;font-size:16px;font-weight:800;border:none;cursor:pointer;text-decoration:none;display:inline-block;}
+.not-logged .ni{font-size:64px;margin-bottom:20px;}
+.not-logged h2{font-size:22px;font-weight:900;margin-bottom:10px;}
+.not-logged p{font-size:14px;color:var(--muted);margin-bottom:24px;}
+.auth-btn{padding:14px 32px;border-radius:28px;background:var(--or);color:white;font-family:'Tajawal',sans-serif;font-size:16px;font-weight:800;border:none;cursor:pointer;}
 
-/* ── MAIN ── */
-.main{position:relative;z-index:1;padding-top:var(--nav-h);}
+/* COVER */
+.cover{height:200px;position:relative;margin-top:var(--nav-h);overflow:hidden;}
+.cover-bg{position:absolute;inset:0;}
+.cover-pattern{position:absolute;inset:0;background-image:radial-gradient(rgba(255,255,255,0.07) 1px,transparent 1px);background-size:18px 18px;}
+.cover-edit{position:absolute;top:14px;left:14px;background:rgba(0,0,0,0.4);border:none;color:white;padding:7px 14px;border-radius:20px;font-family:'Tajawal',sans-serif;font-size:12px;font-weight:700;cursor:pointer;backdrop-filter:blur(8px);display:none;}
+.cover-edit.show{display:block;}
 
-/* ── COVER & AVATAR ── */
-.cover{height:180px;position:relative;overflow:hidden;background:linear-gradient(135deg,var(--or),var(--yl),var(--tl));}
-.cover-pattern{position:absolute;inset:0;background-image:radial-gradient(rgba(255,255,255,0.08) 1px,transparent 1px);background-size:20px 20px;}
-.cover-edit{position:absolute;top:12px;left:12px;background:rgba(0,0,0,0.4);border:none;color:white;width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px;backdrop-filter:blur(8px);}
+/* AVATAR */
+.avatar-section{padding:0 20px;position:relative;}
+.avatar-wrap{margin-top:-48px;display:inline-block;position:relative;}
+.avatar{width:96px;height:96px;border-radius:26px;border:4px solid var(--dk);display:flex;align-items:center;justify-content:center;font-size:36px;font-weight:900;position:relative;}
 
-.avatar-wrap{position:relative;display:inline-block;margin-top:-44px;margin-right:20px;}
-.avatar{width:88px;height:88px;border-radius:24px;border:3px solid var(--dk);background:linear-gradient(135deg,var(--or),var(--yl));display:flex;align-items:center;justify-content:center;font-size:32px;font-weight:900;color:white;overflow:hidden;}
-.avatar img{width:100%;height:100%;object-fit:cover;}
-.avatar-edit{position:absolute;bottom:-4px;left:-4px;background:var(--or);border:2px solid var(--dk);width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:12px;}
+/* INFO */
+.info-section{padding:14px 20px 0;}
+.profile-name{font-size:26px;font-weight:900;margin-bottom:6px;}
+.profile-type{display:inline-flex;align-items:center;gap:6px;padding:5px 14px;border-radius:14px;font-size:12px;font-weight:800;margin-bottom:12px;}
+.tt{background:rgba(255,92,26,0.15);color:var(--or);}
+.ta{background:rgba(0,201,177,0.15);color:var(--tl);}
+.profile-bio{font-size:14px;color:rgba(255,255,255,0.65);line-height:1.7;margin-bottom:14px;}
+.profile-meta{display:flex;gap:16px;flex-wrap:wrap;margin-bottom:18px;}
+.meta-item{display:flex;align-items:center;gap:5px;font-size:12px;color:var(--muted);}
 
-/* ── PROFILE HEADER ── */
-.profile-header{padding:0 20px 20px;}
-.profile-top{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:16px;}
-.edit-btn{padding:9px 20px;border-radius:20px;background:rgba(255,255,255,0.08);border:1.5px solid rgba(255,255,255,0.15);color:white;font-family:'Tajawal',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:all .2s;}
-.edit-btn:hover{border-color:var(--or);color:var(--or);}
-.edit-btn.saving{background:var(--tl);border-color:var(--tl);color:white;}
+/* STATS */
+.stats{display:flex;margin:0 20px 20px;background:var(--card);border:1px solid var(--border);border-radius:18px;overflow:hidden;}
+.stat{flex:1;padding:16px 8px;text-align:center;border-left:1px solid var(--border);}
+.stat:last-child{border-left:none;}
+.stat .sv{font-size:22px;font-weight:900;background:linear-gradient(135deg,var(--or),var(--yl));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;display:block;}
+.stat .sl{font-size:11px;color:var(--muted);margin-top:2px;}
 
-.profile-name{font-size:24px;font-weight:900;margin-bottom:4px;}
-.profile-username{font-size:13px;color:var(--muted);margin-bottom:8px;}
-.profile-type{display:inline-flex;align-items:center;gap:6px;padding:5px 14px;border-radius:16px;font-size:12px;font-weight:800;margin-bottom:14px;}
-.type-traveler{background:rgba(255,92,26,0.15);color:var(--or);}
-.type-agent{background:rgba(0,201,177,0.15);color:var(--tl);}
+/* COUNTRIES */
+.countries-section{margin:0 20px 20px;background:var(--card);border:1px solid var(--border);border-radius:18px;padding:16px;}
+.countries-title{font-size:14px;font-weight:800;margin-bottom:12px;display:flex;align-items:center;gap:6px;}
+.flags-wrap{display:flex;gap:8px;flex-wrap:wrap;}
+.flag-tag{padding:6px 12px;border-radius:12px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);font-size:13px;font-weight:600;}
+.add-country{padding:6px 12px;border-radius:12px;border:1.5px dashed rgba(255,92,26,0.3);background:transparent;color:var(--or);font-family:'Tajawal',sans-serif;font-size:12px;font-weight:700;cursor:pointer;transition:all .2s;}
+.add-country:hover{background:rgba(255,92,26,0.08);}
 
-.profile-bio{font-size:14px;color:rgba(255,255,255,0.7);line-height:1.7;margin-bottom:16px;}
-.profile-bio.empty{color:var(--muted);font-style:italic;}
+/* ACTION BTNS */
+.action-btns{display:flex;gap:10px;margin:0 20px 20px;}
+.action-btn{flex:1;padding:12px;border-radius:14px;font-family:'Tajawal',sans-serif;font-size:13px;font-weight:800;border:none;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:6px;}
+.ab-edit{background:rgba(255,255,255,0.07);color:white;border:1px solid var(--border);}
+.ab-edit:hover{border-color:rgba(255,255,255,0.3);}
+.ab-post{background:rgba(255,92,26,0.12);color:var(--or);border:1px solid rgba(255,92,26,0.2);}
+.ab-post:hover{background:rgba(255,92,26,0.2);}
 
-.profile-meta{display:flex;gap:16px;flex-wrap:wrap;}
-.meta-item{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--muted);}
+/* TABS */
+.tabs{display:flex;margin:0 20px 16px;background:rgba(255,255,255,0.04);border-radius:16px;padding:4px;}
+.tab{flex:1;padding:10px 6px;border-radius:13px;border:none;background:transparent;font-family:'Tajawal',sans-serif;font-size:13px;font-weight:700;color:rgba(255,255,255,0.4);cursor:pointer;transition:all .2s;}
+.tab.active{background:var(--or);color:white;}
 
-/* ── STATS ── */
-.stats-bar{display:flex;border-top:1px solid var(--border);border-bottom:1px solid var(--border);margin:0 0 24px;}
-.stat-item{flex:1;padding:16px 8px;text-align:center;border-left:1px solid var(--border);}
-.stat-item:last-child{border-left:none;}
-.stat-num{font-size:22px;font-weight:900;background:linear-gradient(135deg,var(--or),var(--yl));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;display:block;}
-.stat-lbl{font-size:11px;color:var(--muted);margin-top:2px;}
+/* POSTS */
+.posts-wrap{padding:0 20px;}
+.post-card{background:var(--card);border:1px solid var(--border);border-radius:20px;overflow:hidden;margin-bottom:16px;transition:all .2s;}
+.post-card:hover{border-color:rgba(255,92,26,0.3);}
+.post-img-single{width:100%;height:220px;object-fit:cover;}
+.post-img-grid{display:grid;grid-template-columns:1fr 1fr;gap:2px;height:200px;}
+.post-img-grid img{width:100%;height:100%;object-fit:cover;}
+.post-no-img{height:100px;display:flex;align-items:center;justify-content:center;font-size:40px;background:linear-gradient(135deg,rgba(255,92,26,0.1),rgba(255,208,0,0.06));}
+.post-body{padding:16px;}
+.post-dest{font-size:12px;color:var(--or);font-weight:700;margin-bottom:5px;}
+.post-title{font-size:16px;font-weight:900;margin-bottom:7px;line-height:1.3;}
+.post-text{font-size:13px;color:rgba(255,255,255,0.6);line-height:1.7;margin-bottom:12px;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;}
+.post-foot{display:flex;align-items:center;justify-content:space-between;}
+.post-time{font-size:11px;color:var(--muted);}
+.like-btn{display:flex;align-items:center;gap:5px;padding:6px 14px;border-radius:11px;background:rgba(255,92,26,0.07);border:1px solid rgba(255,92,26,0.12);color:rgba(255,255,255,0.55);font-family:'Tajawal',sans-serif;font-size:12px;font-weight:700;cursor:pointer;transition:all .2s;}
+.like-btn.liked{background:rgba(255,92,26,0.18);color:var(--or);border-color:rgba(255,92,26,0.28);}
 
-/* ── SECTIONS ── */
-.section{padding:0 20px 28px;}
-.sec-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
-.sec-title{font-size:16px;font-weight:800;}
-.sec-action{font-size:12px;color:var(--or);cursor:pointer;font-weight:700;}
+/* TRIPS */
+.trips-wrap{padding:0 20px;display:flex;flex-direction:column;gap:12px;}
+.trip-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:16px;display:flex;gap:12px;align-items:center;cursor:pointer;transition:all .2s;}
+.trip-card:hover{border-color:var(--or);transform:translateX(-3px);}
+.trip-emoji{width:48px;height:48px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;}
+.trip-info{flex:1;}
+.trip-name{font-size:14px;font-weight:800;margin-bottom:4px;}
+.trip-meta{font-size:12px;color:var(--muted);}
+.trip-seats{padding:4px 10px;border-radius:9px;font-size:11px;font-weight:700;}
 
-/* ── COUNTRIES ── */
-.countries-grid{display:flex;gap:8px;flex-wrap:wrap;}
-.country-tag{padding:7px 14px;border-radius:16px;background:var(--card);border:1px solid var(--border);font-size:13px;font-weight:600;transition:all .2s;cursor:default;}
-.country-tag.add{border-style:dashed;color:var(--or);border-color:rgba(255,92,26,0.3);cursor:pointer;}
-.country-tag.add:hover{background:rgba(255,92,26,0.1);}
-.empty-countries{font-size:13px;color:var(--muted);font-style:italic;}
+/* REVIEWS TAB */
+.reviews-wrap{padding:0 20px;display:flex;flex-direction:column;gap:12px;}
+.rev-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:16px;}
+.rev-head{display:flex;align-items:center;gap:10px;margin-bottom:8px;}
+.rev-av{width:36px;height:36px;border-radius:12px;background:rgba(255,92,26,0.15);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;}
+.rev-info strong{display:block;font-size:13px;font-weight:800;}
+.rev-info span{font-size:11px;color:var(--muted);}
+.rev-stars{margin-right:auto;color:var(--yl);font-size:14px;}
+.rev-text{font-size:13px;color:rgba(255,255,255,0.65);line-height:1.6;}
 
-/* ── TRIPS ── */
-.trips-list{display:flex;flex-direction:column;gap:12px;}
-.trip-mini{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:16px;display:flex;gap:14px;align-items:center;transition:all .2s;cursor:pointer;}
-.trip-mini:hover{border-color:var(--or);transform:translateX(-3px);}
-.trip-mini-img{width:52px;height:52px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0;}
-.trip-mini-info{flex:1;}
-.trip-mini-name{font-size:14px;font-weight:800;margin-bottom:4px;}
-.trip-mini-meta{font-size:12px;color:var(--muted);}
-.trip-mini-badge{padding:4px 12px;border-radius:10px;font-size:11px;font-weight:800;flex-shrink:0;}
-.badge-org{background:rgba(255,92,26,0.15);color:var(--or);}
-.badge-join{background:rgba(0,201,177,0.12);color:var(--tl);}
+/* EMPTY */
+.empty{text-align:center;padding:48px 20px;}
+.empty .ei{font-size:48px;margin-bottom:14px;}
+.empty h3{font-size:17px;font-weight:800;margin-bottom:7px;}
+.empty p{font-size:13px;color:var(--muted);}
 
-.empty-trips{text-align:center;padding:32px 20px;background:var(--card);border-radius:18px;border:1px dashed var(--border);}
-.empty-trips .eicon{font-size:40px;margin-bottom:12px;}
-.empty-trips p{font-size:13px;color:var(--muted);margin-bottom:16px;}
-.empty-trips button{padding:10px 24px;border-radius:20px;background:var(--or);color:white;border:none;font-family:'Tajawal',sans-serif;font-size:14px;font-weight:800;cursor:pointer;}
+/* LOGOUT */
+.logout-btn{width:calc(100% - 40px);margin:20px 20px 0;padding:14px;border-radius:16px;background:rgba(229,57,53,0.08);border:1.5px solid rgba(229,57,53,0.18);color:#ff6b6b;font-family:'Tajawal',sans-serif;font-size:15px;font-weight:800;cursor:pointer;transition:all .2s;}
+.logout-btn:hover{background:rgba(229,57,53,0.16);}
 
-/* ── EDIT MODAL ── */
-.modal-overlay{position:fixed;inset:0;z-index:2000;background:rgba(0,0,0,0.7);backdrop-filter:blur(8px);display:flex;align-items:flex-end;justify-content:center;opacity:0;pointer-events:none;transition:opacity .3s;}
-.modal-overlay.open{opacity:1;pointer-events:all;}
-.modal{background:#161616;border-radius:28px 28px 0 0;width:100%;max-width:500px;padding:28px 24px 40px;transform:translateY(100%);transition:transform .4s cubic-bezier(.34,1.2,.64,1);max-height:85vh;overflow-y:auto;}
-.modal-overlay.open .modal{transform:translateY(0);}
-.modal::-webkit-scrollbar{display:none;}
-.modal-handle{width:40px;height:4px;border-radius:2px;background:rgba(255,255,255,0.15);margin:0 auto 24px;}
-.modal-title{font-size:20px;font-weight:900;margin-bottom:24px;}
-.field{margin-bottom:18px;}
-.field label{display:block;font-size:13px;font-weight:800;color:rgba(255,255,255,0.6);margin-bottom:8px;}
-.field input,.field textarea,.field select{width:100%;padding:13px 16px;border-radius:14px;border:1.5px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.06);font-family:'Tajawal',sans-serif;font-size:15px;color:white;outline:none;transition:border-color .2s;}
-.field input:focus,.field textarea:focus,.field select:focus{border-color:var(--or);background:rgba(255,92,26,0.06);}
+/* EDIT MODAL */
+.overlay{position:fixed;inset:0;z-index:2000;background:rgba(0,0,0,0.75);backdrop-filter:blur(8px);display:flex;align-items:flex-end;justify-content:center;opacity:0;pointer-events:none;transition:opacity .3s;}
+.overlay.open{opacity:1;pointer-events:all;}
+.sheet{background:#161616;border-radius:24px 24px 0 0;width:100%;max-width:520px;max-height:88vh;overflow-y:auto;transform:translateY(100%);transition:transform .4s cubic-bezier(.34,1.2,.64,1);}
+.overlay.open .sheet{transform:translateY(0);}
+.sheet::-webkit-scrollbar{display:none;}
+.handle{width:36px;height:4px;border-radius:2px;background:rgba(255,255,255,0.1);margin:14px auto;}
+.sheet-body{padding:0 20px 32px;}
+.sheet-title{font-size:20px;font-weight:900;margin-bottom:20px;}
+.field{margin-bottom:14px;}
+.field label{display:block;font-size:12px;font-weight:800;color:rgba(255,255,255,0.5);margin-bottom:6px;letter-spacing:.5px;}
+.field input,.field textarea,.field select{width:100%;padding:13px 15px;border-radius:13px;border:1.5px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.06);font-family:'Tajawal',sans-serif;font-size:14px;color:white;outline:none;transition:border-color .2s;}
+.field input:focus,.field textarea:focus,.field select:focus{border-color:var(--or);}
 .field input::placeholder,.field textarea::placeholder{color:rgba(255,255,255,0.2);}
 .field textarea{resize:vertical;min-height:90px;}
-.field select option{background:#222;color:white;}
-.save-btn{width:100%;padding:15px;border-radius:16px;background:linear-gradient(135deg,var(--or),#ff8c42);color:white;border:none;font-family:'Tajawal',sans-serif;font-size:17px;font-weight:900;cursor:pointer;margin-top:8px;transition:all .2s;position:relative;}
-.save-btn:disabled{opacity:0.7;cursor:not-allowed;}
-.save-btn .sl{display:none;width:20px;height:20px;border:2.5px solid rgba(255,255,255,0.3);border-top-color:white;border-radius:50%;animation:spin .7s linear infinite;margin:0 auto;}
-.save-btn.loading .st{display:none;}
-.save-btn.loading .sl{display:block;}
+.field select option{background:#222;}
+.save-btn{width:100%;padding:14px;border-radius:15px;background:linear-gradient(135deg,var(--or),#ff8c42);color:white;border:none;font-family:'Tajawal',sans-serif;font-size:16px;font-weight:900;cursor:pointer;margin-top:6px;}
+.save-btn:disabled{opacity:0.6;cursor:not-allowed;}
 
-/* ── COUNTRIES MODAL ── */
-.countries-search{width:100%;padding:12px 16px;border-radius:14px;border:1.5px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.06);font-family:'Tajawal',sans-serif;font-size:14px;color:white;outline:none;margin-bottom:16px;}
-.countries-search:focus{border-color:var(--or);}
-.countries-search::placeholder{color:rgba(255,255,255,0.25);}
-.countries-list{display:flex;flex-direction:column;gap:6px;max-height:320px;overflow-y:auto;}
-.countries-list::-webkit-scrollbar{width:3px;}
-.countries-list::-webkit-scrollbar-thumb{background:rgba(255,92,26,0.3);border-radius:3px;}
-.country-opt{display:flex;align-items:center;justify-content:space-between;padding:12px 14px;border-radius:14px;background:rgba(255,255,255,0.04);cursor:pointer;transition:all .2s;border:1px solid transparent;}
-.country-opt:hover{background:rgba(255,92,26,0.08);border-color:rgba(255,92,26,0.2);}
-.country-opt.selected{background:rgba(255,92,26,0.12);border-color:rgba(255,92,26,0.3);}
-.country-opt .co-name{font-size:14px;font-weight:600;}
-.country-opt .co-check{color:var(--or);font-size:18px;display:none;}
-.country-opt.selected .co-check{display:block;}
+/* POST MODAL */
+.img-upload{border:2px dashed rgba(255,255,255,0.12);border-radius:14px;padding:18px;text-align:center;cursor:pointer;transition:all .2s;margin-bottom:12px;}
+.img-upload:hover{border-color:var(--or);}
+.img-upload input{display:none;}
+.img-preview{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;}
+.img-prev-item{position:relative;width:76px;height:76px;border-radius:11px;overflow:hidden;}
+.img-prev-item img{width:100%;height:100%;object-fit:cover;}
+.img-prev-item button{position:absolute;top:2px;left:2px;width:18px;height:18px;border-radius:50%;background:rgba(0,0,0,0.65);border:none;color:white;font-size:11px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
 
-/* ── LOGOUT ── */
-.logout-btn{width:calc(100% - 40px);margin:0 20px;padding:14px;border-radius:16px;background:rgba(229,57,53,0.1);border:1.5px solid rgba(229,57,53,0.2);color:#ff6b6b;font-family:'Tajawal',sans-serif;font-size:15px;font-weight:800;cursor:pointer;transition:all .2s;}
-.logout-btn:hover{background:rgba(229,57,53,0.2);}
+/* COUNTRIES MODAL */
+.countries-list{display:flex;flex-direction:column;gap:6px;max-height:300px;overflow-y:auto;}
+.country-opt{display:flex;align-items:center;justify-content:space-between;padding:12px 14px;border-radius:13px;background:rgba(255,255,255,0.04);cursor:pointer;transition:all .2s;border:1px solid transparent;}
+.country-opt:hover{background:rgba(255,92,26,0.07);border-color:rgba(255,92,26,0.18);}
+.country-opt.sel{background:rgba(255,92,26,0.1);border-color:rgba(255,92,26,0.25);}
+.country-opt .cn{font-size:14px;font-weight:600;}
+.country-opt .ck{color:var(--or);font-size:16px;display:none;}
+.country-opt.sel .ck{display:block;}
+.csearch{width:100%;padding:11px 14px;border-radius:13px;border:1.5px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.06);font-family:'Tajawal',sans-serif;font-size:14px;color:white;outline:none;margin-bottom:12px;}
+.csearch::placeholder{color:rgba(255,255,255,0.2);}
 
-/* ── BOTTOM NAV ── */
-.botnav{position:fixed;bottom:0;width:100%;z-index:1000;height:var(--bot-h);background:rgba(14,14,14,0.95);backdrop-filter:blur(20px);border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-around;padding-bottom:env(safe-area-inset-bottom);}
-.bnav-item{display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;padding:8px 16px;border-radius:14px;transition:all .2s;flex:1;text-decoration:none;}
-.bnav-item.active .bni,.bnav-item.active .bnl{color:var(--or);}
-.bni{font-size:22px;}
-.bnl{font-size:11px;font-weight:700;color:var(--muted);}
+/* BOTTOM NAV */
+.botnav{position:fixed;bottom:0;width:100%;z-index:1000;height:var(--bot-h);background:rgba(14,14,14,0.95);backdrop-filter:blur(20px);border-top:1px solid var(--border);display:flex;align-items:center;}
+.botnav a{display:flex;flex-direction:column;align-items:center;gap:4px;flex:1;text-decoration:none;padding:8px 0;}
+.botnav a span:first-child{font-size:20px;}
+.botnav a span:last-child{font-size:10px;font-weight:700;color:var(--muted);}
+.botnav a.active span{color:var(--or);}
 
-/* ── TOAST ── */
+/* TOAST */
 .toast{position:fixed;bottom:calc(var(--bot-h)+16px);left:50%;transform:translateX(-50%) translateY(80px);background:#1a1a1a;color:white;padding:12px 22px;border-radius:22px;font-size:13px;font-weight:700;box-shadow:0 8px 24px rgba(0,0,0,0.4);transition:transform .4s cubic-bezier(.34,1.56,.64,1);z-index:9999;border:1px solid rgba(255,255,255,0.08);}
 .toast.show{transform:translateX(-50%) translateY(0);}
 </style>
 </head>
 <body>
 
-<div class="bg"><div class="blob b1"></div><div class="blob b2"></div></div>
-
 <!-- LOADING -->
-<div class="loading-screen" id="loadingScreen">
-  <div class="spinner"></div>
-  <p>جاري تحميل ملفك الشخصي...</p>
-</div>
+<div class="loading" id="loading"><div class="spinner"></div><p style="font-size:13px;color:rgba(255,255,255,0.4)">جاري التحميل...</p></div>
 
-<!-- NOT LOGGED IN -->
+<!-- NOT LOGGED -->
 <div class="not-logged" id="notLogged">
-  <div class="icon">👤</div>
+  <div class="ni">👤</div>
   <h2>سجّل دخولك أولاً</h2>
-  <p>تحتاج حساباً في رِحلة لعرض ملفك الشخصي</p>
-  <a href="auth.html" class="auth-btn">تسجيل / دخول ✈️</a>
+  <p>تحتاج حساباً لعرض ملفك الشخصي</p>
+  <button class="auth-btn" onclick="window.location.href='auth.html'">تسجيل / دخول ✈️</button>
 </div>
 
-<!-- TOP NAV -->
+<!-- NAV -->
 <nav class="topnav">
-  <a href="index.html" class="nav-logo">Rihla</a>
-  <a href="index.html" class="nav-back">← الرئيسية</a>
+  <button class="nav-logo" onclick="window.location.href='index.html'">Rihla</button>
+  <button class="nav-action" id="editNavBtn" onclick="openEditModal()" style="display:none">تعديل الملف ✏️</button>
 </nav>
 
-<!-- MAIN CONTENT -->
-<div class="main" id="mainContent" style="display:none">
+<!-- MAIN -->
+<div id="mainContent" style="display:none">
 
   <!-- COVER -->
   <div class="cover">
+    <div class="cover-bg" id="coverBg"></div>
     <div class="cover-pattern"></div>
+    <button class="cover-edit" id="coverEditBtn" onclick="openEditModal()">✏️ تعديل</button>
   </div>
 
-  <!-- PROFILE HEADER -->
-  <div class="profile-header">
-    <div class="profile-top">
-      <div class="avatar-wrap">
-        <div class="avatar" id="avatarEl"></div>
-        <div class="avatar-edit">✏️</div>
-      </div>
-      <button class="edit-btn" id="editBtn" onclick="openEditModal()">تعديل الملف</button>
+  <!-- AVATAR -->
+  <div class="avatar-section">
+    <div class="avatar-wrap">
+      <div class="avatar" id="avatarEl"></div>
     </div>
-    <div class="profile-name" id="profileName">...</div>
-    <div class="profile-username" id="profileEmail"></div>
+  </div>
+
+  <!-- INFO -->
+  <div class="info-section">
+    <div class="profile-name" id="profileName"></div>
     <div class="profile-type" id="profileType"></div>
-    <div class="profile-bio" id="profileBio"></div>
+    <div class="profile-bio" id="profileBio" style="display:none"></div>
     <div class="profile-meta">
       <div class="meta-item">📍 <span id="profileCountry">الكويت</span></div>
       <div class="meta-item">📅 <span id="profileJoined"></span></div>
@@ -218,288 +229,458 @@ body{font-family:'Tajawal',sans-serif;background:var(--dk);color:white;min-heigh
   </div>
 
   <!-- STATS -->
-  <div class="stats-bar">
-    <div class="stat-item"><span class="stat-num" id="statTrips">٠</span><div class="stat-lbl">رحلة</div></div>
-    <div class="stat-item"><span class="stat-num" id="statCountries">٠</span><div class="stat-lbl">دولة</div></div>
-    <div class="stat-item"><span class="stat-num" id="statRating">—</span><div class="stat-lbl">تقييم</div></div>
+  <div class="stats">
+    <div class="stat"><span class="sv" id="statPosts">٠</span><div class="sl">منشور</div></div>
+    <div class="stat"><span class="sv" id="statTrips">٠</span><div class="sl">رحلة</div></div>
+    <div class="stat"><span class="sv" id="statCountries">٠</span><div class="sl">دولة</div></div>
+    <div class="stat"><span class="sv" id="statRating">—</span><div class="sl">تقييم</div></div>
   </div>
 
   <!-- COUNTRIES -->
-  <div class="section">
-    <div class="sec-header">
-      <div class="sec-title">🌍 الدول التي زرتها</div>
-      <div class="sec-action" onclick="openCountriesModal()">+ إضافة</div>
-    </div>
-    <div class="countries-grid" id="countriesGrid">
-      <div class="empty-countries">لم تضف أي دولة بعد</div>
+  <div class="countries-section" id="countriesSection">
+    <div class="countries-title">🌍 الدول التي زرتها</div>
+    <div class="flags-wrap" id="flagsWrap">
+      <button class="add-country" onclick="openCountriesModal()">+ أضف دولة</button>
     </div>
   </div>
 
-  <!-- TRIPS -->
-  <div class="section">
-    <div class="sec-header">
-      <div class="sec-title">✈️ رحلاتي</div>
-      <div class="sec-action" onclick="window.location.href='index.html#trips'">تصفح الرحلات</div>
-    </div>
-    <div class="trips-list" id="tripsList">
-      <div class="empty-trips">
-        <div class="eicon">🗺️</div>
-        <p>لم تنضم أو تنشر أي رحلة بعد</p>
-        <button onclick="window.location.href='index.html'">اكتشف الرحلات</button>
-      </div>
-    </div>
+  <!-- ACTION BTNS -->
+  <div class="action-btns">
+    <button class="action-btn ab-edit" onclick="openEditModal()">✏️ تعديل الملف</button>
+    <button class="action-btn ab-post" onclick="openPostModal()">📝 منشور جديد</button>
   </div>
+
+  <!-- TABS -->
+  <div class="tabs">
+    <button class="tab active" onclick="setTab('posts',this)">📸 المنشورات</button>
+    <button class="tab" onclick="setTab('trips',this)">✈️ رحلاتي</button>
+    <button class="tab" onclick="setTab('reviews',this)">⭐ تقييماتي</button>
+  </div>
+
+  <!-- CONTENT -->
+  <div id="postsWrap" class="posts-wrap"></div>
+  <div id="tripsWrap" class="trips-wrap" style="display:none"></div>
+  <div id="reviewsWrap" class="reviews-wrap" style="display:none"></div>
 
   <!-- LOGOUT -->
-  <a id="viewPublicBtn" href="#" style="display:flex;align-items:center;justify-content:center;gap:8px;text-align:center;padding:14px;font-size:14px;color:var(--or);font-weight:700;text-decoration:none;margin:0 20px 10px;background:rgba(255,92,26,0.08);border-radius:14px;border:1px solid rgba(255,92,26,0.2);">👁️ عرض ملفي كما يراه الآخرون</a>
-  <a href="user.html" id="addPostBtn" style="display:flex;align-items:center;justify-content:center;gap:8px;text-align:center;padding:14px;font-size:14px;color:var(--tl);font-weight:700;text-decoration:none;margin:0 20px 10px;background:rgba(0,201,177,0.08);border-radius:14px;border:1px solid rgba(0,201,177,0.2);">📝 أضف منشور رحلة</a>
   <button class="logout-btn" onclick="doLogout()">🚪 تسجيل الخروج</button>
-  <div style="height:20px"></div>
 
 </div>
 
 <!-- BOTTOM NAV -->
 <nav class="botnav">
-  <a href="index.html" class="bnav-item"><div class="bni">🏠</div><div class="bnl">الرئيسية</div></a>
-  <a href="trips.html" class="bnav-item"><div class="bni">✈️</div><div class="bnl">الرحلات</div></a>
-  <a href="flights.html" class="bnav-item"><div class="bni">🛫</div><div class="bnl">طيران</div></a>
-  <a href="agents.html" class="bnav-item"><div class="bni">🤝</div><div class="bnl">المساعدون</div></a>
-  <a href="profile.html" class="bnav-item active"><div class="bni">👤</div><div class="bnl">حسابي</div></a>
+  <a href="index.html"><span>🏠</span><span>الرئيسية</span></a>
+  <a href="trips.html"><span>✈️</span><span>الرحلات</span></a>
+  <a href="flights.html"><span>🛫</span><span>طيران</span></a>
+  <a href="agents.html"><span>🤝</span><span>المساعدون</span></a>
+  <a href="profile.html" class="active"><span>👤</span><span>حسابي</span></a>
 </nav>
 
 <!-- EDIT MODAL -->
-<div class="modal-overlay" id="editModal" onclick="closeEditModal(event)">
-  <div class="modal">
-    <div class="modal-handle"></div>
-    <div class="modal-title">تعديل الملف الشخصي</div>
-    <div class="field">
-      <label>الاسم الكامل</label>
-      <input type="text" id="editName" placeholder="اسمك الكامل">
+<div class="overlay" id="editOverlay" onclick="closeOverlay('editOverlay',event)">
+  <div class="sheet">
+    <div class="handle"></div>
+    <div class="sheet-body">
+      <div class="sheet-title">✏️ تعديل الملف الشخصي</div>
+      <div class="field"><label>الاسم الكامل</label><input type="text" id="editName" placeholder="اسمك الكامل"></div>
+      <div class="field"><label>نبذة عنك</label><textarea id="editBio" placeholder="أخبر المسافرين عن نفسك..."></textarea></div>
+      <div class="field">
+        <label>الدولة</label>
+        <select id="editCountry">
+          <option>🇰🇼 الكويت</option><option>🇸🇦 السعودية</option><option>🇦🇪 الإمارات</option>
+          <option>🇶🇦 قطر</option><option>🇧🇭 البحرين</option><option>🇴🇲 عُمان</option>
+          <option>🇯🇴 الأردن</option><option>🇪🇬 مصر</option><option>🌍 أخرى</option>
+        </select>
+      </div>
+      <button class="save-btn" id="saveEditBtn" onclick="saveProfile()">حفظ التغييرات ✓</button>
     </div>
-    <div class="field">
-      <label>نبذة عنك</label>
-      <textarea id="editBio" placeholder="أخبر المسافرين عن نفسك، اهتماماتك، وأسلوبك في السفر..."></textarea>
+  </div>
+</div>
+
+<!-- POST MODAL -->
+<div class="overlay" id="postOverlay" onclick="closeOverlay('postOverlay',event)">
+  <div class="sheet">
+    <div class="handle"></div>
+    <div class="sheet-body">
+      <div class="sheet-title">📝 شارك تجربتك</div>
+      <div class="field"><label>عنوان المنشور</label><input type="text" id="postTitle" placeholder="مثال: رحلتي إلى طوكيو 🗼"></div>
+      <div class="field"><label>الوجهة</label><input type="text" id="postDest" placeholder="مثال: طوكيو، اليابان"></div>
+      <div class="field"><label>اكتب تجربتك</label><textarea id="postContent" placeholder="شارك أجمل لحظاتك ونصائحك..."></textarea></div>
+      <div class="img-upload" onclick="document.getElementById('imgInput').click()">
+        <input type="file" id="imgInput" accept="image/*" multiple onchange="previewImgs(this)">
+        <div style="font-size:28px;margin-bottom:6px">📸</div>
+        <p style="font-size:13px;color:var(--muted)">اضغط لإضافة صور (حتى ٤ صور)</p>
+      </div>
+      <div class="img-preview" id="imgPreview"></div>
+      <button class="save-btn" id="postBtn" onclick="submitPost()">🚀 نشر المنشور</button>
     </div>
-    <div class="field">
-      <label>الدولة</label>
-      <select id="editCountry">
-        <option value="الكويت">🇰🇼 الكويت</option>
-        <option value="السعودية">🇸🇦 السعودية</option>
-        <option value="الإمارات">🇦🇪 الإمارات</option>
-        <option value="قطر">🇶🇦 قطر</option>
-        <option value="البحرين">🇧🇭 البحرين</option>
-        <option value="عُمان">🇴🇲 عُمان</option>
-        <option value="الأردن">🇯🇴 الأردن</option>
-        <option value="مصر">🇪🇬 مصر</option>
-        <option value="أخرى">🌍 أخرى</option>
-      </select>
-    </div>
-    <button class="save-btn" id="saveBtn" onclick="saveProfile()">
-      <span class="st">حفظ التغييرات ✓</span>
-      <div class="sl"></div>
-    </button>
   </div>
 </div>
 
 <!-- COUNTRIES MODAL -->
-<div class="modal-overlay" id="countriesModal" onclick="closeCountriesModal(event)">
-  <div class="modal">
-    <div class="modal-handle"></div>
-    <div class="modal-title">🌍 الدول التي زرتها</div>
-    <input class="countries-search" type="text" placeholder="ابحث عن دولة..." oninput="filterCountries(this.value)">
-    <div class="countries-list" id="countriesList"></div>
-    <button class="save-btn" style="margin-top:16px" onclick="saveCountries()">
-      <span>حفظ الدول ✓</span>
-    </button>
+<div class="overlay" id="countriesOverlay" onclick="closeOverlay('countriesOverlay',event)">
+  <div class="sheet">
+    <div class="handle"></div>
+    <div class="sheet-body">
+      <div class="sheet-title">🌍 الدول التي زرتها</div>
+      <input class="csearch" type="text" placeholder="ابحث عن دولة..." oninput="filterCountries(this.value)">
+      <div class="countries-list" id="countriesList"></div>
+      <button class="save-btn" style="margin-top:14px" onclick="saveCountries()">حفظ الدول ✓</button>
+    </div>
   </div>
 </div>
 
-<!-- TOAST -->
 <div class="toast" id="toast"></div>
 
 <script>
-// ── SUPABASE ──
 const{createClient}=supabase;
 const sb=createClient(
   'https://ybjdagurvkweabujkeyz.supabase.co',
   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InliamRhZ3Vydmt3ZWFidWprZXl6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkzNjQyMDAsImV4cCI6MjA5NDk0MDIwMH0.CIK7sew_-kBlC_t_szCjKjjnFNg695kwSryuRshQ9nI'
 );
 
-let currentUser=null, currentProfile=null, selectedCountries=[];
-
-// ── COUNTRIES DATA ──
-const ALL_COUNTRIES=[
-  {name:'تركيا',flag:'🇹🇷'},{name:'اليابان',flag:'🇯🇵'},{name:'فرنسا',flag:'🇫🇷'},
-  {name:'إيطاليا',flag:'🇮🇹'},{name:'إسبانيا',flag:'🇪🇸'},{name:'ألمانيا',flag:'🇩🇪'},
-  {name:'المملكة المتحدة',flag:'🇬🇧'},{name:'الولايات المتحدة',flag:'🇺🇸'},{name:'كندا',flag:'🇨🇦'},
-  {name:'أستراليا',flag:'🇦🇺'},{name:'المالديف',flag:'🇲🇻'},{name:'تايلاند',flag:'🇹🇭'},
-  {name:'إندونيسيا',flag:'🇮🇩'},{name:'ماليزيا',flag:'🇲🇾'},{name:'سنغافورة',flag:'🇸🇬'},
-  {name:'الهند',flag:'🇮🇳'},{name:'الصين',flag:'🇨🇳'},{name:'كوريا الجنوبية',flag:'🇰🇷'},
-  {name:'مصر',flag:'🇪🇬'},{name:'المغرب',flag:'🇲🇦'},{name:'كينيا',flag:'🇰🇪'},
-  {name:'جورجيا',flag:'🇬🇪'},{name:'اليونان',flag:'🇬🇷'},{name:'البرتغال',flag:'🇵🇹'},
-  {name:'هولندا',flag:'🇳🇱'},{name:'سويسرا',flag:'🇨🇭'},{name:'النمسا',flag:'🇦🇹'},
-  {name:'البرازيل',flag:'🇧🇷'},{name:'الأرجنتين',flag:'🇦🇷'},{name:'المكسيك',flag:'🇲🇽'},
+const GRADS=[
+  'linear-gradient(135deg,#FF5C1A,#FFD000)',
+  'linear-gradient(135deg,#1A6BFF,#00C9B1)',
+  'linear-gradient(135deg,#7C3AED,#FF5C1A)',
+  'linear-gradient(135deg,#00838F,#4DD0E1)',
+  'linear-gradient(135deg,#558B2F,#FFD000)',
 ];
 
-// ── INIT ──
+const ALL_COUNTRIES=[
+  {n:'تركيا',f:'🇹🇷'},{n:'اليابان',f:'🇯🇵'},{n:'فرنسا',f:'🇫🇷'},{n:'إيطاليا',f:'🇮🇹'},
+  {n:'إسبانيا',f:'🇪🇸'},{n:'ألمانيا',f:'🇩🇪'},{n:'المملكة المتحدة',f:'🇬🇧'},{n:'الولايات المتحدة',f:'🇺🇸'},
+  {n:'كندا',f:'🇨🇦'},{n:'أستراليا',f:'🇦🇺'},{n:'المالديف',f:'🇲🇻'},{n:'تايلاند',f:'🇹🇭'},
+  {n:'إندونيسيا',f:'🇮🇩'},{n:'ماليزيا',f:'🇲🇾'},{n:'سنغافورة',f:'🇸🇬'},{n:'الهند',f:'🇮🇳'},
+  {n:'الصين',f:'🇨🇳'},{n:'كوريا الجنوبية',f:'🇰🇷'},{n:'مصر',f:'🇪🇬'},{n:'المغرب',f:'🇲🇦'},
+  {n:'كينيا',f:'🇰🇪'},{n:'جورجيا',f:'🇬🇪'},{n:'اليونان',f:'🇬🇷'},{n:'البرتغال',f:'🇵🇹'},
+  {n:'هولندا',f:'🇳🇱'},{n:'سويسرا',f:'🇨🇭'},{n:'النمسا',f:'🇦🇹'},{n:'البرازيل',f:'🇧🇷'},
+  {n:'الأرجنتين',f:'🇦🇷'},{n:'المكسيك',f:'🇲🇽'},{n:'أوزبكستان',f:'🇺🇿'},{n:'أذربيجان',f:'🇦🇿'},
+];
+
+let currentUser=null, profile=null, selCountries=[], myLikes=new Set(), imgFiles=[], currentTab='posts';
+
+// ══ INIT ══
 async function init(){
   const{data:{session}}=await sb.auth.getSession();
-  document.getElementById('loadingScreen').classList.add('hide');
   if(!session){
+    document.getElementById('loading').classList.add('hide');
     document.getElementById('notLogged').classList.add('show');
     return;
   }
   currentUser=session.user;
-  await loadProfile();
+
+  const{data:p}=await sb.from('profiles').select('*').eq('id',currentUser.id).single();
+  profile=p||{};
+  selCountries=profile.visited_countries||[];
+
+  renderProfile();
+
+  // جلب الإعجابات
+  const{data:likes}=await sb.from('post_likes').select('post_id').eq('user_id',currentUser.id);
+  if(likes) likes.forEach(l=>myLikes.add(l.post_id));
+
+  await loadPosts();
+  await loadTrips();
+  await loadReviews();
+
+  document.getElementById('loading').classList.add('hide');
   document.getElementById('mainContent').style.display='block';
-  document.getElementById('viewPublicBtn').href=`user.html?id=${currentUser.id}`;
+  document.getElementById('editNavBtn').style.display='block';
+  document.getElementById('coverEditBtn').classList.add('show');
 }
 
-// ── LOAD PROFILE ──
-async function loadProfile(){
-  const{data:profile}=await sb.from('profiles').select('*').eq('id',currentUser.id).single();
-  currentProfile=profile||{};
-  selectedCountries=profile?.visited_countries||[];
-
-  // Avatar
-  const name=profile?.full_name||currentUser.email;
+// ══ RENDER PROFILE ══
+function renderProfile(){
+  const name=profile?.full_name||'مستخدم رِحلة';
   const initials=name.split(' ').map(w=>w[0]).join('').substring(0,2);
+  const grad=GRADS[currentUser.id.charCodeAt(0)%GRADS.length];
+
+  document.getElementById('coverBg').style.background=grad;
+  document.getElementById('avatarEl').style.background=grad;
   document.getElementById('avatarEl').textContent=initials;
+  document.getElementById('profileName').textContent=name;
 
-  // Info
-  document.getElementById('profileName').textContent=profile?.full_name||'مستخدم رِحلة';
-  document.getElementById('profileEmail').textContent=currentUser.email;
-
-  // Type
   const typeEl=document.getElementById('profileType');
   if(profile?.account_type==='agent'){
-    typeEl.className='profile-type type-agent';
-    typeEl.textContent='🤝 مساعد سفريات';
+    typeEl.className='profile-type ta';typeEl.textContent='🤝 مساعد سفريات';
   }else{
-    typeEl.className='profile-type type-traveler';
-    typeEl.textContent='✈️ مسافر';
+    typeEl.className='profile-type tt';typeEl.textContent='✈️ مسافر';
   }
 
-  // Bio
-  const bioEl=document.getElementById('profileBio');
-  if(profile?.bio){bioEl.textContent=profile.bio;bioEl.classList.remove('empty');}
-  else{bioEl.textContent='أضف نبذة عنك لتعريف المسافرين بنفسك...';bioEl.classList.add('empty');}
+  if(profile?.bio){
+    document.getElementById('profileBio').textContent=profile.bio;
+    document.getElementById('profileBio').style.display='block';
+  }
 
-  // Meta
   document.getElementById('profileCountry').textContent=profile?.country||'الكويت';
   const joined=new Date(currentUser.created_at);
   document.getElementById('profileJoined').textContent=`عضو منذ ${joined.toLocaleDateString('ar-KW',{year:'numeric',month:'long'})}`;
 
-  // Stats
-  document.getElementById('statCountries').textContent=toArabicNum(selectedCountries.length);
-  document.getElementById('statTrips').textContent=toArabicNum(0);
-  document.getElementById('statRating').textContent='—';
-
-  // Countries
-  renderCountriesGrid();
+  // دول
+  renderFlags();
+  document.getElementById('statCountries').textContent=toAr(selCountries.length);
 }
 
-// ── RENDER COUNTRIES ──
-function renderCountriesGrid(){
-  const grid=document.getElementById('countriesGrid');
-  if(selectedCountries.length===0){
-    grid.innerHTML='<div class="empty-countries">لم تضف أي دولة بعد — اضغط + إضافة</div>';
+// ══ FLAGS ══
+function renderFlags(){
+  const wrap=document.getElementById('flagsWrap');
+  const tags=selCountries.map(c=>{
+    const found=ALL_COUNTRIES.find(x=>x.n===c);
+    return`<span class="flag-tag">${found?found.f:''} ${c}</span>`;
+  }).join('');
+  wrap.innerHTML=tags+`<button class="add-country" onclick="openCountriesModal()">+ إضافة</button>`;
+}
+
+// ══ LOAD POSTS ══
+async function loadPosts(){
+  const{data}=await sb.from('posts').select('*').eq('user_id',currentUser.id).order('created_at',{ascending:false});
+  document.getElementById('statPosts').textContent=toAr(data?.length||0);
+  const wrap=document.getElementById('postsWrap');
+  if(!data||data.length===0){
+    wrap.innerHTML=`<div class="empty"><div class="ei">📸</div><h3>لا توجد منشورات بعد</h3><p>شارك تجارب رحلاتك مع المجتمع</p></div>`;
     return;
   }
-  grid.innerHTML=selectedCountries.map(c=>{
-    const found=ALL_COUNTRIES.find(x=>x.name===c);
-    return`<div class="country-tag">${found?found.flag:''} ${c}</div>`;
-  }).join('')+`<div class="country-tag add" onclick="openCountriesModal()">+ إضافة</div>`;
-}
-
-// ── EDIT MODAL ──
-function openEditModal(){
-  document.getElementById('editName').value=currentProfile?.full_name||'';
-  document.getElementById('editBio').value=currentProfile?.bio||'';
-  document.getElementById('editCountry').value=currentProfile?.country||'الكويت';
-  document.getElementById('editModal').classList.add('open');
-}
-function closeEditModal(e){
-  if(e.target===document.getElementById('editModal')) document.getElementById('editModal').classList.remove('open');
-}
-
-// ── SAVE PROFILE ──
-async function saveProfile(){
-  const btn=document.getElementById('saveBtn');
-  btn.classList.add('loading');btn.disabled=true;
-  const name=document.getElementById('editName').value.trim();
-  const bio=document.getElementById('editBio').value.trim();
-  const country=document.getElementById('editCountry').value;
-  const{error}=await sb.from('profiles').upsert({
-    id:currentUser.id,full_name:name,bio,country,
-    account_type:currentProfile?.account_type||'traveler'
-  });
-  btn.classList.remove('loading');btn.disabled=false;
-  if(error){showToast('❌ حدث خطأ — حاول مجدداً');return;}
-  document.getElementById('editModal').classList.remove('open');
-  await loadProfile();
-  showToast('✅ تم حفظ التغييرات بنجاح!');
-}
-
-// ── COUNTRIES MODAL ──
-function openCountriesModal(){
-  renderCountriesList('');
-  document.getElementById('countriesModal').classList.add('open');
-}
-function closeCountriesModal(e){
-  if(e.target===document.getElementById('countriesModal')) document.getElementById('countriesModal').classList.remove('open');
-}
-function filterCountries(q){renderCountriesList(q);}
-function renderCountriesList(q){
-  const filtered=ALL_COUNTRIES.filter(c=>c.name.includes(q)||!q);
-  document.getElementById('countriesList').innerHTML=filtered.map(c=>{
-    const sel=selectedCountries.includes(c.name);
-    return`<div class="country-opt ${sel?'selected':''}" onclick="toggleCountry('${c.name}',this)">
-      <span class="co-name">${c.flag} ${c.name}</span>
-      <span class="co-check">✓</span>
+  wrap.innerHTML=data.map(p=>{
+    const imgs=p.images||[];
+    let imgHtml=imgs.length===0
+      ?`<div class="post-no-img">🌍</div>`
+      :imgs.length===1
+        ?`<img class="post-img-single" src="${imgs[0]}" loading="lazy">`
+        :`<div class="post-img-grid">${imgs.slice(0,4).map(i=>`<img src="${i}" loading="lazy">`).join('')}</div>`;
+    const liked=myLikes.has(p.id);
+    const dt=new Date(p.created_at).toLocaleDateString('ar-KW',{day:'numeric',month:'long',year:'numeric'});
+    return`<div class="post-card">
+      ${imgHtml}
+      <div class="post-body">
+        ${p.destination?`<div class="post-dest">📍 ${p.destination}</div>`:''}
+        <div class="post-title">${p.title}</div>
+        ${p.content?`<div class="post-text">${p.content}</div>`:''}
+        <div class="post-foot">
+          <div class="post-time">${dt}</div>
+          <button class="like-btn ${liked?'liked':''}" id="lk-${p.id}" onclick="toggleLike('${p.id}',${p.likes||0})">
+            ${liked?'❤️':'🤍'} ${toAr(p.likes||0)}
+          </button>
+        </div>
+      </div>
     </div>`;
   }).join('');
 }
-function toggleCountry(name,el){
-  if(selectedCountries.includes(name)){
-    selectedCountries=selectedCountries.filter(c=>c!==name);
-    el.classList.remove('selected');
-  }else{
-    selectedCountries.push(name);
-    el.classList.add('selected');
+
+// ══ LOAD TRIPS ══
+async function loadTrips(){
+  const{data}=await sb.from('trips').select('*').eq('user_id',currentUser.id).order('created_at',{ascending:false});
+  document.getElementById('statTrips').textContent=toAr(data?.length||0);
+  const wrap=document.getElementById('tripsWrap');
+  if(!data||data.length===0){
+    wrap.innerHTML=`<div class="empty"><div class="ei">✈️</div><h3>لا توجد رحلات</h3><p>انشر رحلتك الأولى!</p></div>`;
+    return;
   }
-}
-async function saveCountries(){
-  const{error}=await sb.from('profiles').upsert({
-    id:currentUser.id,visited_countries:selectedCountries,
-    account_type:currentProfile?.account_type||'traveler'
-  });
-  if(error){showToast('❌ حدث خطأ');return;}
-  document.getElementById('countriesModal').classList.remove('open');
-  document.getElementById('statCountries').textContent=toArabicNum(selectedCountries.length);
-  renderCountriesGrid();
-  showToast(`✅ تم حفظ ${toArabicNum(selectedCountries.length)} دول!`);
+  wrap.innerHTML=data.map(t=>{
+    const dt=new Date(t.date).toLocaleDateString('ar-KW',{day:'numeric',month:'long'});
+    const left=(t.seats||5)-(t.seats_taken||0);
+    const sc=left<=2?'background:rgba(229,57,53,0.15);color:#ff6b6b':'background:rgba(0,201,177,0.12);color:var(--tl)';
+    return`<div class="trip-card" onclick="window.location.href='trip.html?id=${t.id}'">
+      <div class="trip-emoji">${t.emoji||'✈️'}</div>
+      <div class="trip-info">
+        <div class="trip-name">${t.title}</div>
+        <div class="trip-meta">📅 ${dt} · ${t.country}</div>
+      </div>
+      <span class="trip-seats" style="${sc}">${toAr(left)} أماكن</span>
+    </div>`;
+  }).join('');
 }
 
-// ── LOGOUT ──
+// ══ LOAD REVIEWS ══
+async function loadReviews(){
+  const{data}=await sb.from('reviews').select('*').eq('target_id',currentUser.id).order('created_at',{ascending:false});
+  if(data&&data.length>0){
+    const avg=data.reduce((s,r)=>s+r.rating,0)/data.length;
+    document.getElementById('statRating').textContent=avg.toFixed(1)+'⭐';
+  }
+  const wrap=document.getElementById('reviewsWrap');
+  if(!data||data.length===0){
+    wrap.innerHTML=`<div class="empty"><div class="ei">⭐</div><h3>لا توجد تقييمات بعد</h3><p>التقييمات تظهر هنا بعد سفرك مع الآخرين</p></div>`;
+    return;
+  }
+  wrap.innerHTML=data.map(r=>{
+    const dt=new Date(r.created_at).toLocaleDateString('ar-KW',{month:'long',year:'numeric'});
+    return`<div class="rev-card">
+      <div class="rev-head">
+        <div class="rev-av">👤</div>
+        <div class="rev-info"><strong>مسافر</strong><span>${dt}</span></div>
+        <div class="rev-stars">${'⭐'.repeat(r.rating)}</div>
+      </div>
+      ${r.comment?`<div class="rev-text">${r.comment}</div>`:''}
+    </div>`;
+  }).join('');
+}
+
+// ══ LIKE ══
+async function toggleLike(postId,cur){
+  if(!currentUser){showToast('سجّل دخولك للإعجاب');return;}
+  const btn=document.getElementById(`lk-${postId}`);
+  const liked=myLikes.has(postId);
+  if(liked){
+    myLikes.delete(postId);
+    await sb.from('post_likes').delete().eq('post_id',postId).eq('user_id',currentUser.id);
+    await sb.from('posts').update({likes:Math.max(0,cur-1)}).eq('id',postId);
+    btn.className='like-btn';btn.innerHTML=`🤍 ${toAr(Math.max(0,cur-1))}`;
+  }else{
+    myLikes.add(postId);
+    await sb.from('post_likes').insert({post_id:postId,user_id:currentUser.id});
+    await sb.from('posts').update({likes:cur+1}).eq('id',postId);
+    btn.className='like-btn liked';btn.innerHTML=`❤️ ${toAr(cur+1)}`;
+  }
+}
+
+// ══ EDIT PROFILE ══
+function openEditModal(){
+  document.getElementById('editName').value=profile?.full_name||'';
+  document.getElementById('editBio').value=profile?.bio||'';
+  document.getElementById('editCountry').value=profile?.country||'🇰🇼 الكويت';
+  document.getElementById('editOverlay').classList.add('open');
+}
+
+async function saveProfile(){
+  const btn=document.getElementById('saveEditBtn');
+  btn.disabled=true;btn.textContent='جاري الحفظ...';
+  const name=document.getElementById('editName').value.trim();
+  const bio=document.getElementById('editBio').value.trim();
+  const country=document.getElementById('editCountry').value.replace(/🇰🇼|🇸🇦|🇦🇪|🇶🇦|🇧🇭|🇴🇲|🇯🇴|🇪🇬|🌍/g,'').trim();
+  const{error}=await sb.from('profiles').upsert({
+    id:currentUser.id,full_name:name,bio,country,
+    account_type:profile?.account_type||'traveler'
+  });
+  btn.disabled=false;btn.textContent='حفظ التغييرات ✓';
+  if(error){showToast('❌ '+error.message);return;}
+  profile={...profile,full_name:name,bio,country};
+  renderProfile();
+  document.getElementById('editOverlay').classList.remove('open');
+  showToast('✅ تم حفظ التغييرات!');
+}
+
+// ══ POST ══
+function openPostModal(){document.getElementById('postOverlay').classList.add('open');}
+
+function previewImgs(input){
+  imgFiles=Array.from(input.files).slice(0,4);
+  document.getElementById('imgPreview').innerHTML=imgFiles.map((f,i)=>{
+    const url=URL.createObjectURL(f);
+    return`<div class="img-prev-item"><img src="${url}"><button onclick="removeImg(${i})">✕</button></div>`;
+  }).join('');
+}
+
+function removeImg(idx){
+  imgFiles.splice(idx,1);
+  document.getElementById('imgPreview').innerHTML=imgFiles.map((f,i)=>{
+    const url=URL.createObjectURL(f);
+    return`<div class="img-prev-item"><img src="${url}"><button onclick="removeImg(${i})">✕</button></div>`;
+  }).join('');
+}
+
+async function submitPost(){
+  const title=document.getElementById('postTitle').value.trim();
+  const dest=document.getElementById('postDest').value.trim();
+  const content=document.getElementById('postContent').value.trim();
+  if(!title){showToast('⚠️ أدخل عنوان المنشور');return;}
+  const btn=document.getElementById('postBtn');
+  btn.disabled=true;btn.textContent='جاري النشر...';
+
+  let urls=[];
+  for(const file of imgFiles){
+    const ext=file.name.split('.').pop();
+    const path=`${currentUser.id}/${Date.now()}.${ext}`;
+    const{data,error}=await sb.storage.from('posts').upload(path,file,{upsert:true});
+    if(!error){
+      const{data:u}=sb.storage.from('posts').getPublicUrl(path);
+      urls.push(u.publicUrl);
+    }
+  }
+
+  const{error}=await sb.from('posts').insert({
+    user_id:currentUser.id,title,destination:dest,content,images:urls,likes:0
+  });
+  btn.disabled=false;btn.textContent='🚀 نشر المنشور';
+  if(error){showToast('❌ '+error.message);return;}
+
+  document.getElementById('postOverlay').classList.remove('open');
+  document.getElementById('postTitle').value='';
+  document.getElementById('postDest').value='';
+  document.getElementById('postContent').value='';
+  document.getElementById('imgPreview').innerHTML='';
+  imgFiles=[];
+  showToast('🎉 تم نشر منشورك!');
+  await loadPosts();
+}
+
+// ══ COUNTRIES ══
+function openCountriesModal(){
+  renderCountriesList('');
+  document.getElementById('countriesOverlay').classList.add('open');
+}
+
+function filterCountries(q){renderCountriesList(q);}
+
+function renderCountriesList(q){
+  const fl=ALL_COUNTRIES.filter(c=>!q||c.n.includes(q));
+  document.getElementById('countriesList').innerHTML=fl.map(c=>{
+    const sel=selCountries.includes(c.n);
+    return`<div class="country-opt ${sel?'sel':''}" onclick="toggleCountry('${c.n}',this)">
+      <span class="cn">${c.f} ${c.n}</span>
+      <span class="ck">✓</span>
+    </div>`;
+  }).join('');
+}
+
+function toggleCountry(name,el){
+  if(selCountries.includes(name)){selCountries=selCountries.filter(c=>c!==name);el.classList.remove('sel');}
+  else{selCountries.push(name);el.classList.add('sel');}
+}
+
+async function saveCountries(){
+  const{error}=await sb.from('profiles').upsert({
+    id:currentUser.id,visited_countries:selCountries,
+    account_type:profile?.account_type||'traveler'
+  });
+  if(error){showToast('❌ '+error.message);return;}
+  document.getElementById('countriesOverlay').classList.remove('open');
+  profile={...profile,visited_countries:selCountries};
+  renderFlags();
+  document.getElementById('statCountries').textContent=toAr(selCountries.length);
+  showToast(`✅ تم حفظ ${toAr(selCountries.length)} دول!`);
+}
+
+// ══ TABS ══
+function setTab(tab,el){
+  currentTab=tab;
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('postsWrap').style.display=tab==='posts'?'block':'none';
+  document.getElementById('tripsWrap').style.display=tab==='trips'?'flex':'none';
+  document.getElementById('reviewsWrap').style.display=tab==='reviews'?'flex':'none';
+}
+
+// ══ LOGOUT ══
 async function doLogout(){
   await sb.auth.signOut();
   showToast('👋 تم تسجيل الخروج');
   setTimeout(()=>window.location.href='index.html',1500);
 }
 
-// ── HELPERS ──
-function toArabicNum(n){
-  return n.toString().replace(/\d/g,d=>'٠١٢٣٤٥٦٧٨٩'[d]);
+// ══ HELPERS ══
+function closeOverlay(id,e){
+  if(e.target===document.getElementById(id))
+    document.getElementById(id).classList.remove('open');
 }
+
+function toAr(n){return n.toString().replace(/\d/g,d=>'٠١٢٣٤٥٦٧٨٩'[d]);}
+
 function showToast(msg){
   const t=document.getElementById('toast');
   t.textContent=msg;t.classList.add('show');
   setTimeout(()=>t.classList.remove('show'),3500);
 }
-
-// ── ADD COLUMN IF NEEDED (Supabase) ──
-// تأكد من إضافة عمود visited_countries في Supabase
 
 init();
 </script>
