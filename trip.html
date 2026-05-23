@@ -127,8 +127,8 @@ body{font-family:'Tajawal',sans-serif;background:var(--dk);color:white;min-heigh
 </div>
 
 <nav class="topnav">
-  <a href="index.html" class="nav-logo">Rihla</a>
-  <a href="index.html" class="nav-back">← الرحلات</a>
+  <a href="/rihla/" class="nav-logo">Rihla</a>
+  <a href="/rihla/" class="nav-back">← الرحلات</a>
 </nav>
 
 <div id="mainContent" style="display:none">
@@ -167,6 +167,18 @@ body{font-family:'Tajawal',sans-serif;background:var(--dk);color:white;min-heigh
       <div id="requestsList"></div>
     </div>
 
+    <!-- زر الدردشة -->
+    <a href="#" id="chatBtn" style="display:none;text-decoration:none;margin-bottom:24px">
+      <div style="background:linear-gradient(135deg,rgba(0,201,177,0.15),rgba(0,201,177,0.05));border:1px solid rgba(0,201,177,0.25);border-radius:18px;padding:16px 20px;display:flex;align-items:center;gap:14px;transition:all .2s;">
+        <span style="font-size:32px">💬</span>
+        <div style="flex:1">
+          <div style="font-size:15px;font-weight:800;margin-bottom:3px">دردشة المجموعة</div>
+          <div style="font-size:12px;color:var(--muted)">تحدث مع أعضاء الرحلة</div>
+        </div>
+        <span style="color:var(--tl);font-size:16px">←</span>
+      </div>
+    </a>
+
     <!-- يظهر حسب الحالة -->
     <div id="actionArea"></div>
   </div>
@@ -174,9 +186,9 @@ body{font-family:'Tajawal',sans-serif;background:var(--dk);color:white;min-heigh
 
 <!-- BOTTOM NAV -->
 <nav class="botnav">
-  <button class="bnav-item" onclick="window.location.href='index.html'"><div class="bni">🏠</div><div class="bnl">الرئيسية</div></button>
-  <button class="bnav-item" onclick="window.location.href='index.html#trips'"><div class="bni">✈️</div><div class="bnl">الرحلات</div></button>
-  <button class="bnav-item" onclick="window.location.href='index.html#agents'"><div class="bni">🤝</div><div class="bnl">المساعدون</div></button>
+  <button class="bnav-item" onclick="window.location.href='/rihla/'"><div class="bni">🏠</div><div class="bnl">الرئيسية</div></button>
+  <button class="bnav-item" onclick="window.location.href='/rihla/#trips'"><div class="bni">✈️</div><div class="bnl">الرحلات</div></button>
+  <button class="bnav-item" onclick="window.location.href='/rihla/#agents'"><div class="bni">🤝</div><div class="bnl">المساعدون</div></button>
   <button class="bnav-item" onclick="goToProfile()"><div class="bni">👤</div><div class="bnl">حسابي</div></button>
 </nav>
 
@@ -282,6 +294,17 @@ function renderTrip(){
 
   // Action area
   renderActionArea(seatsLeft);
+
+  // إظهار زر الدردشة للمنظم أو الأعضاء المقبولين
+  const chatBtn=document.getElementById('chatBtn');
+  if(currentUser){
+    const isOwner=currentUser.id===trip.user_id;
+    const isAccepted=myRequest?.status==='accepted';
+    if(isOwner||isAccepted){
+      chatBtn.href=`chat.html?id=${trip.id}`;
+      chatBtn.style.display='block';
+    }
+  }
 }
 
 // ── ACTION AREA ──
@@ -435,7 +458,7 @@ async function updateRequest(reqId, status){
 
 async function goToProfile(){
   const{data:{session}}=await sb.auth.getSession();
-  window.location.href=session?'profile.html':'auth.html';
+  window.location.href=session?'/rihla/profile.html':'/rihla/auth.html';
 }
 
 function showToast(msg){
