@@ -230,22 +230,18 @@ body { font-family: 'Tajawal', sans-serif; background: var(--dk); color: white; 
 
 <!-- BOTTOM NAV -->
 <nav class="botnav">
-  <a href="index.html" style="display:flex;flex-direction:column;align-items:center;gap:4px;flex:1;text-decoration:none;padding:8px 0;">
-    <span style="font-size:22px">🏠</span>
-    <span style="font-size:11px;font-weight:700;color:var(--or)">الرئيسية</span>
-  </a>
-  <a href="trips.html" style="display:flex;flex-direction:column;align-items:center;gap:4px;flex:1;text-decoration:none;padding:8px 0;">
-    <span style="font-size:22px">✈️</span>
-    <span style="font-size:11px;font-weight:700;color:var(--muted)">الرحلات</span>
-  </a>
-  <a href="agents.html" style="display:flex;flex-direction:column;align-items:center;gap:4px;flex:1;text-decoration:none;padding:8px 0;">
-    <span style="font-size:22px">🤝</span>
-    <span style="font-size:11px;font-weight:700;color:var(--muted)">المساعدون</span>
-  </a>
-  <a href="profile.html" style="display:flex;flex-direction:column;align-items:center;gap:4px;flex:1;text-decoration:none;padding:8px 0;">
-    <span style="font-size:22px">👤</span>
-    <span style="font-size:11px;font-weight:700;color:var(--muted)">حسابي</span>
-  </a>
+  <button class="bnav-item active" id="tab-home" onclick="setTab('home'); window.scrollTo({top:0,behavior:'smooth'})">
+    <div class="bni">🏠</div><div class="bnl">الرئيسية</div>
+  </button>
+  <button class="bnav-item" id="tab-trips" onclick="setTab('trips'); document.getElementById('trips').scrollIntoView({behavior:'smooth'})">
+    <div class="bni">✈️</div><div class="bnl">الرحلات</div>
+  </button>
+  <button class="bnav-item" id="tab-agents" onclick="setTab('agents'); document.getElementById('agents').scrollIntoView({behavior:'smooth'})">
+    <div class="bni">🤝</div><div class="bnl">المساعدون</div>
+  </button>
+  <button class="bnav-item" id="tab-profile" onclick="goToProfile()">
+    <div class="bni">👤</div><div class="bnl">حسابي</div>
+  </button>
 </nav>
 
 <div class="toast" id="toast"></div>
@@ -437,16 +433,6 @@ async function checkSession() {
       <span style="font-size:13px;color:rgba(255,255,255,0.6);font-weight:600">مرحباً 👋</span>
       <button class="nav-btn nav-btn-primary" onclick="window.location.href='profile.html'">ملفي الشخصي</button>
     `;
-    // جلب عدد الإشعارات غير المقروءة
-    const { count } = await sb
-      .from('notifications')
-      .select('*', { count: 'exact', head: true })
-      .eq('user_id', session.user.id)
-      .eq('is_read', false);
-    if (count > 0) {
-      const badge = document.getElementById('notifBadge');
-      if(badge){ badge.textContent = count > 9 ? '9+' : count; badge.style.display = 'flex'; }
-    }
   }
 }
 
