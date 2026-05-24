@@ -3,145 +3,145 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>رِحلة — مساعدو السفريات</title>
+<title>رِحلة — مرشدو السفر</title>
 <meta name="theme-color" content="#FF5C1A">
 <link rel="manifest" href="manifest.json">
 <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&family=Righteous&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
-:root{--or:#FF5C1A;--yl:#FFD000;--tl:#00C9B1;--dk:#0E0E0E;--muted:rgba(255,255,255,0.45);--card:rgba(255,255,255,0.05);--border:rgba(255,255,255,0.08);--nav-h:60px;--bot-h:68px;}
+:root{--or:#FF5C1A;--yl:#FFD000;--tl:#00C9B1;--dk:#0E0E0E;--muted:rgba(255,255,255,0.45);--card:rgba(255,255,255,0.05);--border:rgba(255,255,255,0.08);--nav-h:56px;--bot-h:64px;}
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
-body{font-family:'Tajawal',sans-serif;background:var(--dk);color:white;min-height:100vh;padding-bottom:calc(var(--bot-h)+20px);}
+body{font-family:'Tajawal',sans-serif;background:var(--dk);color:white;min-height:100vh;padding-bottom:calc(var(--bot-h)+48px);}
 
 /* NAV */
-
-
-.reg-btn{padding:8px 18px;border-radius:24px;background:var(--tl);color:var(--dk);font-family:'Tajawal',sans-serif;font-size:13px;font-weight:800;border:none;cursor:pointer;}
+.topnav{position:fixed;top:0;width:100%;z-index:1000;height:var(--nav-h);padding:0 16px;display:flex;align-items:center;justify-content:space-between;background:rgba(14,14,14,0.95);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);}
+.nav-logo{font-family:'Righteous',cursive;font-size:22px;background:linear-gradient(90deg,var(--or),var(--yl));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;cursor:pointer;border:none;background-color:transparent;padding:0;}
+.nav-profile-btn{padding:7px 14px;border-radius:20px;background:rgba(255,92,26,0.12);border:1.5px solid rgba(255,92,26,0.25);color:var(--or);font-family:'Tajawal',sans-serif;font-size:12px;font-weight:800;cursor:pointer;white-space:nowrap;}
+.reg-btn{padding:7px 14px;border-radius:20px;background:var(--tl);color:var(--dk);font-family:'Tajawal',sans-serif;font-size:12px;font-weight:800;border:none;cursor:pointer;white-space:nowrap;}
 
 /* MAIN */
-.main{padding:calc(var(--nav-h)+24px) 20px 0;}
-.page-title{font-size:26px;font-weight:900;margin-bottom:6px;}
-.page-sub{font-size:14px;color:var(--muted);margin-bottom:20px;}
+.main{padding:calc(var(--nav-h)+20px) 16px 0;}
+.page-title{font-size:24px;font-weight:900;margin-bottom:4px;}
+.page-sub{font-size:13px;color:var(--muted);margin-bottom:20px;line-height:1.6;}
 
-/* SEARCH */
-.search-box{display:flex;align-items:center;gap:10px;background:var(--card);border:1.5px solid var(--border);border-radius:16px;padding:12px 16px;margin-bottom:16px;}
+/* SEARCH BOX */
+.search-box{display:flex;align-items:center;gap:8px;background:var(--card);border:1.5px solid var(--border);border-radius:14px;padding:11px 14px;margin-bottom:12px;}
 .search-box input{flex:1;background:transparent;border:none;font-family:'Tajawal',sans-serif;font-size:14px;color:white;outline:none;}
 .search-box input::placeholder{color:rgba(255,255,255,0.2);}
 
 /* FILTERS */
-.filter-row{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;margin-bottom:24px;}
-.filter-row::-webkit-scrollbar{display:none;}
-.fchip{white-space:nowrap;padding:8px 16px;border-radius:20px;border:1.5px solid rgba(255,255,255,0.1);background:transparent;font-family:'Tajawal',sans-serif;font-size:12px;font-weight:700;cursor:pointer;color:rgba(255,255,255,0.6);transition:all .2s;}
-.fchip.active,.fchip:hover{background:var(--tl);color:var(--dk);border-color:var(--tl);}
+.filter-section{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:14px;margin-bottom:20px;}
+.filter-row{display:flex;gap:8px;margin-bottom:10px;align-items:center;}
+.filter-row:last-child{margin-bottom:0;}
+.filter-label{font-size:11px;font-weight:800;color:var(--muted);white-space:nowrap;min-width:40px;}
+.filter-chips{display:flex;gap:6px;overflow-x:auto;flex:1;}
+.filter-chips::-webkit-scrollbar{display:none;}
+.fchip{white-space:nowrap;padding:6px 12px;border-radius:16px;border:1.5px solid rgba(255,255,255,0.1);background:transparent;font-family:'Tajawal',sans-serif;font-size:11px;font-weight:700;cursor:pointer;color:rgba(255,255,255,0.6);transition:all .2s;flex-shrink:0;}
+.fchip.active{background:var(--tl);color:var(--dk);border-color:var(--tl);}
+.clear-btn{padding:6px 12px;border-radius:16px;border:1px solid rgba(229,57,53,0.2);background:rgba(229,57,53,0.08);font-family:'Tajawal',sans-serif;font-size:11px;font-weight:700;cursor:pointer;color:#ff6b6b;white-space:nowrap;}
 
-/* GRID */
-.agents-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;}
+/* RESULTS COUNT */
+.results-count{font-size:12px;color:var(--muted);margin-bottom:14px;display:flex;align-items:center;gap:6px;}
+.results-count strong{color:white;}
 
-/* CARD */
-.acard{background:var(--card);border:1px solid var(--border);border-radius:20px;overflow:hidden;transition:all .3s;cursor:pointer;}
+/* AGENTS GRID */
+.agents-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px;}
+
+/* AGENT CARD */
+.acard{background:var(--card);border:1px solid var(--border);border-radius:20px;overflow:hidden;cursor:pointer;transition:all .3s;}
 .acard:hover{transform:translateY(-5px);border-color:var(--tl);box-shadow:0 14px 36px rgba(0,201,177,0.1);}
-.acard-cover{height:72px;position:relative;}
-.acard-av{position:absolute;bottom:-22px;right:16px;width:48px;height:48px;border-radius:14px;border:3px solid var(--dk);display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:900;}
+.acard-cover{height:70px;position:relative;}
+.acard-av{position:absolute;bottom:-22px;right:14px;width:48px;height:48px;border-radius:14px;border:3px solid var(--dk);display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:900;}
 .verified{position:absolute;top:8px;left:8px;background:rgba(0,201,177,0.9);color:var(--dk);padding:2px 8px;border-radius:8px;font-size:10px;font-weight:800;}
-.acard-body{padding:30px 16px 16px;}
-.acard-name{font-size:16px;font-weight:900;margin-bottom:4px;}
-.acard-rating{display:flex;align-items:center;gap:6px;margin-bottom:8px;}
-.stars{color:var(--yl);font-size:13px;}
+.acard-body{padding:28px 14px 14px;}
+.acard-name{font-size:15px;font-weight:900;margin-bottom:3px;}
+.acard-location{font-size:11px;color:var(--tl);margin-bottom:6px;display:flex;align-items:center;gap:4px;}
+.acard-rating{display:flex;align-items:center;gap:5px;margin-bottom:8px;}
+.stars{color:var(--yl);font-size:12px;}
 .rnum{font-size:12px;font-weight:700;}
-.rcnt{font-size:11px;color:var(--muted);}
-.acard-bio{font-size:12px;color:var(--muted);line-height:1.6;margin-bottom:12px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
-.acard-svcs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px;}
-.svc{padding:4px 10px;border-radius:9px;background:rgba(0,201,177,0.1);color:var(--tl);font-size:11px;font-weight:700;}
+.rcnt{font-size:10px;color:var(--muted);}
+.acard-bio{font-size:12px;color:var(--muted);line-height:1.6;margin-bottom:10px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+.acard-svcs{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:12px;}
+.svc{padding:3px 9px;border-radius:8px;background:rgba(0,201,177,0.1);color:var(--tl);font-size:10px;font-weight:700;}
 .acard-foot{display:flex;gap:8px;}
-.contact-btn{flex:1;padding:10px;border-radius:12px;background:var(--tl);color:var(--dk);border:none;font-family:'Tajawal',sans-serif;font-size:13px;font-weight:800;cursor:pointer;}
-.rate-btn{padding:10px 12px;border-radius:12px;background:rgba(255,208,0,0.1);color:var(--yl);border:1px solid rgba(255,208,0,0.2);font-family:'Tajawal',sans-serif;font-size:12px;font-weight:800;cursor:pointer;}
+.contact-btn{flex:1;padding:9px;border-radius:11px;background:var(--tl);color:var(--dk);border:none;font-family:'Tajawal',sans-serif;font-size:12px;font-weight:800;cursor:pointer;}
+.rate-btn{padding:9px 12px;border-radius:11px;background:rgba(255,208,0,0.1);color:var(--yl);border:1px solid rgba(255,208,0,0.2);font-family:'Tajawal',sans-serif;font-size:12px;font-weight:800;cursor:pointer;}
 
 /* EMPTY */
-.empty{text-align:center;padding:60px 20px;grid-column:1/-1;}
-.empty .ei{font-size:52px;margin-bottom:14px;}
-.empty h3{font-size:18px;font-weight:800;margin-bottom:8px;}
+.empty{text-align:center;padding:48px 16px;grid-column:1/-1;}
+.empty .ei{font-size:48px;margin-bottom:12px;}
+.empty h3{font-size:17px;font-weight:800;margin-bottom:7px;}
 .empty p{font-size:13px;color:var(--muted);}
 
-/* MODAL */
-.overlay{position:fixed;inset:0;z-index:2000;background:rgba(0,0,0,0.75);backdrop-filter:blur(8px);display:flex;align-items:flex-end;justify-content:center;opacity:0;pointer-events:none;transition:opacity .3s;}
+/* OVERLAYS */
+.overlay{position:fixed;inset:0;z-index:2000;background:rgba(0,0,0,0.8);backdrop-filter:blur(8px);display:flex;align-items:flex-end;justify-content:center;opacity:0;pointer-events:none;transition:opacity .3s;}
 .overlay.open{opacity:1;pointer-events:all;}
-.sheet{background:#161616;border-radius:24px 24px 0 0;width:100%;max-width:520px;max-height:88vh;overflow-y:auto;transform:translateY(100%);transition:transform .4s cubic-bezier(.34,1.2,.64,1);}
+.sheet{background:#161616;border-radius:22px 22px 0 0;width:100%;max-width:520px;max-height:90vh;overflow-y:auto;transform:translateY(100%);transition:transform .4s cubic-bezier(.34,1.2,.64,1);}
 .overlay.open .sheet{transform:translateY(0);}
 .sheet::-webkit-scrollbar{display:none;}
-.handle{width:36px;height:4px;border-radius:2px;background:rgba(255,255,255,0.12);margin:14px auto;}
-.sheet-body{padding:0 20px 32px;}
-.sheet-title{font-size:20px;font-weight:900;margin-bottom:4px;}
-.sheet-sub{font-size:13px;color:var(--muted);margin-bottom:22px;}
+.handle{width:36px;height:4px;border-radius:2px;background:rgba(255,255,255,0.1);margin:12px auto;}
+.sheet-body{padding:0 18px 28px;}
+.sheet-title{font-size:19px;font-weight:900;margin-bottom:6px;}
+.sheet-sub{font-size:13px;color:var(--muted);margin-bottom:18px;}
 
-/* AGENT DETAIL */
-.detail-cover{height:100px;border-radius:16px;margin-bottom:36px;position:relative;}
-.detail-av{position:absolute;bottom:-24px;right:16px;width:56px;height:56px;border-radius:16px;border:3px solid #161616;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:900;}
-.detail-name{font-size:20px;font-weight:900;margin-bottom:6px;}
-.detail-rating{display:flex;align-items:center;gap:8px;margin-bottom:14px;}
-.detail-bio{font-size:14px;color:rgba(255,255,255,0.7);line-height:1.7;margin-bottom:18px;}
-.sec-label{font-size:11px;font-weight:800;letter-spacing:2px;color:var(--muted);margin-bottom:10px;}
-.svcs-wrap{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px;}
-.svc-big{padding:8px 16px;border-radius:12px;background:rgba(0,201,177,0.1);color:var(--tl);font-size:13px;font-weight:700;border:1px solid rgba(0,201,177,0.2);}
-.contact-links{display:flex;flex-direction:column;gap:10px;margin-bottom:18px;}
-.clink{display:flex;align-items:center;gap:12px;padding:14px 16px;background:var(--card);border-radius:14px;border:1px solid var(--border);text-decoration:none;color:white;transition:all .2s;}
-.clink:hover{border-color:var(--tl);}
-.clink .ci{font-size:20px;}
-.clink .ct strong{display:block;font-size:14px;font-weight:800;}
-.clink .ct span{font-size:12px;color:var(--muted);}
-.clink .ca{margin-right:auto;font-size:12px;color:var(--tl);font-weight:700;}
-
-/* REVIEWS */
-.reviews-wrap{display:flex;flex-direction:column;gap:10px;margin-bottom:16px;}
-.rev-item{background:var(--card);border-radius:14px;padding:14px;border:1px solid var(--border);}
+/* DETAIL SHEET */
+.detail-cover{height:100px;border-radius:16px;margin-bottom:32px;position:relative;}
+.detail-av{position:absolute;bottom:-24px;right:14px;width:56px;height:56px;border-radius:16px;border:3px solid #161616;display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:900;}
+.detail-name{font-size:21px;font-weight:900;margin-bottom:4px;}
+.detail-location{font-size:12px;color:var(--tl);margin-bottom:6px;}
+.detail-rating{display:flex;align-items:center;gap:8px;margin-bottom:12px;}
+.detail-bio{font-size:13px;color:rgba(255,255,255,0.7);line-height:1.7;margin-bottom:16px;}
+.sec-lbl{font-size:11px;font-weight:800;color:var(--muted);letter-spacing:1px;margin-bottom:10px;}
+.svcs-wrap{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:16px;}
+.svc-big{padding:7px 14px;border-radius:12px;background:rgba(0,201,177,0.1);color:var(--tl);font-size:12px;font-weight:700;border:1px solid rgba(0,201,177,0.2);}
+.clinks{display:flex;flex-direction:column;gap:8px;margin-bottom:16px;}
+.clink{display:flex;align-items:center;gap:12px;padding:12px 14px;background:var(--card);border-radius:12px;border:1px solid var(--border);text-decoration:none;color:white;}
+.clink .ci{font-size:18px;}
+.clink .ct strong{display:block;font-size:13px;font-weight:800;}
+.clink .ct span{font-size:11px;color:var(--muted);}
+.clink .ca{margin-right:auto;font-size:11px;color:var(--tl);font-weight:700;}
+.revs-wrap{display:flex;flex-direction:column;gap:8px;margin-bottom:16px;}
+.rev-item{background:var(--card);border-radius:12px;padding:12px;border:1px solid var(--border);}
 .rev-head{display:flex;align-items:center;gap:8px;margin-bottom:6px;}
-.rev-av{width:32px;height:32px;border-radius:10px;background:rgba(255,92,26,0.15);display:flex;align-items:center;justify-content:center;font-size:13px;}
-.rev-info strong{font-size:13px;font-weight:800;}
-.rev-info span{font-size:11px;color:var(--muted);}
-.rev-stars{margin-right:auto;color:var(--yl);font-size:13px;}
-.rev-text{font-size:13px;color:rgba(255,255,255,0.65);line-height:1.6;}
-.add-rev-btn{width:100%;padding:12px;border-radius:14px;background:rgba(255,208,0,0.1);color:var(--yl);border:1.5px solid rgba(255,208,0,0.2);font-family:'Tajawal',sans-serif;font-size:14px;font-weight:800;cursor:pointer;margin-bottom:8px;}
+.rev-av{width:30px;height:30px;border-radius:9px;background:rgba(255,92,26,0.15);display:flex;align-items:center;justify-content:center;font-size:13px;}
+.rev-info strong{font-size:12px;font-weight:800;}
+.rev-info span{font-size:10px;color:var(--muted);}
+.rev-stars-s{margin-right:auto;color:var(--yl);font-size:12px;}
+.rev-text{font-size:12px;color:rgba(255,255,255,0.65);line-height:1.6;}
+.add-rev-btn{width:100%;padding:11px;border-radius:12px;background:rgba(255,208,0,0.1);color:var(--yl);border:1.5px solid rgba(255,208,0,0.2);font-family:'Tajawal',sans-serif;font-size:13px;font-weight:800;cursor:pointer;margin-bottom:8px;}
 
-/* FORM */
-.field{margin-bottom:14px;}
-.field label{display:block;font-size:12px;font-weight:800;color:rgba(255,255,255,0.55);margin-bottom:6px;letter-spacing:.5px;}
-.field input,.field textarea,.field select{width:100%;padding:13px 15px;border-radius:13px;border:1.5px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.06);font-family:'Tajawal',sans-serif;font-size:14px;color:white;outline:none;transition:border-color .2s;}
+/* REGISTER FORM */
+.field{margin-bottom:13px;}
+.field label{display:block;font-size:11px;font-weight:800;color:rgba(255,255,255,0.5);margin-bottom:5px;letter-spacing:.5px;}
+.field input,.field textarea,.field select{width:100%;padding:12px 14px;border-radius:12px;border:1.5px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.06);font-family:'Tajawal',sans-serif;font-size:14px;color:white;outline:none;transition:border-color .2s;}
 .field input:focus,.field textarea:focus,.field select:focus{border-color:var(--tl);}
 .field input::placeholder,.field textarea::placeholder{color:rgba(255,255,255,0.2);}
-.field textarea{resize:vertical;min-height:85px;}
+.field textarea{resize:vertical;min-height:80px;}
 .field select option{background:#222;}
-.svcs-check{display:flex;gap:8px;flex-wrap:wrap;}
-.sc{padding:8px 13px;border-radius:11px;border:1.5px solid rgba(255,255,255,0.1);background:transparent;font-family:'Tajawal',sans-serif;font-size:12px;font-weight:700;cursor:pointer;color:rgba(255,255,255,0.55);transition:all .2s;}
+.svcs-check{display:flex;gap:7px;flex-wrap:wrap;}
+.sc{padding:7px 11px;border-radius:10px;border:1.5px solid rgba(255,255,255,0.1);background:transparent;font-family:'Tajawal',sans-serif;font-size:11px;font-weight:700;cursor:pointer;color:rgba(255,255,255,0.55);transition:all .2s;}
 .sc.on{background:rgba(0,201,177,0.15);color:var(--tl);border-color:rgba(0,201,177,0.3);}
-.main-btn{width:100%;padding:14px;border-radius:15px;border:none;font-family:'Tajawal',sans-serif;font-size:16px;font-weight:900;cursor:pointer;transition:all .2s;margin-top:6px;}
-.tl-btn{background:linear-gradient(135deg,var(--tl),#00a896);color:var(--dk);}
-.or-btn{background:linear-gradient(135deg,var(--or),#ff8c42);color:white;}
-.main-btn:disabled{opacity:0.6;cursor:not-allowed;}
+.save-btn{width:100%;padding:13px;border-radius:13px;border:none;font-family:'Tajawal',sans-serif;font-size:15px;font-weight:900;cursor:pointer;margin-top:6px;}
+.sb-tl{background:linear-gradient(135deg,var(--tl),#00a896);color:var(--dk);}
+.sb-or{background:linear-gradient(135deg,var(--or),#ff8c42);color:white;}
+.save-btn:disabled{opacity:0.6;cursor:not-allowed;}
 
-/* STARS */
-.stars-row{display:flex;gap:10px;justify-content:center;margin:14px 0;}
-.sbtn{font-size:34px;cursor:pointer;background:none;border:none;transition:transform .15s;}
+/* STARS RATING */
+.stars-row{display:flex;gap:8px;justify-content:center;margin:12px 0;}
+.sbtn{font-size:32px;cursor:pointer;background:none;border:none;transition:transform .15s;}
 .sbtn:hover,.sbtn.on{transform:scale(1.2);}
-.star-lbl{text-align:center;font-size:13px;color:var(--muted);margin-bottom:14px;}
+.star-lbl{text-align:center;font-size:13px;color:var(--muted);margin-bottom:12px;}
 
 /* BOTTOM NAV */
-
-
-
-
-
-
-/* TOAST */
-.toast{position:fixed;bottom:calc(var(--bot-h)+16px);left:50%;transform:translateX(-50%) translateY(80px);background:#1a1a1a;color:white;padding:12px 22px;border-radius:22px;font-size:13px;font-weight:700;box-shadow:0 8px 24px rgba(0,0,0,0.4);transition:transform .4s cubic-bezier(.34,1.56,.64,1);z-index:9999;border:1px solid rgba(255,255,255,0.08);}
-.toast.show{transform:translateX(-50%) translateY(0);}
-/* ── SHARED NAV ── */
-.topnav{position:fixed;top:0;width:100%;z-index:1000;height:var(--nav-h);padding:0 16px;display:flex;align-items:center;justify-content:space-between;background:rgba(14,14,14,0.95);backdrop-filter:blur(16px);border-bottom:1px solid rgba(255,255,255,0.07);}
-.nav-logo{font-family:'Righteous',cursive;font-size:22px;background:linear-gradient(90deg,#FF5C1A,#FFD000);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;border:none;background-color:transparent;cursor:pointer;padding:0;}
-.nav-profile-btn{padding:7px 16px;border-radius:20px;background:rgba(255,92,26,0.12);border:1.5px solid rgba(255,92,26,0.25);color:#FF5C1A;font-family:'Tajawal',sans-serif;font-size:13px;font-weight:800;cursor:pointer;white-space:nowrap;transition:all .2s;}
-.botnav{position:fixed;bottom:0;width:100%;z-index:1000;height:var(--bot-h);background:rgba(14,14,14,0.97);backdrop-filter:blur(20px);border-top:1px solid rgba(255,255,255,0.07);display:flex;align-items:center;padding-bottom:env(safe-area-inset-bottom);}
-.bitem{display:flex;flex-direction:column;align-items:center;gap:3px;flex:1;text-decoration:none;padding:6px 0;transition:all .2s;}
+.botnav{position:fixed;bottom:0;width:100%;z-index:1000;height:var(--bot-h);background:rgba(14,14,14,0.97);backdrop-filter:blur(20px);border-top:1px solid var(--border);display:flex;align-items:center;}
+.bitem{display:flex;flex-direction:column;align-items:center;gap:3px;flex:1;text-decoration:none;padding:6px 0;}
 .bitem .bi{font-size:20px;line-height:1;}
 .bitem .bl{font-size:10px;font-weight:700;color:rgba(255,255,255,0.4);}
-.bitem.active .bl{color:#FF5C1A;}
+.bitem.active .bl{color:var(--tl);}
+
+/* TOAST */
+.toast{position:fixed;bottom:calc(var(--bot-h)+14px);left:50%;transform:translateX(-50%) translateY(80px);background:#1a1a1a;color:white;padding:11px 20px;border-radius:20px;font-size:13px;font-weight:700;box-shadow:0 8px 24px rgba(0,0,0,0.4);transition:transform .4s cubic-bezier(.34,1.56,.64,1);z-index:9999;border:1px solid rgba(255,255,255,0.08);}
+.toast.show{transform:translateX(-50%) translateY(0);}
 </style>
 </head>
 <body>
@@ -150,33 +150,42 @@ body{font-family:'Tajawal',sans-serif;background:var(--dk);color:white;min-heigh
 <nav class="topnav">
   <button class="nav-logo" onclick="window.location.href='index.html'">Rihla</button>
   <div style="display:flex;gap:8px;align-items:center;">
-    <button class="reg-btn" id="regBtn" onclick="openRegister()">+ سجّل كمساعد</button>
+    <button class="reg-btn" id="regBtn" onclick="openRegister()">🧭 سجّل كمرشد</button>
     <button class="nav-profile-btn" id="navProfileBtn" onclick="goToProfile()">تسجيل دخول 👤</button>
   </div>
 </nav>
 
 <!-- MAIN -->
 <div class="main">
-  <div class="page-title">🤝 مساعدو السفريات</div>
-  <div class="page-sub">محترفون كويتيون يساعدونك في الحجز والتأشيرات</div>
+  <div class="page-title">🧭 مرشدو السفر</div>
+  <div class="page-sub">خبراء محليون يرشدونك في رحلتك — من حجز الطيران إلى المرافقة الشخصية</div>
 
+  <!-- SEARCH -->
   <div class="search-box">
     <span>🔍</span>
-    <input type="text" id="searchInput" placeholder="ابحث عن مساعد..." oninput="applyFilter()">
+    <input type="text" id="searchInput" placeholder="ابحث عن مرشد أو دولة أو مدينة..." oninput="applyFilter()">
   </div>
 
-  <div class="filter-row">
-    <button class="fchip active" onclick="setFilter('الكل',this)">الكل</button>
-    <button class="fchip" onclick="setFilter('تذاكر طيران',this)">✈️ تذاكر</button>
-    <button class="fchip" onclick="setFilter('فنادق',this)">🏨 فنادق</button>
-    <button class="fchip" onclick="setFilter('تأشيرات',this)">📋 تأشيرات</button>
-    <button class="fchip" onclick="setFilter('باقات سفر',this)">🌍 باقات</button>
+  <!-- FILTERS -->
+  <div class="filter-section">
+    <div class="filter-row">
+      <span class="filter-label">🌍 دولة</span>
+      <div class="filter-chips" id="countryChips"></div>
+    </div>
+    <div class="filter-row">
+      <span class="filter-label">🛎️ خدمة</span>
+      <div class="filter-chips" id="serviceChips"></div>
+    </div>
+    <div style="margin-top:10px;text-align:left">
+      <button class="clear-btn" onclick="clearFilters()">✕ مسح الفلاتر</button>
+    </div>
   </div>
 
+  <!-- RESULTS -->
+  <div class="results-count" id="resultsCount"></div>
   <div class="agents-grid" id="grid">
     <div class="empty" style="grid-column:1/-1">
-      <div class="ei">⏳</div>
-      <h3>جاري التحميل...</h3>
+      <div class="ei">⏳</div><h3>جاري التحميل...</h3>
     </div>
   </div>
 </div>
@@ -187,10 +196,10 @@ body{font-family:'Tajawal',sans-serif;background:var(--dk);color:white;min-heigh
   <a href="trips.html" class="bitem"><div class="bi">✈️</div><div class="bl">الرحلات</div></a>
   <a href="destinations.html" class="bitem"><div class="bi">🗺️</div><div class="bl">الوجهات</div></a>
   <a href="flights.html" class="bitem"><div class="bi">🛫</div><div class="bl">طيران</div></a>
-  <a href="agents.html" class="bitem active"><div class="bi">🤝</div><div class="bl">المساعدون</div></a>
+  <a href="agents.html" class="bitem active"><div class="bi">🧭</div><div class="bl">المرشدون</div></a>
 </nav>
 
-<!-- AGENT DETAIL OVERLAY -->
+<!-- DETAIL OVERLAY -->
 <div class="overlay" id="detailOverlay" onclick="closeOverlay('detailOverlay',event)">
   <div class="sheet">
     <div class="handle"></div>
@@ -203,33 +212,40 @@ body{font-family:'Tajawal',sans-serif;background:var(--dk);color:white;min-heigh
   <div class="sheet">
     <div class="handle"></div>
     <div class="sheet-body">
-      <div class="sheet-title">🌟 سجّل كمساعد سفريات</div>
+      <div class="sheet-title">🧭 سجّل كمرشد سفر</div>
       <div class="sheet-sub">أنشئ ملفك واعرض خدماتك لآلاف المسافرين</div>
-      <div class="field"><label>الاسم الكامل</label><input type="text" id="agName" placeholder="اسمك كما تريد أن يظهر"></div>
-      <div class="field"><label>نبذة عنك</label><textarea id="agBio" placeholder="أخبر المسافرين عن خبرتك..."></textarea></div>
+      <div class="field"><label>اسمك الكامل</label><input type="text" id="agName" placeholder="اسمك كما تريد أن يظهر"></div>
+      <div class="field"><label>نبذة عن خبرتك</label><textarea id="agBio" placeholder="أخبر المسافرين عن خبرتك وتخصصك..."></textarea></div>
+      <div class="field">
+        <label>دولة تخصصك</label>
+        <select id="agCountry">
+          <option value="">اختر الدولة</option>
+          <option>تركيا 🇹🇷</option><option>اليابان 🇯🇵</option><option>فرنسا 🇫🇷</option>
+          <option>إيطاليا 🇮🇹</option><option>إسبانيا 🇪🇸</option><option>المالديف 🇲🇻</option>
+          <option>تايلاند 🇹🇭</option><option>إندونيسيا 🇮🇩</option><option>ماليزيا 🇲🇾</option>
+          <option>سنغافورة 🇸🇬</option><option>كوريا الجنوبية 🇰🇷</option><option>الهند 🇮🇳</option>
+          <option>مصر 🇪🇬</option><option>المغرب 🇲🇦</option><option>جورجيا 🇬🇪</option>
+          <option>أوزبكستان 🇺🇿</option><option>الإمارات 🇦🇪</option><option>البحرين 🇧🇭</option>
+          <option>الأردن 🇯🇴</option><option>لبنان 🇱🇧</option><option>أخرى 🌍</option>
+        </select>
+      </div>
+      <div class="field"><label>المدينة أو المنطقة</label><input type="text" id="agCity" placeholder="مثال: إسطنبول، طوكيو، بانكوك..."></div>
       <div class="field">
         <label>الخدمات التي تقدمها</label>
         <div class="svcs-check">
-          <button class="sc" onclick="toggleSvc(this,'تذاكر طيران')">✈️ تذاكر طيران</button>
-          <button class="sc" onclick="toggleSvc(this,'فنادق')">🏨 فنادق</button>
+          <button class="sc" onclick="toggleSvc(this,'حجز طيران')">✈️ حجز طيران</button>
+          <button class="sc" onclick="toggleSvc(this,'حجز فنادق')">🏨 حجز فنادق</button>
           <button class="sc" onclick="toggleSvc(this,'تأشيرات')">📋 تأشيرات</button>
-          <button class="sc" onclick="toggleSvc(this,'باقات سفر')">🌍 باقات سفر</button>
-          <button class="sc" onclick="toggleSvc(this,'رحلات عائلية')">👨‍👩‍👧 رحلات عائلية</button>
-          <button class="sc" onclick="toggleSvc(this,'سياحة طبية')">🏥 سياحة طبية</button>
+          <button class="sc" onclick="toggleSvc(this,'مرشد سياحي')">🏛️ مرشد سياحي</button>
+          <button class="sc" onclick="toggleSvc(this,'مترجم')">🗣️ مترجم</button>
+          <button class="sc" onclick="toggleSvc(this,'سائق خاص')">🚗 سائق خاص</button>
+          <button class="sc" onclick="toggleSvc(this,'مرافق محلي')">🤝 مرافق محلي</button>
+          <button class="sc" onclick="toggleSvc(this,'حجز أنشطة')">🎫 حجز أنشطة</button>
         </div>
       </div>
       <div class="field"><label>واتساب (اختياري)</label><input type="tel" id="agWa" placeholder="+96512345678"></div>
       <div class="field"><label>إنستغرام (اختياري)</label><input type="text" id="agIg" placeholder="@username"></div>
-      <div class="field">
-        <label>سنوات الخبرة</label>
-        <select id="agExp">
-          <option value="1">أقل من سنة</option>
-          <option value="2">١-٢ سنة</option>
-          <option value="3">٣-٥ سنوات</option>
-          <option value="6">أكثر من ٥ سنوات</option>
-        </select>
-      </div>
-      <button class="main-btn tl-btn" id="saveAgBtn" onclick="saveAgent()">🚀 إنشاء الملف</button>
+      <button class="save-btn sb-tl" id="saveAgBtn" onclick="saveAgent()">🚀 إنشاء ملفي كمرشد</button>
     </div>
   </div>
 </div>
@@ -239,7 +255,7 @@ body{font-family:'Tajawal',sans-serif;background:var(--dk);color:white;min-heigh
   <div class="sheet">
     <div class="handle"></div>
     <div class="sheet-body">
-      <div class="sheet-title" style="text-align:center">⭐ أضف تقييمك</div>
+      <div class="sheet-title" style="text-align:center">⭐ قيّم المرشد</div>
       <div class="sheet-sub" style="text-align:center">تقييمك يساعد المسافرين على الاختيار</div>
       <div class="stars-row" id="starsRow">
         <button class="sbtn" onclick="setStar(1)">☆</button>
@@ -248,9 +264,9 @@ body{font-family:'Tajawal',sans-serif;background:var(--dk);color:white;min-heigh
         <button class="sbtn" onclick="setStar(4)">☆</button>
         <button class="sbtn" onclick="setStar(5)">☆</button>
       </div>
-      <div class="star-lbl" id="starLbl">اضغط على النجوم لتقييم</div>
-      <div class="field"><label>تعليقك (اختياري)</label><textarea id="revComment" placeholder="شارك تجربتك مع هذا المساعد..."></textarea></div>
-      <button class="main-btn or-btn" id="saveRevBtn" onclick="saveReview()">إرسال التقييم ⭐</button>
+      <div class="star-lbl" id="starLbl">اضغط على النجوم للتقييم</div>
+      <div class="field"><label>تعليقك (اختياري)</label><textarea id="revComment" placeholder="شارك تجربتك مع هذا المرشد..."></textarea></div>
+      <button class="save-btn sb-or" id="saveRevBtn" onclick="saveReview()">إرسال التقييم ⭐</button>
     </div>
   </div>
 </div>
@@ -258,37 +274,27 @@ body{font-family:'Tajawal',sans-serif;background:var(--dk);color:white;min-heigh
 <div class="toast" id="toast"></div>
 
 <script>
-// ══ SUPABASE ══
 const{createClient}=supabase;
 const sb=createClient(
   'https://ybjdagurvkweabujkeyz.supabase.co',
   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InliamRhZ3Vydmt3ZWFidWprZXl6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkzNjQyMDAsImV4cCI6MjA5NDk0MDIwMH0.CIK7sew_-kBlC_t_szCjKjjnFNg695kwSryuRshQ9nI'
 );
-// ── NAV FUNCTIONS ──
+
+// ── NAV JS ──
 async function goToProfile(){
-  try{
-    const{data:{session}}=await sb.auth.getSession();
-    window.location.href=session?'profile.html':'auth.html';
-  }catch(e){window.location.href='auth.html';}
+  try{const{data:{session}}=await sb.auth.getSession();window.location.href=session?'profile.html':'auth.html';}
+  catch(e){window.location.href='auth.html';}
 }
 async function initNav(){
   try{
     const{data:{session}}=await sb.auth.getSession();
     const btn=document.getElementById('navProfileBtn');
-    if(!btn) return;
-    if(session){
-      const{data:p}=await sb.from('profiles').select('full_name').eq('id',session.user.id).single();
-      btn.textContent=(p?.full_name?.split(' ')[0]||'ملفي')+' 👤';
-    }else{
-      btn.textContent='تسجيل دخول 👤';
-    }
-  }catch(e){
-    const btn=document.getElementById('navProfileBtn');
-    if(btn) btn.textContent='تسجيل دخول 👤';
-  }
+    if(!btn||!session) return;
+    const{data:p}=await sb.from('profiles').select('full_name').eq('id',session.user.id).single();
+    btn.textContent=(p?.full_name?.split(' ')[0]||'ملفي')+' 👤';
+  }catch(e){}
 }
 initNav();
-
 
 const COLORS=[
   {bg:'#BBDEFB',tx:'#0D47A1'},{bg:'#F8BBD9',tx:'#880E4F'},
@@ -296,55 +302,109 @@ const COLORS=[
   {bg:'#E1BEE7',tx:'#6A1B9A'},{bg:'#FFF9C4',tx:'#F57F17'},
 ];
 
-let allAgents=[], filtered=[], activeFilter='الكل';
-let currentUser=null, selAgent=null, selStar=0, selSvcs=[];
+const ALL_SERVICES=['حجز طيران','حجز فنادق','تأشيرات','مرشد سياحي','مترجم','سائق خاص','مرافق محلي','حجز أنشطة'];
 
-// ══ INIT ══
+let allAgents=[], filtered=[];
+let currentUser=null, selAgent=null, selStar=0, selSvcs=[];
+let filterCountry='', filterService='';
+
+// ── INIT ──
 async function init(){
   const{data:{session}}=await sb.auth.getSession();
   currentUser=session?.user||null;
   if(currentUser){
-    const{data:ag}=await sb.from('agents').select('id').eq('user_id',currentUser.id).single();
-    if(ag) document.getElementById('regBtn').textContent='✏️ تعديل ملفي';
+    const{data:ag}=await sb.from('agents').select('id').eq('user_id',currentUser.id);
+    if(ag&&ag.length>0) document.getElementById('regBtn').textContent='✏️ تعديل ملفي';
   }
   await fetchAgents();
+  buildFilterChips();
 }
 
-// ══ FETCH ══
+// ── FETCH ──
 async function fetchAgents(){
   const{data,error}=await sb.from('agents').select('*').order('rating_avg',{ascending:false});
-  const grid=document.getElementById('grid');
   if(error){
-    grid.innerHTML=`<div class="empty" style="grid-column:1/-1"><div class="ei">⚠️</div><h3>تعذّر التحميل</h3><p>${error.message}</p></div>`;
+    document.getElementById('grid').innerHTML=`<div class="empty"><div class="ei">⚠️</div><h3>تعذّر التحميل</h3><p>${error.message}</p></div>`;
     return;
   }
   allAgents=data||[];
-  filtered=allAgents;
-  render();
+  applyFilter();
 }
 
-// ══ RENDER ══
+// ── BUILD FILTER CHIPS ──
+function buildFilterChips(){
+  // Countries from agents
+  const countries=[...new Set(allAgents.map(a=>a.specialty_country).filter(Boolean))];
+  const countryChips=document.getElementById('countryChips');
+  countryChips.innerHTML=countries.map(c=>`
+    <button class="fchip" onclick="setCountryFilter('${c}',this)">${c}</button>`).join('');
+
+  // Services
+  const serviceChips=document.getElementById('serviceChips');
+  serviceChips.innerHTML=ALL_SERVICES.map(s=>`
+    <button class="fchip" onclick="setServiceFilter('${s}',this)">${s}</button>`).join('');
+}
+
+function setCountryFilter(val,el){
+  filterCountry=filterCountry===val?'':val;
+  document.querySelectorAll('#countryChips .fchip').forEach(c=>c.classList.remove('active'));
+  if(filterCountry) el.classList.add('active');
+  applyFilter();
+}
+
+function setServiceFilter(val,el){
+  filterService=filterService===val?'':val;
+  document.querySelectorAll('#serviceChips .fchip').forEach(c=>c.classList.remove('active'));
+  if(filterService) el.classList.add('active');
+  applyFilter();
+}
+
+function clearFilters(){
+  filterCountry='';filterService='';
+  document.getElementById('searchInput').value='';
+  document.querySelectorAll('.fchip').forEach(c=>c.classList.remove('active'));
+  applyFilter();
+}
+
+// ── FILTER ──
+function applyFilter(){
+  const q=document.getElementById('searchInput').value.toLowerCase();
+  filtered=allAgents.filter(a=>{
+    const mq=!q||a.full_name?.toLowerCase().includes(q)||a.bio?.toLowerCase().includes(q)||a.specialty_country?.toLowerCase().includes(q)||a.specialty_city?.toLowerCase().includes(q);
+    const mc=!filterCountry||a.specialty_country===filterCountry;
+    const ms=!filterService||(a.services||[]).includes(filterService);
+    return mq&&mc&&ms;
+  });
+  const count=document.getElementById('resultsCount');
+  count.innerHTML=`<strong>${toAr(filtered.length)}</strong> مرشد متاح`;
+  render();
+  buildFilterChips();
+}
+
+// ── RENDER ──
 function render(){
   const grid=document.getElementById('grid');
   if(filtered.length===0){
-    grid.innerHTML=`<div class="empty" style="grid-column:1/-1"><div class="ei">🤝</div><h3>لا يوجد مساعدون بعد</h3><p>كن أول مساعد سفريات في رِحلة!</p></div>`;
+    grid.innerHTML=`<div class="empty"><div class="ei">🧭</div><h3>لا يوجد مرشدون</h3><p>جرب تغيير الفلاتر أو كن أول مرشد في رِحلة!</p></div>`;
     return;
   }
   grid.innerHTML=filtered.map((a,i)=>{
     const c=COLORS[i%COLORS.length];
-    const ini=a.full_name.split(' ').map(w=>w[0]).join('').substring(0,2);
+    const ini=a.full_name?.split(' ').map(w=>w[0]).join('').substring(0,2)||'مر';
     const st='⭐'.repeat(Math.round(a.rating_avg||0))||'☆☆☆☆☆';
     const rv=a.rating_avg>0?a.rating_avg.toFixed(1):'جديد';
+    const location=[a.specialty_city,a.specialty_country].filter(Boolean).join('، ');
     return`<div class="acard" onclick="openDetail('${a.id}')">
       <div class="acard-cover" style="background:linear-gradient(135deg,${c.bg}33,${c.tx}22)">
         ${a.is_verified?'<div class="verified">✓ موثّق</div>':''}
         <div class="acard-av" style="background:${c.bg};color:${c.tx}">${ini}</div>
       </div>
       <div class="acard-body">
-        <div class="acard-name">${a.full_name}</div>
+        <div class="acard-name">${a.full_name||'مرشد سفر'}</div>
+        ${location?`<div class="acard-location">📍 ${location}</div>`:''}
         <div class="acard-rating"><span class="stars">${st}</span><span class="rnum">${rv}</span><span class="rcnt">(${a.rating_count||0})</span></div>
-        <div class="acard-bio">${a.bio||'مساعد سفريات محترف'}</div>
-        <div class="acard-svcs">${(a.services||[]).map(s=>`<span class="svc">${s}</span>`).join('')}</div>
+        <div class="acard-bio">${a.bio||'مرشد سفر متخصص'}</div>
+        <div class="acard-svcs">${(a.services||[]).slice(0,4).map(s=>`<span class="svc">${s}</span>`).join('')}</div>
         <div class="acard-foot">
           <button class="contact-btn" onclick="event.stopPropagation();openDetail('${a.id}')">تواصل معه</button>
           <button class="rate-btn" onclick="event.stopPropagation();openRating('${a.id}')">⭐ قيّم</button>
@@ -354,54 +414,34 @@ function render(){
   }).join('');
 }
 
-// ══ FILTER ══
-function setFilter(tag,el){
-  activeFilter=tag;
-  document.querySelectorAll('.fchip').forEach(c=>c.classList.remove('active'));
-  el.classList.add('active');
-  applyFilter();
-}
-function applyFilter(){
-  const q=document.getElementById('searchInput').value.toLowerCase();
-  filtered=allAgents.filter(a=>{
-    const mq=!q||a.full_name.toLowerCase().includes(q)||(a.bio||'').toLowerCase().includes(q);
-    const mf=activeFilter==='الكل'||(a.services||[]).includes(activeFilter);
-    return mq&&mf;
-  });
-  render();
-}
-
-// ══ OPEN DETAIL ══
+// ── DETAIL ──
 async function openDetail(id){
   const a=allAgents.find(x=>x.id===id);
   if(!a) return;
   selAgent=a;
   const i=allAgents.indexOf(a)%COLORS.length;
   const c=COLORS[i];
-  const ini=a.full_name.split(' ').map(w=>w[0]).join('').substring(0,2);
+  const ini=a.full_name?.split(' ').map(w=>w[0]).join('').substring(0,2)||'مر';
   const st='⭐'.repeat(Math.round(a.rating_avg||0))||'☆☆☆☆☆';
   const rv=a.rating_avg>0?a.rating_avg.toFixed(1):'جديد';
+  const location=[a.specialty_city,a.specialty_country].filter(Boolean).join('، ');
 
-  // Contact links
   let contacts='';
   if(a.whatsapp) contacts+=`<a class="clink" href="https://wa.me/${a.whatsapp.replace(/\D/g,'')}" target="_blank"><span class="ci">📱</span><div class="ct"><strong>واتساب</strong><span>${a.whatsapp}</span></div><span class="ca">فتح ←</span></a>`;
   if(a.instagram) contacts+=`<a class="clink" href="https://instagram.com/${a.instagram.replace('@','')}" target="_blank"><span class="ci">📸</span><div class="ct"><strong>إنستغرام</strong><span>${a.instagram}</span></div><span class="ca">فتح ←</span></a>`;
   if(!contacts) contacts=`<div style="font-size:13px;color:var(--muted);padding:10px">لم يضف معلومات تواصل بعد</div>`;
 
-  // Reviews
   const{data:revs}=await sb.from('reviews').select('*').eq('target_id',id).eq('target_type','agent').order('created_at',{ascending:false}).limit(5);
-  let revsHtml='<div style="font-size:13px;color:var(--muted);padding:10px;text-align:center">لا توجد تقييمات بعد</div>';
-  if(revs&&revs.length>0){
-    revsHtml=`<div class="reviews-wrap">${revs.map(r=>`
-      <div class="rev-item">
+  let revsHtml=revs&&revs.length>0
+    ?revs.map(r=>`<div class="rev-item">
         <div class="rev-head">
-          <div class="rev-av">👤</div>
+          <div class="rev-av">✈️</div>
           <div class="rev-info"><strong>مسافر</strong><span>${new Date(r.created_at).toLocaleDateString('ar-KW',{month:'long',year:'numeric'})}</span></div>
-          <div class="rev-stars">${'⭐'.repeat(r.rating)}</div>
+          <div class="rev-stars-s">${'⭐'.repeat(r.rating)}</div>
         </div>
         ${r.comment?`<div class="rev-text">${r.comment}</div>`:''}
-      </div>`).join('')}</div>`;
-  }
+      </div>`).join('')
+    :`<div style="font-size:13px;color:var(--muted);text-align:center;padding:16px">لا توجد تقييمات بعد</div>`;
 
   const showRevBtn=currentUser&&currentUser.id!==a.user_id;
 
@@ -409,25 +449,26 @@ async function openDetail(id){
     <div class="detail-cover" style="background:linear-gradient(135deg,${c.bg}33,${c.tx}22)">
       <div class="detail-av" style="background:${c.bg};color:${c.tx}">${ini}</div>
     </div>
-    <div class="detail-name">${a.full_name}${a.is_verified?' ✓':''}</div>
+    <div class="detail-name">${a.full_name||'مرشد سفر'}${a.is_verified?' ✓':''}</div>
+    ${location?`<div class="detail-location">📍 متخصص في ${location}</div>`:''}
     <div class="detail-rating">
-      <span style="color:var(--yl);font-size:17px">${st}</span>
+      <span style="color:var(--yl);font-size:16px">${st}</span>
       <span style="font-size:13px;font-weight:700">${rv}</span>
-      <span style="font-size:12px;color:var(--muted)">(${a.rating_count||0} تقييم)</span>
+      <span style="font-size:11px;color:var(--muted)">(${a.rating_count||0} تقييم)</span>
     </div>
-    <div class="detail-bio">${a.bio||'مساعد سفريات محترف'}</div>
-    <div class="sec-label">الخدمات</div>
-    <div class="svcs-wrap">${(a.services||[]).map(s=>`<span class="svc-big">${s}</span>`).join('')}</div>
-    <div class="sec-label">تواصل معه</div>
-    <div class="contact-links">${contacts}</div>
-    <div class="sec-label">التقييمات</div>
-    ${revsHtml}
-    ${showRevBtn?`<button class="add-rev-btn" onclick="closeOverlay('detailOverlay',{target:null});setTimeout(()=>openRating('${a.id}'),300)">⭐ أضف تقييمك</button>`:''}
+    <div class="detail-bio">${a.bio||'مرشد سفر متخصص'}</div>
+    <div class="sec-lbl">الخدمات المقدمة</div>
+    <div class="svcs-wrap">${(a.services||[]).map(s=>`<span class="svc-big">${s}</span>`).join('')||'<span style="color:var(--muted);font-size:13px">لم يحدد خدمات بعد</span>'}</div>
+    <div class="sec-lbl">تواصل معه</div>
+    <div class="clinks">${contacts}</div>
+    <div class="sec-lbl">التقييمات</div>
+    <div class="revs-wrap">${revsHtml}</div>
+    ${showRevBtn?`<button class="add-rev-btn" onclick="closeOverlay2('detailOverlay');setTimeout(()=>openRating('${a.id}'),300)">⭐ أضف تقييمك</button>`:''}
   `;
   document.getElementById('detailOverlay').classList.add('open');
 }
 
-// ══ REGISTER ══
+// ── REGISTER ──
 async function openRegister(){
   const{data:{session}}=await sb.auth.getSession();
   if(!session){window.location.href='auth.html';return;}
@@ -444,46 +485,48 @@ async function saveAgent(){
   const btn=document.getElementById('saveAgBtn');
   const name=document.getElementById('agName').value.trim();
   const bio=document.getElementById('agBio').value.trim();
+  const country=document.getElementById('agCountry').value;
+  const city=document.getElementById('agCity').value.trim();
   const wa=document.getElementById('agWa').value.trim();
   const ig=document.getElementById('agIg').value.trim();
-  const exp=parseInt(document.getElementById('agExp').value);
   if(!name){showToast('⚠️ أدخل اسمك');return;}
   if(selSvcs.length===0){showToast('⚠️ اختر خدمة واحدة على الأقل');return;}
   btn.disabled=true;btn.textContent='جاري الحفظ...';
-  const{data:agData,error}=await sb.from('agents').upsert({user_id:currentUser.id,full_name:name,bio,services:selSvcs,whatsapp:wa,instagram:ig,experience_years:exp},{onConflict:'user_id'});
-  console.log('Agent save result:', agData, error);
-  btn.disabled=false;btn.textContent='🚀 إنشاء الملف';
-  if(error){showToast('❌ '+error.message);console.error(error);return;}
-
-  // تحديث نوع الحساب في الملف الشخصي
-  await sb.from('profiles').upsert({id:currentUser.id,account_type:'agent',full_name:name});
+  const{error}=await sb.from('agents').upsert({
+    user_id:currentUser.id,
+    full_name:name,bio,
+    services:selSvcs,
+    specialty_country:country,
+    specialty_city:city,
+    whatsapp:wa,instagram:ig
+  },{onConflict:'user_id'});
+  if(!error){
+    await sb.from('profiles').upsert({id:currentUser.id,account_type:'agent',full_name:name});
+  }
+  btn.disabled=false;btn.textContent='🚀 إنشاء ملفي كمرشد';
+  if(error){showToast('❌ '+error.message);return;}
   document.getElementById('regOverlay').classList.remove('open');
   showToast('🎉 تم إنشاء ملفك بنجاح!');
   await fetchAgents();
 }
 
-// ══ RATING ══
+// ── RATING ──
 function openRating(id){
   if(!currentUser){window.location.href='auth.html';return;}
   selAgent=allAgents.find(x=>x.id===id)||selAgent;
-  selStar=0;
-  updateStars();
+  selStar=0;updateStars();
   document.getElementById('revComment').value='';
-  document.getElementById('starLbl').textContent='اضغط على النجوم لتقييم';
+  document.getElementById('starLbl').textContent='اضغط على النجوم للتقييم';
   document.getElementById('ratingOverlay').classList.add('open');
 }
-
 function setStar(n){
-  selStar=n;
-  updateStars();
+  selStar=n;updateStars();
   const lbls=['','ضعيف 😞','مقبول 😐','جيد 🙂','جيد جداً 😊','ممتاز 🤩'];
   document.getElementById('starLbl').textContent=lbls[n];
 }
-
 function updateStars(){
   document.querySelectorAll('.sbtn').forEach((b,i)=>{b.textContent=i<selStar?'⭐':'☆';});
 }
-
 async function saveReview(){
   if(!selStar){showToast('⚠️ اختر عدد النجوم');return;}
   const btn=document.getElementById('saveRevBtn');
@@ -493,40 +536,25 @@ async function saveReview(){
     reviewer_id:currentUser.id,
     target_id:selAgent.id,
     target_type:'agent',
-    rating:selStar,
-    comment
+    rating:selStar,comment
   });
   btn.disabled=false;btn.textContent='إرسال التقييم ⭐';
   if(error){showToast('❌ '+error.message);return;}
-
-  // تحديث متوسط التقييم
   const{data:revs}=await sb.from('reviews').select('rating').eq('target_id',selAgent.id).eq('target_type','agent');
   if(revs&&revs.length>0){
     const avg=revs.reduce((s,r)=>s+r.rating,0)/revs.length;
     await sb.from('agents').update({rating_avg:avg,rating_count:revs.length}).eq('id',selAgent.id);
   }
-
   document.getElementById('ratingOverlay').classList.remove('open');
   showToast('✅ شكراً على تقييمك!');
   await fetchAgents();
 }
 
-// ══ HELPERS ══
-function closeOverlay(id,e){
-  if(!e||e.target===document.getElementById(id))
-    document.getElementById(id).classList.remove('open');
-}
-
-async function goToProfile(){
-  const{data:{session}}=await sb.auth.getSession();
-  window.location.href=session?'profile.html':'auth.html';
-}
-
-function showToast(msg){
-  const t=document.getElementById('toast');
-  t.textContent=msg;t.classList.add('show');
-  setTimeout(()=>t.classList.remove('show'),3500);
-}
+// ── HELPERS ──
+function closeOverlay(id,e){if(e.target===document.getElementById(id))document.getElementById(id).classList.remove('open');}
+function closeOverlay2(id){document.getElementById(id).classList.remove('open');}
+function toAr(n){return n.toString().replace(/\d/g,d=>'٠١٢٣٤٥٦٧٨٩'[d]);}
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3500);}
 
 init();
 </script>
