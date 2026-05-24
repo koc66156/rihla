@@ -182,9 +182,9 @@ body{font-family:'Tajawal',sans-serif;background:var(--dk);color:white;min-heigh
 
 <!-- DETAIL OVERLAY -->
 <div class="overlay" id="detailOverlay" onclick="closeDetail(event)">
+  <button onclick="closeDetailOverlay()" style="position:absolute;top:16px;left:16px;z-index:9999;width:40px;height:40px;border-radius:50%;background:rgba(0,0,0,0.7);border:2px solid rgba(255,255,255,0.2);color:white;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;">✕</button>
   <div class="sheet" id="detailSheet">
     <div class="sheet-cover" id="sheetCover">
-      <button class="sheet-close" id="sheetCloseBtn" onclick="closeDetailOverlay()" style="position:absolute;top:16px;left:16px;z-index:10;width:36px;height:36px;border-radius:50%;background:rgba(0,0,0,0.6);border:none;color:white;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;">✕</button>
       <div class="sheet-cover-overlay"></div>
     </div>
     <div class="sheet-body" id="sheetBody"></div>
