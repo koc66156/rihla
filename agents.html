@@ -425,8 +425,10 @@ async function openDetail(id){
 }
 
 // ══ REGISTER ══
-function openRegister(){
-  if(!currentUser){window.location.href='auth.html';return;}
+async function openRegister(){
+  const{data:{session}}=await sb.auth.getSession();
+  if(!session){window.location.href='auth.html';return;}
+  currentUser=session.user;
   document.getElementById('regOverlay').classList.add('open');
 }
 
@@ -445,9 +447,10 @@ async function saveAgent(){
   if(!name){showToast('⚠️ أدخل اسمك');return;}
   if(selSvcs.length===0){showToast('⚠️ اختر خدمة واحدة على الأقل');return;}
   btn.disabled=true;btn.textContent='جاري الحفظ...';
-  const{error}=await sb.from('agents').upsert({user_id:currentUser.id,full_name:name,bio,services:selSvcs,whatsapp:wa,instagram:ig,experience_years:exp});
+  const{data:agData,error}=await sb.from('agents').upsert({user_id:currentUser.id,full_name:name,bio,services:selSvcs,whatsapp:wa,instagram:ig,experience_years:exp},{onConflict:'user_id'});
+  console.log('Agent save result:', agData, error);
   btn.disabled=false;btn.textContent='🚀 إنشاء الملف';
-  if(error){showToast('❌ '+error.message);return;}
+  if(error){showToast('❌ '+error.message);console.error(error);return;}
 
   // تحديث نوع الحساب في الملف الشخصي
   await sb.from('profiles').upsert({id:currentUser.id,account_type:'agent',full_name:name});
