@@ -8,223 +8,186 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="رِحلة">
-<meta name="description" content="منصة المسافرين العرب — ابحث عن رفيق سفرك وانطلق">
 <link rel="manifest" href="manifest.json">
 <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&family=Righteous&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
-:root{--or:#FF5C1A;--yl:#FFD000;--tl:#00C9B1;--dk:#0E0E0E;--muted:rgba(255,255,255,0.5);--card:rgba(255,255,255,0.05);--border:rgba(255,255,255,0.08);--nav-h:64px;--bot-h:68px;}
+:root{--or:#FF5C1A;--yl:#FFD000;--tl:#00C9B1;--dk:#0E0E0E;--muted:rgba(255,255,255,0.5);--card:rgba(255,255,255,0.05);--border:rgba(255,255,255,0.08);--nav-h:64px;--bot-h:64px;}
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
 html{scroll-behavior:smooth;}
-body{font-family:'Tajawal',sans-serif;background:var(--dk);color:white;overflow-x:hidden;padding-bottom:calc(var(--bot-h) + 48px);}
+body{font-family:'Tajawal',sans-serif;background:var(--dk);color:white;overflow-x:hidden;padding-bottom:calc(var(--bot-h)+48px);}
 
 /* NAV */
+.topnav{position:fixed;top:0;width:100%;z-index:1000;padding:0 16px;height:var(--nav-h);display:flex;align-items:center;justify-content:space-between;background:rgba(14,14,14,0.92);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);}
+.nav-logo{font-family:'Righteous',cursive;font-size:26px;background:linear-gradient(90deg,var(--or),var(--yl));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.nav-profile-btn{padding:8px 16px;border-radius:20px;background:rgba(255,92,26,0.12);border:1.5px solid rgba(255,92,26,0.25);color:var(--or);font-family:'Tajawal',sans-serif;font-size:13px;font-weight:800;cursor:pointer;white-space:nowrap;}
 
+/* ═══ HERO ═══ */
+.hero{position:relative;min-height:100vh;display:flex;flex-direction:column;justify-content:center;padding:calc(var(--nav-h)+32px) 20px 48px;overflow:hidden;}
+.blob{position:absolute;border-radius:50%;filter:blur(80px);animation:drift 9s ease-in-out infinite alternate;pointer-events:none;}
+.b1{width:420px;height:420px;background:var(--or);opacity:0.4;top:-100px;right:-100px;}
+.b2{width:320px;height:320px;background:var(--tl);opacity:0.3;bottom:-60px;left:-80px;animation-delay:-4s;}
+.b3{width:220px;height:220px;background:var(--yl);opacity:0.15;top:40%;left:20%;animation-delay:-7s;}
+@keyframes drift{from{transform:translate(0,0)scale(1);}to{transform:translate(24px,18px)scale(1.08);}}
 
-
-
-
-
-
-/* HERO */
-.hero{min-height:100vh;padding:calc(var(--nav-h) + 52px) 20px 60px;display:flex;flex-direction:column;justify-content:center;position:relative;overflow:hidden;}
-.blob{position:absolute;border-radius:50%;filter:blur(70px);opacity:0.45;animation:drift 9s ease-in-out infinite alternate;pointer-events:none;}
-.b1{width:380px;height:380px;background:var(--or);top:-80px;right:-80px;}
-.b2{width:300px;height:300px;background:var(--tl);bottom:-60px;left:-60px;animation-delay:-4s;}
-.b3{width:200px;height:200px;background:var(--yl);top:50%;left:25%;animation-delay:-7s;opacity:0.2;}
-@keyframes drift{from{transform:translate(0,0)scale(1);}to{transform:translate(25px,18px)scale(1.1);}}
 .hero-inner{position:relative;z-index:2;}
-.hero-tag{display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);padding:8px 16px;border-radius:30px;font-size:13px;font-weight:700;margin-bottom:24px;}
-.dot{width:8px;height:8px;border-radius:50%;background:var(--tl);animation:pulse 2s infinite;}
-@keyframes pulse{0%,100%{opacity:1;transform:scale(1);}50%{opacity:.5;transform:scale(1.4);}}
-.hero h1{font-size:clamp(38px,9vw,68px);font-weight:900;line-height:1.1;margin-bottom:20px;}
-.grad{background:linear-gradient(135deg,var(--or),var(--yl));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
-.hero p{font-size:15px;color:var(--muted);line-height:1.8;margin-bottom:32px;}
-.hero-btns{display:flex;gap:10px;flex-wrap:wrap;}
-.hbtn{padding:13px 24px;border-radius:28px;font-family:'Tajawal',sans-serif;font-size:15px;font-weight:800;border:none;cursor:pointer;transition:all .25s;}
-.hbtn-p{background:var(--or);color:white;box-shadow:0 8px 24px rgba(255,92,26,0.4);}
-.hbtn-p:hover{transform:translateY(-2px);}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.14);padding:7px 16px;border-radius:28px;font-size:12px;font-weight:700;margin-bottom:22px;}
+.hero-badge .dot{width:7px;height:7px;border-radius:50%;background:var(--tl);animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1);}50%{opacity:.5;transform:scale(1.5);}}
+
+.hero h1{font-size:clamp(36px,9vw,64px);font-weight:900;line-height:1.1;margin-bottom:16px;}
+.hero h1 .line2{display:block;background:linear-gradient(135deg,var(--or),var(--yl));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.hero-sub{font-size:15px;color:rgba(255,255,255,0.65);line-height:1.8;margin-bottom:32px;max-width:340px;}
+
+.hero-btns{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:44px;}
+.hbtn{padding:14px 24px;border-radius:28px;font-family:'Tajawal',sans-serif;font-size:15px;font-weight:800;border:none;cursor:pointer;transition:all .25s;}
+.hbtn-p{background:var(--or);color:white;box-shadow:0 8px 28px rgba(255,92,26,0.4);}
+.hbtn-p:hover{transform:translateY(-2px);box-shadow:0 12px 36px rgba(255,92,26,0.5);}
 .hbtn-s{background:rgba(255,255,255,0.08);color:white;border:1.5px solid rgba(255,255,255,0.15);}
-.hbtn-t{background:rgba(0,201,177,0.12);color:var(--tl);border:1.5px solid rgba(0,201,177,0.25);}
-.stats-row{display:flex;margin-top:44px;padding-top:28px;border-top:1px solid rgba(255,255,255,0.08);}
-.stat{flex:1;text-align:center;}
-.stat .num{font-size:clamp(22px,5vw,32px);font-weight:900;background:linear-gradient(135deg,var(--or),var(--yl));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;display:block;}
-.stat .lbl{font-size:11px;color:var(--muted);margin-top:3px;}
 
-/* FLIGHT SEARCH */
-.flight-section{padding:0 20px 32px;}
-.flight-card{background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:22px;padding:20px;}
-.flight-card h3{font-size:18px;font-weight:900;margin-bottom:4px;}
-.flight-card p{font-size:13px;color:var(--muted);margin-bottom:16px;}
-.flight-row{display:flex;gap:6px;align-items:center;margin-bottom:10px;}
-.finput{background:rgba(255,255,255,0.06);border:1.5px solid rgba(255,255,255,0.1);border-radius:13px;padding:11px 12px;display:flex;align-items:center;gap:6px;flex:1;min-width:0;overflow:hidden;}
-.finput input{flex:1;background:transparent;border:none;font-family:'Tajawal',sans-serif;font-size:13px;color:white;outline:none;min-width:0;width:100%;}
-.finput input::placeholder{color:rgba(255,255,255,0.2);}
-.finput span{font-size:16px;flex-shrink:0;}
-.swap-btn{width:36px;height:36px;border-radius:50%;background:var(--or);border:none;color:white;font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
-.date-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;}
-.date-row .finput input[type="date"]{font-size:11px;-webkit-appearance:none;}
-.fsearch-btn{width:100%;padding:14px;border-radius:14px;background:linear-gradient(135deg,var(--or),#ff8c42);color:white;border:none;font-family:'Tajawal',sans-serif;font-size:16px;font-weight:800;cursor:pointer;margin-bottom:8px;}
-.fadv-btn{width:100%;padding:9px;border-radius:12px;background:transparent;color:rgba(255,255,255,0.35);border:none;font-family:'Tajawal',sans-serif;font-size:13px;cursor:pointer;}
+.hero-stats{display:flex;gap:0;padding-top:28px;border-top:1px solid rgba(255,255,255,0.08);}
+.hstat{flex:1;text-align:center;}
+.hstat .hv{font-size:clamp(20px,4vw,28px);font-weight:900;background:linear-gradient(135deg,var(--or),var(--yl));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;display:block;}
+.hstat .hl{font-size:10px;color:var(--muted);margin-top:2px;}
 
-/* SECTIONS */
-.section{padding:0 20px 40px;}
-.sec-label{font-size:11px;font-weight:800;letter-spacing:3px;color:var(--or);margin-bottom:10px;}
-.sec-title{font-size:clamp(22px,5vw,32px);font-weight:900;margin-bottom:8px;}
-.sec-sub{font-size:14px;color:var(--muted);margin-bottom:28px;line-height:1.7;}
+/* ═══ SECTION HEADER ═══ */
+.sec-header{display:flex;align-items:center;justify-content:space-between;padding:0 16px;margin-bottom:14px;}
+.sec-header h2{font-size:18px;font-weight:900;}
+.sec-header a{font-size:12px;color:var(--or);font-weight:700;text-decoration:none;}
 
-/* FILTERS */
-.filter-row{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;margin-bottom:22px;}
-.filter-row::-webkit-scrollbar{display:none;}
-.fchip{white-space:nowrap;padding:8px 16px;border-radius:20px;border:1.5px solid rgba(255,255,255,0.1);background:transparent;font-family:'Tajawal',sans-serif;font-size:12px;font-weight:700;cursor:pointer;color:rgba(255,255,255,0.6);transition:all .2s;}
-.fchip.active,.fchip:hover{background:var(--or);color:white;border-color:var(--or);}
+/* ═══ TRIPS HORIZONTAL ═══ */
+.trips-section{padding:32px 0 8px;}
+.trips-scroll{display:flex;gap:12px;overflow-x:auto;padding:0 16px 12px;scrollbar-width:none;}
+.trips-scroll::-webkit-scrollbar{display:none;}
 
-/* TRIPS */
-.trips-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px;}
-.tcard{background:var(--card);border-radius:18px;overflow:hidden;border:1px solid var(--border);cursor:pointer;transition:all .3s;}
-.tcard:hover{transform:translateY(-5px);border-color:var(--or);box-shadow:0 14px 36px rgba(255,92,26,0.15);}
-.tc-img{height:148px;display:flex;align-items:center;justify-content:center;font-size:52px;position:relative;}
-.tc-seats{position:absolute;top:10px;left:10px;padding:4px 11px;border-radius:11px;font-size:11px;font-weight:800;}
-.tc-dest{position:absolute;bottom:10px;right:10px;background:rgba(0,0,0,0.5);color:white;padding:4px 11px;border-radius:11px;font-size:11px;font-weight:700;backdrop-filter:blur(8px);}
-.tc-body{padding:14px;}
-.tc-title{font-size:14px;font-weight:800;margin-bottom:7px;line-height:1.3;}
-.tc-meta{display:flex;gap:12px;margin-bottom:11px;}
-.tc-meta span{font-size:11px;color:var(--muted);}
-.tc-foot{display:flex;justify-content:space-between;align-items:center;}
-.tc-org{display:flex;align-items:center;gap:7px;}
-.tc-av{width:24px;height:24px;border-radius:50%;background:rgba(255,92,26,0.2);display:flex;align-items:center;justify-content:center;font-size:12px;}
-.tc-org span{font-size:11px;color:var(--muted);}
-.tc-join{padding:7px 14px;border-radius:11px;background:var(--or);color:white;border:none;font-family:'Tajawal',sans-serif;font-size:12px;font-weight:800;cursor:pointer;}
+.tcard{background:var(--card);border-radius:18px;overflow:hidden;border:1px solid var(--border);cursor:pointer;transition:all .3s;flex-shrink:0;width:220px;}
+.tcard:hover{border-color:var(--or);transform:translateY(-4px);}
+.tc-img{height:120px;display:flex;align-items:center;justify-content:center;font-size:44px;position:relative;}
+.tc-seats{position:absolute;top:8px;left:8px;padding:3px 9px;border-radius:10px;font-size:10px;font-weight:800;}
+.tc-dest{position:absolute;bottom:8px;right:8px;background:rgba(0,0,0,0.55);color:white;padding:3px 9px;border-radius:10px;font-size:10px;font-weight:700;backdrop-filter:blur(8px);}
+.tc-body{padding:12px;}
+.tc-title{font-size:13px;font-weight:800;margin-bottom:5px;line-height:1.3;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+.tc-meta{font-size:11px;color:var(--muted);}
 
-/* EMPTY */
-.empty-state{grid-column:1/-1;text-align:center;padding:44px 20px;background:var(--card);border-radius:18px;border:1px dashed var(--border);}
-.empty-state .eicon{font-size:44px;margin-bottom:12px;}
-.empty-state h3{font-size:17px;font-weight:800;margin-bottom:7px;}
-.empty-state p{font-size:13px;color:var(--muted);margin-bottom:18px;}
-.empty-state button{padding:11px 26px;border-radius:18px;background:var(--or);color:white;border:none;font-family:'Tajawal',sans-serif;font-size:13px;font-weight:800;cursor:pointer;}
+/* ═══ FEED ═══ */
+.feed-section{padding:24px 0 0;}
+.feed-wrap{display:flex;flex-direction:column;gap:0;}
 
-/* HOW */
-.how-section{background:linear-gradient(160deg,#111,#1a0a00);padding:0 20px 40px;}
-.steps{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;}
-.step{background:rgba(255,255,255,0.04);border-radius:18px;padding:20px;border:1px solid rgba(255,255,255,0.06);}
-.step-num{width:42px;height:42px;border-radius:50%;background:rgba(255,92,26,0.15);border:2px solid var(--or);display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:900;color:var(--or);margin-bottom:12px;}
-.step h3{font-size:14px;font-weight:800;margin-bottom:6px;}
-.step p{font-size:12px;color:var(--muted);line-height:1.7;}
+.feed-card{background:var(--dk);border-bottom:1px solid var(--border);padding:16px;}
+.feed-card:first-child{border-top:1px solid var(--border);}
 
-/* CTA */
-.cta{margin:0 20px 32px;border-radius:22px;background:linear-gradient(135deg,var(--or),var(--yl));padding:44px 24px;text-align:center;position:relative;overflow:hidden;}
-.cta::before{content:'';position:absolute;inset:0;background-image:radial-gradient(rgba(255,255,255,0.1) 1px,transparent 1px);background-size:22px 22px;}
-.cta h2{font-size:clamp(22px,5vw,34px);font-weight:900;color:white;margin-bottom:10px;position:relative;}
-.cta p{font-size:14px;color:rgba(255,255,255,0.85);margin-bottom:22px;line-height:1.7;position:relative;}
-.cta-btn{display:inline-block;padding:14px 30px;border-radius:26px;background:white;color:var(--or);font-family:'Tajawal',sans-serif;font-size:16px;font-weight:900;border:none;cursor:pointer;position:relative;}
+/* FEED HEADER */
+.feed-head{display:flex;align-items:center;gap:10px;margin-bottom:12px;cursor:pointer;}
+.feed-av{width:40px;height:40px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:900;flex-shrink:0;}
+.feed-info{flex:1;}
+.feed-name{font-size:14px;font-weight:800;}
+.feed-meta{font-size:11px;color:var(--muted);}
+.feed-follow{padding:5px 14px;border-radius:14px;background:rgba(255,92,26,0.1);border:1px solid rgba(255,92,26,0.2);color:var(--or);font-family:'Tajawal',sans-serif;font-size:11px;font-weight:800;cursor:pointer;}
+
+/* FEED IMAGES */
+.feed-imgs{margin:0 -16px 12px;overflow:hidden;}
+.feed-img-single{width:100%;max-height:320px;object-fit:cover;display:block;}
+.feed-img-grid{display:grid;gap:2px;}
+.feed-img-grid.g2{grid-template-columns:1fr 1fr;height:220px;}
+.feed-img-grid.g3{grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;height:280px;}
+.feed-img-grid.g3 img:first-child{grid-row:1/3;}
+.feed-img-grid img{width:100%;height:100%;object-fit:cover;}
+.feed-no-img{height:80px;display:flex;align-items:center;justify-content:center;font-size:36px;background:linear-gradient(135deg,rgba(255,92,26,0.1),rgba(255,208,0,0.06));margin:0 -16px 12px;}
+
+/* FEED CONTENT */
+.feed-dest{font-size:11px;color:var(--or);font-weight:700;margin-bottom:4px;display:flex;align-items:center;gap:4px;}
+.feed-title{font-size:16px;font-weight:900;margin-bottom:6px;line-height:1.3;}
+.feed-text{font-size:13px;color:rgba(255,255,255,0.65);line-height:1.7;margin-bottom:12px;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;}
+
+/* FEED ACTIONS */
+.feed-actions{display:flex;align-items:center;gap:16px;}
+.feed-action{display:flex;align-items:center;gap:5px;font-size:13px;color:var(--muted);cursor:pointer;background:none;border:none;font-family:'Tajawal',sans-serif;font-weight:700;padding:4px 0;transition:color .2s;}
+.feed-action.liked{color:var(--or);}
+.feed-action:hover{color:white;}
+.feed-time{margin-right:auto;font-size:11px;color:rgba(255,255,255,0.25);}
+
+/* LOAD MORE */
+.load-more{text-align:center;padding:24px 16px;}
+.load-more button{padding:12px 28px;border-radius:20px;background:var(--card);border:1px solid var(--border);color:rgba(255,255,255,0.7);font-family:'Tajawal',sans-serif;font-size:14px;font-weight:700;cursor:pointer;transition:all .2s;}
+.load-more button:hover{border-color:var(--or);color:var(--or);}
+
+/* EMPTY FEED */
+.empty-feed{text-align:center;padding:48px 16px;}
+.empty-feed .ei{font-size:52px;margin-bottom:14px;}
+.empty-feed h3{font-size:18px;font-weight:800;margin-bottom:8px;}
+.empty-feed p{font-size:13px;color:var(--muted);margin-bottom:20px;line-height:1.7;}
+.empty-feed button{padding:12px 28px;border-radius:20px;background:var(--or);color:white;border:none;font-family:'Tajawal',sans-serif;font-size:14px;font-weight:800;cursor:pointer;}
 
 /* BOTTOM NAV */
-
-.botnav a{display:flex;flex-direction:column;align-items:center;gap:3px;flex:1;text-decoration:none;padding:8px 0;}
-.botnav a .bi{font-size:20px;}
-.botnav a .bl{font-size:10px;font-weight:700;color:var(--muted);}
-.botnav a.active .bi,.botnav a.active .bl{color:var(--or);}
+.botnav{position:fixed;bottom:0;width:100%;z-index:1000;height:var(--bot-h);background:rgba(14,14,14,0.97);backdrop-filter:blur(20px);border-top:1px solid var(--border);display:flex;align-items:center;}
+.bitem{display:flex;flex-direction:column;align-items:center;gap:3px;flex:1;text-decoration:none;padding:6px 0;}
+.bitem .bi{font-size:20px;line-height:1;}
+.bitem .bl{font-size:10px;font-weight:700;color:rgba(255,255,255,0.4);}
+.bitem.active .bl{color:var(--or);}
+.bitem.active .bi{color:var(--or);}
 
 /* TOAST */
 .toast{position:fixed;bottom:calc(var(--bot-h)+14px);left:50%;transform:translateX(-50%) translateY(80px);background:#1a1a1a;color:white;padding:11px 20px;border-radius:20px;font-size:13px;font-weight:700;box-shadow:0 8px 24px rgba(0,0,0,0.4);transition:transform .4s cubic-bezier(.34,1.56,.64,1);z-index:9999;border:1px solid rgba(255,255,255,0.08);pointer-events:none;opacity:0;}
 .toast.show{transform:translateX(-50%) translateY(0);opacity:1;pointer-events:all;}
-/* ── SHARED NAV ── */
-.topnav{position:fixed;top:0;width:100%;z-index:1000;height:var(--nav-h);padding:0 16px;display:flex;align-items:center;justify-content:space-between;background:rgba(14,14,14,0.95);backdrop-filter:blur(16px);border-bottom:1px solid rgba(255,255,255,0.07);}
-.nav-logo{font-family:'Righteous',cursive;font-size:22px;background:linear-gradient(90deg,#FF5C1A,#FFD000);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;border:none;background-color:transparent;cursor:pointer;padding:0;}
-.nav-profile-btn{padding:7px 16px;border-radius:20px;background:rgba(255,92,26,0.12);border:1.5px solid rgba(255,92,26,0.25);color:#FF5C1A;font-family:'Tajawal',sans-serif;font-size:13px;font-weight:800;cursor:pointer;white-space:nowrap;transition:all .2s;}
-.botnav{position:fixed;bottom:0;width:100%;z-index:1000;height:var(--bot-h);background:rgba(14,14,14,0.97);backdrop-filter:blur(20px);border-top:1px solid rgba(255,255,255,0.07);display:flex;align-items:center;padding-bottom:env(safe-area-inset-bottom);}
-.bitem{display:flex;flex-direction:column;align-items:center;gap:3px;flex:1;text-decoration:none;padding:6px 0;transition:all .2s;}
-.bitem .bi{font-size:20px;line-height:1;}
-.bitem .bl{font-size:10px;font-weight:700;color:rgba(255,255,255,0.4);}
-.bitem.active .bl{color:#FF5C1A;}
 </style>
 </head>
 <body>
 
 <!-- NAV -->
 <nav class="topnav">
-  <button class="nav-logo" onclick="window.location.href='index.html'">Rihla</button>
+  <div class="nav-logo">Rihla</div>
   <button class="nav-profile-btn" id="navProfileBtn" onclick="goToProfile()">تسجيل دخول 👤</button>
 </nav>
 
-<!-- HERO -->
+<!-- ═══ HERO ═══ -->
 <section class="hero">
   <div class="blob b1"></div>
   <div class="blob b2"></div>
   <div class="blob b3"></div>
   <div class="hero-inner">
-    <div class="hero-tag"><span class="dot"></span>منصة المسافرين العرب الأولى</div>
-    <h1>سافر مع<br><span class="grad">رُفقة تشاركك</span><br>الشغف 🌍</h1>
-    <p>لا تسافر وحدك. ابحث عن رفيق سفر، انضم لمجموعة، أو نظّم رحلتك مع أناس من الكويت والخليج.</p>
+    <div class="hero-badge"><span class="dot"></span>منصة المسافرين العرب</div>
+    <h1>
+      سافر مع
+      <span class="line2">رُفقة تشاركك</span>
+      الشغف 🌍
+    </h1>
+    <p class="hero-sub">لا تسافر وحدك — ابحث عن رفيق سفر، انضم لمجموعة، أو نظّم رحلتك مع أناس يشاركونك الشغف من الكويت والخليج.</p>
     <div class="hero-btns">
       <button class="hbtn hbtn-p" onclick="window.location.href='trips.html'">ابحث عن رفيق ✈️</button>
       <button class="hbtn hbtn-s" onclick="window.location.href='post-trip.html'">+ انشر رحلتك</button>
-      <button class="hbtn hbtn-t" onclick="window.location.href='destinations.html'">🗺️ دليل الوجهات</button>
     </div>
-    <div class="stats-row">
-      <div class="stat"><span class="num" id="statTrips">٠</span><div class="lbl">رحلة نشطة</div></div>
-      <div class="stat"><span class="num">٢٤٠٠+</span><div class="lbl">مسافر مسجّل</div></div>
-      <div class="stat"><span class="num">٣٨</span><div class="lbl">وجهة حول العالم</div></div>
+    <div class="hero-stats">
+      <div class="hstat"><span class="hv" id="statTrips">٠</span><div class="hl">رحلة نشطة</div></div>
+      <div class="hstat"><span class="hv" id="statPosts">٠</span><div class="hl">منشور</div></div>
+      <div class="hstat"><span class="hv">٣٨</span><div class="hl">وجهة</div></div>
     </div>
   </div>
 </section>
 
-<!-- FLIGHT SEARCH -->
-<div class="flight-section">
-  <div class="flight-card">
-    <h3>🛫 ابحث عن رحلة طيران</h3>
-    <p>أوصلك لأفضل الأسعار في ثوانٍ</p>
-    <div class="flight-row">
-      <div class="finput"><span>🛫</span><input type="text" id="qFrom" placeholder="من: الكويت"></div>
-      <button class="swap-btn" onclick="swapCities()">⇅</button>
-      <div class="finput"><span>🛬</span><input type="text" id="qTo" placeholder="إلى: ..."></div>
-    </div>
-    <div class="date-row">
-      <div class="finput"><span>📅</span><input type="date" id="qDate"></div>
-      <div class="finput"><span>👥</span><input type="text" value="١ مسافر" readonly style="cursor:default"></div>
-    </div>
-    <button class="fsearch-btn" onclick="quickSearch()">🔍 ابحث عن رحلات</button>
-    <button class="fadv-btn" onclick="window.location.href='flights.html'">خيارات بحث متقدمة ←</button>
+<!-- ═══ TRIPS HORIZONTAL ═══ -->
+<section class="trips-section">
+  <div class="sec-header">
+    <h2>✈️ رحلات مفتوحة الآن</h2>
+    <a href="trips.html">عرض الكل ←</a>
   </div>
-</div>
-
-<!-- TRIPS -->
-<section class="section" id="trips">
-  <div class="sec-label">الرحلات</div>
-  <h2 class="sec-title">رحلات مفتوحة الآن</h2>
-  <p class="sec-sub">انضم لرحلة منظمة من مسافرين مثلك — بدون إلزام، فقط رفقة</p>
-  <div class="filter-row">
-    <button class="fchip active" onclick="setFilter('الكل',this)">🌍 الكل</button>
-    <button class="fchip" onclick="setFilter('مغامرة',this)">🔥 مغامرة</button>
-    <button class="fchip" onclick="setFilter('شاطئ',this)">🌊 شاطئ</button>
-    <button class="fchip" onclick="setFilter('ثقافة',this)">🏛️ ثقافة</button>
-    <button class="fchip" onclick="setFilter('طبيعة',this)">🌿 طبيعة</button>
-    <button class="fchip" onclick="setFilter('طعام',this)">🍜 طعام</button>
-  </div>
-  <div class="trips-grid" id="tripsGrid">
-    <div class="empty-state"><div class="eicon">⏳</div><h3>جاري التحميل...</h3></div>
+  <div class="trips-scroll" id="tripsScroll">
+    <div style="display:flex;align-items:center;justify-content:center;width:100%;padding:20px;color:var(--muted);font-size:13px;">⏳ جاري التحميل...</div>
   </div>
 </section>
 
-<!-- HOW -->
-<section class="section how-section">
-  <div class="sec-label">كيف يعمل</div>
-  <h2 class="sec-title">أربع خطوات وانطلق</h2>
-  <p class="sec-sub">رِحلة تجمعكم — الترتيبات بينكم بحرية تامة</p>
-  <div class="steps">
-    <div class="step"><div class="step-num">١</div><h3>سجّل مجاناً</h3><p>أنشئ ملفك الشخصي وأضف اهتمامات سفرك</p></div>
-    <div class="step"><div class="step-num">٢</div><h3>تصفّح أو انشر</h3><p>ابحث عن رحلة أو انشر رحلتك الخاصة</p></div>
-    <div class="step"><div class="step-num">٣</div><h3>تواصل</h3><p>أرسل طلب انضمام وتحدث مع المنظم</p></div>
-    <div class="step"><div class="step-num">٤</div><h3>سافر 🎉</h3><p>التقوا في الوجهة وشاركوا تجربة لا تُنسى</p></div>
+<!-- ═══ FEED ═══ -->
+<section class="feed-section">
+  <div class="sec-header">
+    <h2>📸 منشورات المجتمع</h2>
+    <span style="font-size:12px;color:var(--muted)">تجارب حقيقية</span>
+  </div>
+  <div class="feed-wrap" id="feedWrap">
+    <div style="text-align:center;padding:40px;color:var(--muted);font-size:13px;">⏳ جاري تحميل المنشورات...</div>
+  </div>
+  <div class="load-more" id="loadMoreWrap" style="display:none">
+    <button onclick="loadMorePosts()">تحميل المزيد ↓</button>
   </div>
 </section>
-
-<!-- CTA -->
-<div class="cta">
-  <h2>جاهز تبدأ رحلتك؟ 🚀</h2>
-  <p>سجّل مجاناً وانضم لآلاف المسافرين الكويتيين والخليجيين</p>
-  <button class="cta-btn" onclick="window.location.href='auth.html'">ابدأ مجاناً الآن</button>
-</div>
 
 <!-- BOTTOM NAV -->
 <nav class="botnav">
@@ -232,43 +195,17 @@ body{font-family:'Tajawal',sans-serif;background:var(--dk);color:white;overflow-
   <a href="trips.html" class="bitem"><div class="bi">✈️</div><div class="bl">الرحلات</div></a>
   <a href="destinations.html" class="bitem"><div class="bi">🗺️</div><div class="bl">الوجهات</div></a>
   <a href="flights.html" class="bitem"><div class="bi">🛫</div><div class="bl">طيران</div></a>
-  <a href="agents.html" class="bitem"><div class="bi">🤝</div><div class="bl">المرشدون</div></a>
+  <a href="agents.html" class="bitem"><div class="bi">🧭</div><div class="bl">المرشدون</div></a>
 </nav>
 
 <div class="toast" id="toast"></div>
 
 <script>
-// ══ SUPABASE ══
 const{createClient}=supabase;
 const sb=createClient(
   'https://ybjdagurvkweabujkeyz.supabase.co',
   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InliamRhZ3Vydmt3ZWFidWprZXl6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkzNjQyMDAsImV4cCI6MjA5NDk0MDIwMH0.CIK7sew_-kBlC_t_szCjKjjnFNg695kwSryuRshQ9nI'
 );
-// ── NAV FUNCTIONS ──
-async function goToProfile(){
-  try{
-    const{data:{session}}=await sb.auth.getSession();
-    window.location.href=session?'profile.html':'auth.html';
-  }catch(e){window.location.href='auth.html';}
-}
-async function initNav(){
-  try{
-    const{data:{session}}=await sb.auth.getSession();
-    const btn=document.getElementById('navProfileBtn');
-    if(!btn) return;
-    if(session){
-      const{data:p}=await sb.from('profiles').select('full_name').eq('id',session.user.id).single();
-      btn.textContent=(p?.full_name?.split(' ')[0]||'ملفي')+' 👤';
-    }else{
-      btn.textContent='تسجيل دخول 👤';
-    }
-  }catch(e){
-    const btn=document.getElementById('navProfileBtn');
-    if(btn) btn.textContent='تسجيل دخول 👤';
-  }
-}
-initNav();
-
 
 const GRADS={
   '✈️':'linear-gradient(135deg,#1A6BFF,#00C9B1)',
@@ -285,35 +222,48 @@ const GRADS={
   '🍜':'linear-gradient(135deg,#E65100,#FFCC02)',
 };
 
-let allTrips=[], activeFilter='الكل';
+const AV_GRADS=['linear-gradient(135deg,#FF5C1A,#FFD000)','linear-gradient(135deg,#1A6BFF,#00C9B1)','linear-gradient(135deg,#7C3AED,#FF5C1A)','linear-gradient(135deg,#00838F,#4DD0E1)','linear-gradient(135deg,#558B2F,#FFD000)'];
 
-// ══ FETCH TRIPS ══
-async function fetchTrips(){
-  try{
-    const{data,error}=await sb.from('trips').select('id,title,destination,country,emoji,date,duration,seats,seats_taken,tags').eq('status','active').order('created_at',{ascending:false});
-    if(error) throw error;
-    allTrips=data||[];
-    document.getElementById('statTrips').textContent=allTrips.length>0?toAr(allTrips.length)+'+':'٠';
-    renderTrips();
-  }catch(err){
-    document.getElementById('tripsGrid').innerHTML=`<div class="empty-state"><div class="eicon">⚠️</div><h3>تعذّر التحميل</h3><p>${err.message}</p><button onclick="fetchTrips()">إعادة المحاولة</button></div>`;
+let currentUser=null, myLikes=new Set();
+let postsPage=0, postsPerPage=10, allPostsLoaded=false;
+let userProfiles={};
+
+// ══ INIT ══
+async function init(){
+  await checkSession();
+  await Promise.all([fetchTrips(), fetchPosts()]);
+}
+
+// ══ SESSION ══
+async function checkSession(){
+  const{data:{session}}=await sb.auth.getSession();
+  currentUser=session?.user||null;
+  const btn=document.getElementById('navProfileBtn');
+  if(currentUser){
+    const{data:p}=await sb.from('profiles').select('full_name').eq('id',currentUser.id).single();
+    btn.textContent=(p?.full_name?.split(' ')[0]||'ملفي')+' 👤';
+    // جلب إعجاباتي
+    const{data:likes}=await sb.from('post_likes').select('post_id').eq('user_id',currentUser.id);
+    if(likes) likes.forEach(l=>myLikes.add(l.post_id));
   }
 }
 
-// ══ RENDER TRIPS ══
-function renderTrips(){
-  const grid=document.getElementById('tripsGrid');
-  const list=activeFilter==='الكل'?allTrips:allTrips.filter(t=>Array.isArray(t.tags)&&t.tags.includes(activeFilter));
-  if(list.length===0){
-    grid.innerHTML=`<div class="empty-state"><div class="eicon">🗺️</div><h3>لا توجد رحلات بعد</h3><p>كن أول من ينشر رحلة!</p><button onclick="window.location.href='post-trip.html'">+ انشر رحلتك</button></div>`;
+// ══ FETCH TRIPS ══
+async function fetchTrips(){
+  const{data}=await sb.from('trips').select('id,title,country,emoji,date,duration,seats,seats_taken').eq('status','active').order('created_at',{ascending:false}).limit(10);
+  const scroll=document.getElementById('tripsScroll');
+  document.getElementById('statTrips').textContent=toAr((data||[]).length)+'+';
+
+  if(!data||data.length===0){
+    scroll.innerHTML=`<div style="padding:20px;color:var(--muted);font-size:13px">لا توجد رحلات بعد</div>`;
     return;
   }
-  grid.innerHTML=list.map(t=>{
+  scroll.innerHTML=data.map(t=>{
     const grad=GRADS[t.emoji]||'linear-gradient(135deg,#FF5C1A,#FFD000)';
     const left=(t.seats||5)-(t.seats_taken||0);
     const ss=left<=2?'background:rgba(229,57,53,0.25);color:#ff6b6b':'background:rgba(0,201,177,0.18);color:#00C9B1';
-    const st=left<=2?`⚠️ ${toAr(left)} فقط`:`✅ ${toAr(left)} أماكن`;
-    const dt=t.date?new Date(t.date).toLocaleDateString('ar-KW',{day:'numeric',month:'long'}):'';
+    const st=left<=2?`⚠️${toAr(left)}`:`✅${toAr(left)}`;
+    const dt=t.date?new Date(t.date).toLocaleDateString('ar-KW',{day:'numeric',month:'short'}):'';
     return`<div class="tcard" onclick="window.location.href='trip.html?id=${t.id}'">
       <div class="tc-img" style="background:${grad}">
         <span>${t.emoji||'✈️'}</span>
@@ -322,63 +272,164 @@ function renderTrips(){
       </div>
       <div class="tc-body">
         <div class="tc-title">${t.title||''}</div>
-        <div class="tc-meta"><span>📅 ${dt}</span><span>⏱ ${t.duration||''}</span></div>
-        <div class="tc-foot">
-          <div class="tc-org"><div class="tc-av">✈️</div><span>${t.destination||''}</span></div>
-          <button class="tc-join" onclick="event.stopPropagation();window.location.href='trip.html?id=${t.id}'">انضم ✈️</button>
-        </div>
+        <div class="tc-meta">📅 ${dt} · ⏱ ${t.duration||''}</div>
       </div>
     </div>`;
   }).join('');
 }
 
-// ══ FILTER ══
-function setFilter(tag,el){
-  activeFilter=tag;
-  document.querySelectorAll('.fchip').forEach(c=>c.classList.remove('active'));
-  el.classList.add('active');
-  renderTrips();
-}
+// ══ FETCH POSTS ══
+async function fetchPosts(append=false){
+  const{data,error}=await sb.from('posts').select('*').order('created_at',{ascending:false}).range(postsPage*postsPerPage,(postsPage+1)*postsPerPage-1);
 
-// ══ FLIGHT SEARCH ══
-document.getElementById('qDate').value=new Date().toISOString().split('T')[0];
-document.getElementById('qDate').min=new Date().toISOString().split('T')[0];
+  document.getElementById('statPosts').textContent=postsPage===0?(data||[]).length>0?toAr((data||[]).length)+'+':'٠':document.getElementById('statPosts').textContent;
 
-function swapCities(){
-  const f=document.getElementById('qFrom'),t=document.getElementById('qTo');
-  [f.value,t.value]=[t.value,f.value];
-}
+  const wrap=document.getElementById('feedWrap');
 
-function quickSearch(){
-  const from=document.getElementById('qFrom').value.trim()||'الكويت';
-  const to=document.getElementById('qTo').value.trim();
-  const date=document.getElementById('qDate').value;
-  if(!to){window.location.href='flights.html';return;}
-  const url=`https://www.skyscanner.com/transport/flights/${encodeURIComponent(from)}/${encodeURIComponent(to)}/${date.replace(/-/g,'')}/?adults=1`;
-  window.open(url,'_blank');
-}
+  if(!data||data.length===0){
+    if(!append){
+      wrap.innerHTML=`
+        <div class="empty-feed">
+          <div class="ei">📸</div>
+          <h3>لا توجد منشورات بعد</h3>
+          <p>كن أول من يشارك تجربة سفره مع مجتمع رِحلة!</p>
+          <button onclick="window.location.href='profile.html'">📝 شارك تجربتك</button>
+        </div>`;
+    }
+    allPostsLoaded=true;
+    document.getElementById('loadMoreWrap').style.display='none';
+    return;
+  }
 
-// ══ SESSION ══
-async function checkSession(){
-  const{data:{session}}=await sb.auth.getSession();
-  if(session){
-    document.getElementById('navActions').innerHTML=`
-      <span style="font-size:13px;color:rgba(255,255,255,0.6);font-weight:600">مرحباً 👋</span>
-      <button class="nav-btn nav-btn-primary" onclick="window.location.href='profile.html'">ملفي الشخصي</button>`;
+  // جلب بيانات المستخدمين
+  const userIds=[...new Set(data.map(p=>p.user_id))];
+  const uncached=userIds.filter(id=>!userProfiles[id]);
+  if(uncached.length>0){
+    const{data:profiles}=await sb.from('profiles').select('id,full_name,avatar,account_type').in('id',uncached);
+    if(profiles) profiles.forEach(p=>userProfiles[p.id]=p);
+  }
+
+  const html=data.map(p=>renderPost(p)).join('');
+  if(append) wrap.innerHTML+=html;
+  else wrap.innerHTML=html;
+
+  if(data.length===postsPerPage){
+    document.getElementById('loadMoreWrap').style.display='block';
+  }else{
+    document.getElementById('loadMoreWrap').style.display='none';
+    allPostsLoaded=true;
   }
 }
 
+// ══ RENDER POST ══
+function renderPost(p){
+  const profile=userProfiles[p.user_id];
+  const name=profile?.full_name||'مسافر';
+  const initials=name.split(' ').map(w=>w[0]).join('').substring(0,2);
+  const avatar=profile?.avatar||'✈️';
+  const isAgent=profile?.account_type==='agent';
+  const gradIdx=p.user_id?.charCodeAt(0)%AV_GRADS.length||0;
+  const grad=AV_GRADS[gradIdx];
+  const liked=myLikes.has(p.id);
+  const dt=timeAgo(p.created_at);
+  const imgs=p.images||[];
+
+  // Images HTML
+  let imgHtml='';
+  if(imgs.length===0){
+    imgHtml=`<div class="feed-no-img">🌍</div>`;
+  }else if(imgs.length===1){
+    imgHtml=`<div class="feed-imgs"><img class="feed-img-single" src="${imgs[0]}" loading="lazy"></div>`;
+  }else if(imgs.length===2){
+    imgHtml=`<div class="feed-imgs"><div class="feed-img-grid g2">${imgs.map(i=>`<img src="${i}" loading="lazy">`).join('')}</div></div>`;
+  }else{
+    imgHtml=`<div class="feed-imgs"><div class="feed-img-grid g3">${imgs.slice(0,3).map(i=>`<img src="${i}" loading="lazy">`).join('')}</div></div>`;
+  }
+
+  return`
+    <div class="feed-card" id="post-${p.id}">
+      <div class="feed-head" onclick="openUserProfile('${p.user_id}')">
+        <div class="feed-av" style="background:${grad}">${avatar}</div>
+        <div class="feed-info">
+          <div class="feed-name">${name} ${isAgent?'🧭':''}</div>
+          <div class="feed-meta">${dt} ${p.destination?'· 📍 '+p.destination:''}</div>
+        </div>
+        ${currentUser&&currentUser.id!==p.user_id?`<button class="feed-follow" onclick="event.stopPropagation()">متابعة+</button>`:''}
+      </div>
+      ${imgHtml}
+      <div class="${imgs.length>0?'':''}">
+        ${p.destination?`<div class="feed-dest">📍 ${p.destination}</div>`:''}
+        <div class="feed-title">${p.title}</div>
+        ${p.content?`<div class="feed-text">${p.content}</div>`:''}
+      </div>
+      <div class="feed-actions">
+        <button class="feed-action ${liked?'liked':''}" id="like-${p.id}" onclick="toggleLike('${p.id}',${p.likes||0})">
+          ${liked?'❤️':'🤍'} ${toAr(p.likes||0)}
+        </button>
+        <div class="feed-time">${dt}</div>
+      </div>
+    </div>`;
+}
+
+// ══ LOAD MORE ══
+async function loadMorePosts(){
+  if(allPostsLoaded) return;
+  postsPage++;
+  await fetchPosts(true);
+}
+
+// ══ LIKE ══
+async function toggleLike(postId,cur){
+  if(!currentUser){showToast('سجّل دخولك للإعجاب بالمنشورات 👤');return;}
+  const btn=document.getElementById(`like-${postId}`);
+  const liked=myLikes.has(postId);
+  if(liked){
+    myLikes.delete(postId);
+    await sb.from('post_likes').delete().eq('post_id',postId).eq('user_id',currentUser.id);
+    await sb.from('posts').update({likes:Math.max(0,cur-1)}).eq('id',postId);
+    btn.className='feed-action';
+    btn.innerHTML=`🤍 ${toAr(Math.max(0,cur-1))}`;
+  }else{
+    myLikes.add(postId);
+    await sb.from('post_likes').insert({post_id:postId,user_id:currentUser.id});
+    await sb.from('posts').update({likes:cur+1}).eq('id',postId);
+    btn.className='feed-action liked';
+    btn.innerHTML=`❤️ ${toAr(cur+1)}`;
+  }
+}
+
+// ══ OPEN USER PROFILE ══
+function openUserProfile(userId){
+  window.location.href=`user.html?id=${userId}`;
+}
+
 // ══ HELPERS ══
+async function goToProfile(){
+  const{data:{session}}=await sb.auth.getSession();
+  window.location.href=session?'profile.html':'auth.html';
+}
+
+function timeAgo(dateStr){
+  const diff=Date.now()-new Date(dateStr).getTime();
+  const mins=Math.floor(diff/60000);
+  const hours=Math.floor(diff/3600000);
+  const days=Math.floor(diff/86400000);
+  if(mins<1) return 'الآن';
+  if(mins<60) return `منذ ${toAr(mins)} د`;
+  if(hours<24) return `منذ ${toAr(hours)} س`;
+  if(days<7) return `منذ ${toAr(days)} يوم`;
+  return new Date(dateStr).toLocaleDateString('ar-KW',{day:'numeric',month:'short'});
+}
+
 function toAr(n){return n.toString().replace(/\d/g,d=>'٠١٢٣٤٥٦٧٨٩'[d]);}
+
 function showToast(msg){
   const t=document.getElementById('toast');
   t.textContent=msg;t.classList.add('show');
   setTimeout(()=>t.classList.remove('show'),3500);
 }
 
-// ══ INIT ══
-checkSession();
-fetchTrips();
+init();
 </script>
 </body>
 </html>
