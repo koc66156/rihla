@@ -149,7 +149,10 @@ body{font-family:'Tajawal',sans-serif;background:var(--dk);color:white;min-heigh
 <!-- NAV -->
 <nav class="topnav">
   <button class="nav-logo" onclick="window.location.href='index.html'">Rihla</button>
-  <button class="nav-profile-btn" id="navProfileBtn" onclick="goToProfile()">تسجيل دخول 👤</button>
+  <div style="display:flex;gap:8px;align-items:center;">
+    <button class="reg-btn" id="regBtn" onclick="openRegister()">+ سجّل كمساعد</button>
+    <button class="nav-profile-btn" id="navProfileBtn" onclick="goToProfile()">تسجيل دخول 👤</button>
+  </div>
 </nav>
 
 <!-- MAIN -->
