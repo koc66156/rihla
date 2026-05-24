@@ -184,7 +184,7 @@ body{font-family:'Tajawal',sans-serif;background:var(--dk);color:white;min-heigh
 <div class="overlay" id="detailOverlay" onclick="closeDetail(event)">
   <div class="sheet" id="detailSheet">
     <div class="sheet-cover" id="sheetCover">
-    <button class="sheet-close" onclick="closeDetailOverlay()">✕</button>
+      <button class="sheet-close" id="sheetCloseBtn" onclick="closeDetailOverlay()" style="position:absolute;top:16px;left:16px;z-index:10;width:36px;height:36px;border-radius:50%;background:rgba(0,0,0,0.6);border:none;color:white;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;">✕</button>
       <div class="sheet-cover-overlay"></div>
     </div>
     <div class="sheet-body" id="sheetBody"></div>
@@ -277,8 +277,11 @@ async function openDetail(id){
   cover.style.background=d.cover_gradient;
   cover.innerHTML=`
     <span style="position:relative;z-index:1;font-size:80px">${d.emoji}</span>
-    <button class="sheet-close" onclick="closeDetailOverlay()">✕</button>
     <div class="sheet-cover-overlay"></div>`;
+  
+  // إضافة زر الإغلاق بشكل منفصل
+  const closeBtn=document.getElementById('sheetCloseBtn');
+  if(closeBtn) closeBtn.style.display='flex';
 
   // جلب رحلات هذه الوجهة
   const{data:trips}=await sb.from('trips').select('id,title,emoji,date,duration,seats,seats_taken,country')
