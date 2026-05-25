@@ -171,7 +171,7 @@ const sb=createClient('https://ybjdagurvkweabujkeyz.supabase.co','eyJhbGciOiJIUz
 const GRADS=['linear-gradient(135deg,#FF5C1A,#FFD000)','linear-gradient(135deg,#1A6BFF,#00C9B1)','linear-gradient(135deg,#7C3AED,#FF5C1A)','linear-gradient(135deg,#00838F,#4DD0E1)','linear-gradient(135deg,#558B2F,#FFD000)'];
 
 let currentUser=null, post=null, authorProfile=null;
-let liked=false, following=false, lbIndex=0, lbImages=[];
+let liked=false, following=false, bookmarked=false, lbIndex=0, lbImages=[];
 
 function getPostId(){return new URLSearchParams(window.location.search).get('id');}
 
@@ -202,6 +202,9 @@ async function init(){
     ]);
     liked=lk&&lk.length>0;
     following=fw&&fw.length>0;
+    // فحص المفضلة
+    const{data:bk}=await sb.from('bookmarks').select('id').eq('user_id',currentUser.id).eq('item_id',postId).eq('item_type','post');
+    bookmarked=bk&&bk.length>0;
     document.getElementById('commentBar').style.display='flex';
     document.getElementById('commentBarGuest').style.display='none';
   } else {
@@ -273,10 +276,13 @@ function render(p,author,comments,cProfiles){
       <button class="action-btn ${liked?'liked':''}" id="likeBtn" onclick="toggleLike()">
         ${liked?'❤️':'🤍'} <span id="likeCount">${toAr(p.likes||0)}</span>
       </button>
-      <button class="action-btn commented" onclick="document.getElementById('commentInput').focus()">
+      <button class="action-btn commented" onclick="document.getElementById('commentInput')?.focus()">
         💬 <span id="commentCount">${toAr(comments.length)}</span>
       </button>
-      <button class="action-btn" onclick="sharePost()">📤 مشاركة</button>
+      <button class="action-btn ${bookmarked?'liked':''}" id="bookmarkBtn" onclick="toggleBookmark()">
+        ${bookmarked?'🔖':'📌'}
+      </button>
+      <button class="action-btn" onclick="sharePost()">📤</button>
     </div>
 
     <!-- COMMENTS -->
@@ -342,6 +348,23 @@ async function toggleLike(){
     post.likes=cur+1;
     btn.className='action-btn liked';
     btn.innerHTML=`❤️ <span id="likeCount">${toAr(post.likes)}</span>`;
+  }
+}
+
+// ══ BOOKMARK ══
+async function toggleBookmark(){
+  if(!currentUser){window.location.href='auth.html';return;}
+  const btn=document.getElementById('bookmarkBtn');
+  if(bookmarked){
+    await sb.from('bookmarks').delete().eq('user_id',currentUser.id).eq('item_id',post.id).eq('item_type','post');
+    bookmarked=false;
+    btn.className='action-btn';btn.textContent='📌';
+    showToast('تم إزالة المنشور من المفضلة');
+  }else{
+    await sb.from('bookmarks').insert({user_id:currentUser.id,item_id:post.id,item_type:'post'});
+    bookmarked=true;
+    btn.className='action-btn liked';btn.textContent='🔖';
+    showToast('✅ تم حفظ المنشور في المفضلة!');
   }
 }
 
