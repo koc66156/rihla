@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>رِحلة — منشور</title>
+<meta name="theme-color" content="#FF5C1A">
+<link rel="manifest" href="manifest.json">
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&family=Righteous&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root{--or:#FF5C1A;--yl:#FFD000;--tl:#00C9B1;--dk:#0E0E0E;--muted:rgba(255,255,255,0.45);--card:rgba(255,255,255,0.05);--border:rgba(255,255,255,0.08);--nav-h:60px;--input-h:64px;}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+body{font-family:'Tajawal',sans-serif;background:var(--dk);color:white;min-height:100vh;padding-bottom:calc(var(--input-h)+40px);}
+
+/* NAV */
+.topnav{position:fixed;top:0;width:100%;z-index:1000;height:var(--nav-h);padding:0 16px;display:flex;align-items:center;gap:12px;background:rgba(14,14,14,0.95);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);}
+.nav-back{width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,0.07);border:1px solid var(--border);color:white;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.nav-logo{font-family:'Righteous',cursive;font-size:20px;background:linear-gradient(90deg,var(--or),var(--yl));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;border:none;background-color:transparent;cursor:pointer;}
+.nav-share{margin-right:auto;padding:7px 14px;border-radius:18px;background:rgba(255,92,26,0.12);border:1.5px solid rgba(255,92,26,0.25);color:var(--or);font-family:'Tajawal',sans-serif;font-size:12px;font-weight:800;cursor:pointer;}
+
+/* LOADING */
+.loading{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;gap:14px;}
+.spinner{width:36px;height:36px;border:3px solid rgba(255,92,26,0.15);border-top-color:var(--or);border-radius:50%;animation:spin .7s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+
+/* AUTHOR */
+.author-bar{display:flex;align-items:center;gap:12px;padding:calc(var(--nav-h)+16px) 16px 16px;}
+.author-av{width:48px;height:48px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:20px;cursor:pointer;flex-shrink:0;}
+.author-info{flex:1;cursor:pointer;}
+.author-name{font-size:15px;font-weight:900;}
+.author-meta{font-size:12px;color:var(--muted);margin-top:2px;}
+.follow-btn{padding:8px 18px;border-radius:18px;background:var(--or);color:white;border:none;font-family:'Tajawal',sans-serif;font-size:13px;font-weight:800;cursor:pointer;transition:all .2s;white-space:nowrap;}
+.follow-btn.following{background:rgba(255,255,255,0.07);color:rgba(255,255,255,0.7);border:1px solid var(--border);}
+
+/* DEST TAG */
+.dest-tag{display:inline-flex;align-items:center;gap:6px;margin:0 16px 14px;padding:6px 14px;border-radius:20px;background:rgba(255,92,26,0.1);border:1px solid rgba(255,92,26,0.2);font-size:13px;font-weight:700;color:var(--or);}
+
+/* TITLE */
+.post-title{font-size:22px;font-weight:900;line-height:1.3;padding:0 16px 14px;}
+
+/* CONTENT */
+.post-content{font-size:15px;color:rgba(255,255,255,0.75);line-height:1.85;padding:0 16px 20px;}
+
+/* GALLERY */
+.gallery{margin-bottom:20px;}
+.gallery-single{width:100%;max-height:500px;object-fit:cover;display:block;}
+.gallery-grid2{display:grid;grid-template-columns:1fr 1fr;gap:3px;}
+.gallery-grid2 img{width:100%;height:260px;object-fit:cover;cursor:pointer;}
+.gallery-grid3{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:3px;height:380px;}
+.gallery-grid3 img:first-child{grid-row:1/3;width:100%;height:100%;object-fit:cover;cursor:pointer;}
+.gallery-grid3 img{width:100%;height:100%;object-fit:cover;cursor:pointer;}
+.gallery-grid4{display:grid;grid-template-columns:1fr 1fr;gap:3px;}
+.gallery-grid4 img{width:100%;height:200px;object-fit:cover;cursor:pointer;}
+.gallery-more{display:grid;grid-template-columns:1fr 1fr;gap:3px;}
+.gallery-more-item{position:relative;}
+.gallery-more-item img{width:100%;height:200px;object-fit:cover;cursor:pointer;}
+.gallery-overlay{position:absolute;inset:0;background:rgba(0,0,0,0.55);display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:900;color:white;cursor:pointer;}
+
+/* LIGHTBOX */
+.lightbox{position:fixed;inset:0;z-index:3000;background:rgba(0,0,0,0.95);display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .25s;}
+.lightbox.open{opacity:1;pointer-events:all;}
+.lightbox img{max-width:95vw;max-height:90vh;object-fit:contain;border-radius:8px;}
+.lb-close{position:absolute;top:20px;left:20px;width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,0.15);border:none;color:white;font-size:20px;cursor:pointer;}
+.lb-prev,.lb-next{position:absolute;top:50%;transform:translateY(-50%);width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,0.15);border:none;color:white;font-size:20px;cursor:pointer;}
+.lb-prev{right:16px;}.lb-next{left:16px;}
+
+/* ACTIONS */
+.post-actions{display:flex;align-items:center;gap:8px;padding:0 16px 20px;border-bottom:1px solid var(--border);}
+.action-btn{display:flex;align-items:center;gap:6px;padding:9px 18px;border-radius:20px;background:var(--card);border:1px solid var(--border);color:rgba(255,255,255,0.6);font-family:'Tajawal',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:all .2s;}
+.action-btn.liked{background:rgba(255,92,26,0.15);color:var(--or);border-color:rgba(255,92,26,0.25);}
+.action-btn.commented{background:rgba(0,201,177,0.1);color:var(--tl);border-color:rgba(0,201,177,0.2);}
+.action-btn:hover{border-color:rgba(255,255,255,0.2);}
+
+/* COMMENTS */
+.comments-section{padding:20px 16px;}
+.comments-title{font-size:16px;font-weight:900;margin-bottom:16px;display:flex;align-items:center;gap:8px;}
+.comment-item{display:flex;gap:10px;margin-bottom:14px;}
+.c-av{width:36px;height:36px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;cursor:pointer;}
+.c-body{flex:1;}
+.c-bubble{background:rgba(255,255,255,0.05);border:1px solid var(--border);border-radius:14px;padding:10px 14px;margin-bottom:4px;}
+.c-name{font-size:12px;font-weight:800;margin-bottom:4px;cursor:pointer;}
+.c-text{font-size:14px;color:rgba(255,255,255,0.85);line-height:1.6;}
+.c-time{font-size:10px;color:var(--muted);padding-right:4px;}
+
+.no-comments{text-align:center;padding:32px 16px;color:var(--muted);font-size:13px;}
+
+/* INPUT */
+.comment-input-bar{position:fixed;bottom:0;width:100%;padding:10px 16px;background:rgba(14,14,14,0.97);backdrop-filter:blur(16px);border-top:1px solid var(--border);display:flex;gap:8px;align-items:center;z-index:100;}
+.comment-input-bar input{flex:1;padding:12px 16px;border-radius:24px;border:1.5px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.06);font-family:'Tajawal',sans-serif;font-size:14px;color:white;outline:none;transition:border-color .2s;}
+.comment-input-bar input:focus{border-color:var(--or);}
+.comment-input-bar input::placeholder{color:rgba(255,255,255,0.2);}
+.send-btn{width:44px;height:44px;border-radius:50%;background:var(--or);color:white;border:none;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s;}
+.send-btn:hover{transform:scale(1.05);}
+</style>
+</head>
+<body>
+
+<nav class="topnav">
+  <button class="nav-back" onclick="window.history.back()">←</button>
+  <button class="nav-logo" onclick="window.location.href='index.html'">Rihla</button>
+  <button class="nav-share" onclick="sharePost()">📤 مشاركة</button>
+</nav>
+
+<div id="mainContent">
+  <div class="loading" id="loadingEl"><div class="spinner"></div></div>
+</div>
+
+<!-- LIGHTBOX -->
+<div class="lightbox" id="lightbox" onclick="closeLightbox()">
+  <button class="lb-close" onclick="closeLightbox()">✕</button>
+  <button class="lb-prev" onclick="event.stopPropagation();moveLightbox(-1)">›</button>
+  <img id="lbImg" src="">
+  <button class="lb-next" onclick="event.stopPropagation();moveLightbox(1)">‹</button>
+</div>
+
+<div class="comment-input-bar" id="commentBar" style="display:none">
+  <input type="text" id="commentInput" placeholder="أضف تعليقاً..." onkeydown="if(event.key==='Enter')sendComment()">
+  <button class="send-btn" onclick="sendComment()">➤</button>
+</div>
+
+<script>
+const{createClient}=supabase;
+const sb=createClient('https://ybjdagurvkweabujkeyz.supabase.co','eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InliamRhZ3Vydmt3ZWFidWprZXl6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkzNjQyMDAsImV4cCI6MjA5NDk0MDIwMH0.CIK7sew_-kBlC_t_szCjKjjnFNg695kwSryuRshQ9nI');
+
+const GRADS=['linear-gradient(135deg,#FF5C1A,#FFD000)','linear-gradient(135deg,#1A6BFF,#00C9B1)','linear-gradient(135deg,#7C3AED,#FF5C1A)','linear-gradient(135deg,#00838F,#4DD0E1)','linear-gradient(135deg,#558B2F,#FFD000)'];
+
+let currentUser=null, post=null, authorProfile=null;
+let liked=false, following=false, lbIndex=0, lbImages=[];
+
+function getPostId(){return new URLSearchParams(window.location.search).get('id');}
+
+async function init(){
+  const postId=getPostId();
+  if(!postId){window.location.href='index.html';return;}
+
+  const{data:{session}}=await sb.auth.getSession();
+  currentUser=session?.user||null;
+
+  const[{data:p},{data:comments}]=await Promise.all([
+    sb.from('posts').select('*').eq('id',postId).single(),
+    sb.from('comments').select('*').eq('post_id',postId).order('created_at',{ascending:true})
+  ]);
+
+  if(!p){window.location.href='index.html';return;}
+  post=p;
+
+  // جلب بيانات الكاتب
+  const{data:author}=await sb.from('profiles').select('*').eq('id',p.user_id).single();
+  authorProfile=author;
+
+  // فحص الإعجاب والمتابعة
+  if(currentUser){
+    const[{data:lk},{data:fw}]=await Promise.all([
+      sb.from('post_likes').select('id').eq('post_id',postId).eq('user_id',currentUser.id),
+      sb.from('follows').select('id').eq('follower_id',currentUser.id).eq('following_id',p.user_id)
+    ]);
+    liked=lk&&lk.length>0;
+    following=fw&&fw.length>0;
+    document.getElementById('commentBar').style.display='flex';
+  }
+
+  // جلب أسماء المعلقين
+  let commentProfiles={};
+  if(comments&&comments.length>0){
+    const uids=[...new Set(comments.map(c=>c.user_id))];
+    const{data:cps}=await sb.from('profiles').select('id,full_name,avatar').in('id',uids);
+    if(cps) cps.forEach(cp=>commentProfiles[cp.id]=cp);
+  }
+
+  render(p,author,comments||[],commentProfiles);
+  document.getElementById('loadingEl').style.display='none';
+}
+
+function render(p,author,comments,cProfiles){
+  const name=author?.full_name||'مستخدم';
+  const av=author?.avatar||name.substring(0,2);
+  const grad=GRADS[p.user_id.charCodeAt(0)%GRADS.length];
+  const dt=timeAgo(p.created_at);
+  const imgs=p.images||[];
+  lbImages=imgs;
+
+  const main=document.getElementById('mainContent');
+  main.innerHTML=`
+    <!-- AUTHOR -->
+    <div class="author-bar">
+      <div class="author-av" style="background:${grad}" onclick="goToProfile('${p.user_id}')">${av}</div>
+      <div class="author-info" onclick="goToProfile('${p.user_id}')">
+        <div class="author-name">${name}</div>
+        <div class="author-meta">${dt} ${author?.country?'· 📍 '+author.country:''}</div>
+      </div>
+      ${currentUser&&currentUser.id!==p.user_id?`
+        <button class="follow-btn ${following?'following':''}" id="followBtn" onclick="toggleFollow()">
+          ${following?'✓ تتابعه':'+ متابعة'}
+        </button>`:''
+      }
+    </div>
+
+    <!-- DEST -->
+    ${p.destination?`<div class="dest-tag">📍 ${p.destination}</div>`:''}
+
+    <!-- TITLE -->
+    <div class="post-title">${p.title}</div>
+
+    <!-- CONTENT -->
+    ${p.content?`<div class="post-content">${p.content.replace(/\n/g,'<br>')}</div>`:''}
+
+    <!-- GALLERY -->
+    ${renderGallery(imgs)}
+
+    <!-- ACTIONS -->
+    <div class="post-actions">
+      <button class="action-btn ${liked?'liked':''}" id="likeBtn" onclick="toggleLike()">
+        ${liked?'❤️':'🤍'} <span id="likeCount">${toAr(p.likes||0)}</span>
+      </button>
+      <button class="action-btn commented" onclick="document.getElementById('commentInput').focus()">
+        💬 <span id="commentCount">${toAr(comments.length)}</span>
+      </button>
+      <button class="action-btn" onclick="sharePost()">📤 مشاركة</button>
+    </div>
+
+    <!-- COMMENTS -->
+    <div class="comments-section">
+      <div class="comments-title">💬 التعليقات <span style="font-size:13px;color:var(--muted);font-weight:400">(${toAr(comments.length)})</span></div>
+      ${comments.length===0
+        ?`<div class="no-comments">لا توجد تعليقات بعد — كن أول من يعلق! 👇</div>`
+        :comments.map(c=>renderComment(c,cProfiles[c.user_id])).join('')
+      }
+    </div>
+  `;
+}
+
+function renderGallery(imgs){
+  if(!imgs||imgs.length===0) return '';
+  if(imgs.length===1) return `<div class="gallery"><img class="gallery-single" src="${imgs[0]}" onclick="openLightbox(0)" loading="lazy"></div>`;
+  if(imgs.length===2) return `<div class="gallery"><div class="gallery-grid2">${imgs.map((i,idx)=>`<img src="${i}" onclick="openLightbox(${idx})" loading="lazy">`).join('')}</div></div>`;
+  if(imgs.length===3) return `<div class="gallery"><div class="gallery-grid3">${imgs.map((i,idx)=>`<img src="${i}" onclick="openLightbox(${idx})" loading="lazy">`).join('')}</div></div>`;
+  if(imgs.length===4) return `<div class="gallery"><div class="gallery-grid4">${imgs.map((i,idx)=>`<img src="${i}" onclick="openLightbox(${idx})" loading="lazy">`).join('')}</div></div>`;
+  // أكثر من 4
+  return `<div class="gallery"><div class="gallery-more">
+    ${imgs.slice(0,3).map((i,idx)=>`<div class="gallery-more-item"><img src="${i}" onclick="openLightbox(${idx})" loading="lazy"></div>`).join('')}
+    <div class="gallery-more-item">
+      <img src="${imgs[3]}" onclick="openLightbox(3)" loading="lazy">
+      ${imgs.length>4?`<div class="gallery-overlay" onclick="openLightbox(3)">+${toAr(imgs.length-4)}</div>`:''}
+    </div>
+  </div></div>`;
+}
+
+function renderComment(c,cp){
+  const name=cp?.full_name||'مستخدم';
+  const av=cp?.avatar||name.substring(0,2);
+  const grad=GRADS[c.user_id.charCodeAt(0)%GRADS.length];
+  const dt=timeAgo(c.created_at);
+  return`<div class="comment-item">
+    <div class="c-av" style="background:${grad}" onclick="goToProfile('${c.user_id}')">${av}</div>
+    <div class="c-body">
+      <div class="c-bubble">
+        <div class="c-name" onclick="goToProfile('${c.user_id}')">${name}</div>
+        <div class="c-text">${c.content}</div>
+      </div>
+      <div class="c-time">${dt}</div>
+    </div>
+  </div>`;
+}
+
+// ══ LIKE ══
+async function toggleLike(){
+  if(!currentUser){window.location.href='auth.html';return;}
+  const btn=document.getElementById('likeBtn');
+  const cur=post.likes||0;
+  if(liked){
+    liked=false;
+    await sb.from('post_likes').delete().eq('post_id',post.id).eq('user_id',currentUser.id);
+    await sb.from('posts').update({likes:Math.max(0,cur-1)}).eq('id',post.id);
+    post.likes=Math.max(0,cur-1);
+    btn.className='action-btn';
+    btn.innerHTML=`🤍 <span id="likeCount">${toAr(post.likes)}</span>`;
+  }else{
+    liked=true;
+    await sb.from('post_likes').insert({post_id:post.id,user_id:currentUser.id});
+    await sb.from('posts').update({likes:cur+1}).eq('id',post.id);
+    post.likes=cur+1;
+    btn.className='action-btn liked';
+    btn.innerHTML=`❤️ <span id="likeCount">${toAr(post.likes)}</span>`;
+  }
+}
+
+// ══ FOLLOW ══
+async function toggleFollow(){
+  if(!currentUser) return;
+  const btn=document.getElementById('followBtn');
+  if(following){
+    following=false;
+    await sb.from('follows').delete().eq('follower_id',currentUser.id).eq('following_id',post.user_id);
+    btn.className='follow-btn';btn.textContent='+ متابعة';
+  }else{
+    following=true;
+    await sb.from('follows').insert({follower_id:currentUser.id,following_id:post.user_id});
+    btn.className='follow-btn following';btn.textContent='✓ تتابعه';
+  }
+}
+
+// ══ COMMENT ══
+async function sendComment(){
+  if(!currentUser){window.location.href='auth.html';return;}
+  const input=document.getElementById('commentInput');
+  const content=input.value.trim();
+  if(!content) return;
+  input.value='';
+
+  await sb.from('comments').insert({post_id:post.id,user_id:currentUser.id,content});
+
+  // إضافة التعليق فوراً
+  const section=document.querySelector('.comments-section');
+  const noC=section.querySelector('.no-comments');
+  if(noC) noC.remove();
+
+  const grad=GRADS[currentUser.id.charCodeAt(0)%GRADS.length];
+  const name=authorProfile?.full_name||'أنت';
+  const myProfile=await sb.from('profiles').select('full_name,avatar').eq('id',currentUser.id).single();
+  const myName=myProfile.data?.full_name||'أنت';
+  const myAv=myProfile.data?.avatar||myName.substring(0,2);
+
+  const div=document.createElement('div');
+  div.innerHTML=renderComment({id:'new',user_id:currentUser.id,content,created_at:new Date().toISOString()},{full_name:myName,avatar:myAv});
+  section.appendChild(div.firstChild);
+
+  // تحديث العداد
+  const cc=document.getElementById('commentCount');
+  if(cc) cc.textContent=toAr(parseInt(cc.textContent.replace(/[٠-٩]/g,d=>'٠١٢٣٤٥٦٧٨٩'.indexOf(d)))||0+1);
+
+  section.scrollIntoView({behavior:'smooth',block:'end'});
+}
+
+// ══ LIGHTBOX ══
+function openLightbox(idx){lbIndex=idx;document.getElementById('lbImg').src=lbImages[idx];document.getElementById('lightbox').classList.add('open');}
+function closeLightbox(){document.getElementById('lightbox').classList.remove('open');}
+function moveLightbox(dir){lbIndex=(lbIndex+dir+lbImages.length)%lbImages.length;document.getElementById('lbImg').src=lbImages[lbIndex];}
+
+// ══ SHARE ══
+function sharePost(){
+  const url=`https://rihlakw.com/post.html?id=${post?.id}`;
+  const text=`${post?.title||'منشور رِحلة'}\n${post?.destination?'📍 '+post.destination+'\n':''}\n${url}`;
+  if(navigator.share){navigator.share({title:'رِحلة',text,url});}
+  else{window.open(`https://wa.me/?text=${encodeURIComponent(text)}`,'_blank');}
+}
+
+function goToProfile(uid){window.location.href=`user.html?id=${uid}`;}
+function timeAgo(d){const diff=Date.now()-new Date(d).getTime(),m=Math.floor(diff/60000),h=Math.floor(diff/3600000),dy=Math.floor(diff/86400000);if(m<1)return'الآن';if(m<60)return`منذ ${toAr(m)} د`;if(h<24)return`منذ ${toAr(h)} س`;if(dy<7)return`منذ ${toAr(dy)} يوم`;return new Date(d).toLocaleDateString('ar-KW',{day:'numeric',month:'long'});}
+function toAr(n){return n.toString().replace(/\d/g,d=>'٠١٢٣٤٥٦٧٨٩'[d]);}
+
+init();
+</script>
+</body>
+</html>
