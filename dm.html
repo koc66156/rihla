@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>رِحلة — محادثة</title>
+<meta name="theme-color" content="#FF5C1A">
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&family=Righteous&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root{--or:#FF5C1A;--yl:#FFD000;--tl:#00C9B1;--dk:#0E0E0E;--muted:rgba(255,255,255,0.45);--card:rgba(255,255,255,0.05);--border:rgba(255,255,255,0.08);--nav-h:64px;--input-h:64px;}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+body{font-family:'Tajawal',sans-serif;background:var(--dk);color:white;height:100vh;display:flex;flex-direction:column;}
+
+.topnav{position:fixed;top:0;width:100%;z-index:1000;height:var(--nav-h);padding:0 16px;display:flex;align-items:center;gap:12px;background:rgba(14,14,14,0.95);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);}
+.nav-back{color:rgba(255,255,255,0.6);font-size:18px;background:none;border:none;cursor:pointer;padding:6px;}
+.nav-av{width:38px;height:38px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:18px;cursor:pointer;}
+.nav-info{flex:1;cursor:pointer;}
+.nav-info strong{display:block;font-size:14px;font-weight:800;}
+.nav-info span{font-size:11px;color:var(--muted);}
+
+.messages-wrap{flex:1;overflow-y:auto;padding:calc(var(--nav-h)+16px) 16px calc(var(--input-h)+16px);display:flex;flex-direction:column;gap:8px;}
+
+.msg{max-width:75%;padding:10px 14px;border-radius:18px;font-size:14px;line-height:1.5;word-wrap:break-word;}
+.msg.mine{align-self:flex-end;background:var(--or);color:white;border-bottom-right-radius:4px;}
+.msg.theirs{align-self:flex-start;background:var(--card);border:1px solid var(--border);border-bottom-left-radius:4px;}
+.msg-time{font-size:10px;color:var(--muted);margin-top:3px;}
+.msg-time.mine{align-self:flex-end;}
+.msg-time.theirs{align-self:flex-start;}
+
+.empty-chat{text-align:center;padding:60px 20px;color:var(--muted);}
+.empty-chat .ei{font-size:48px;margin-bottom:14px;}
+.empty-chat p{font-size:13px;line-height:1.7;}
+
+.input-bar{position:fixed;bottom:0;width:100%;height:var(--input-h);padding:10px 16px;background:rgba(14,14,14,0.97);backdrop-filter:blur(16px);border-top:1px solid var(--border);display:flex;gap:8px;align-items:center;}
+.input-bar input{flex:1;padding:12px 16px;border-radius:24px;border:1.5px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.06);font-family:'Tajawal',sans-serif;font-size:14px;color:white;outline:none;}
+.input-bar input:focus{border-color:var(--or);}
+.send-btn{width:44px;height:44px;border-radius:50%;background:var(--or);color:white;border:none;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+.send-btn:disabled{opacity:0.5;cursor:not-allowed;}
+</style>
+</head>
+<body>
+
+<nav class="topnav">
+  <button class="nav-back" onclick="window.location.href='messages.html'">←</button>
+  <div class="nav-av" id="navAv" onclick="openProfile()"></div>
+  <div class="nav-info" onclick="openProfile()">
+    <strong id="navName">جاري التحميل...</strong>
+    <span id="navStatus">رِحلة</span>
+  </div>
+</nav>
+
+<div class="messages-wrap" id="messagesWrap">
+  <div class="empty-chat"><div class="ei">⏳</div><p>جاري التحميل...</p></div>
+</div>
+
+<div class="input-bar">
+  <input type="text" id="msgInput" placeholder="اكتب رسالتك..." onkeydown="if(event.key==='Enter')sendMessage()">
+  <button class="send-btn" onclick="sendMessage()">➤</button>
+</div>
+
+<script>
+const{createClient}=supabase;
+const sb=createClient('https://ybjdagurvkweabujkeyz.supabase.co','eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InliamRhZ3Vydmt3ZWFidWprZXl6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkzNjQyMDAsImV4cCI6MjA5NDk0MDIwMH0.CIK7sew_-kBlC_t_szCjKjjnFNg695kwSryuRshQ9nI');
+
+const GRADS=['linear-gradient(135deg,#FF5C1A,#FFD000)','linear-gradient(135deg,#1A6BFF,#00C9B1)','linear-gradient(135deg,#7C3AED,#FF5C1A)','linear-gradient(135deg,#00838F,#4DD0E1)','linear-gradient(135deg,#558B2F,#FFD000)'];
+
+let currentUser=null, conversationId=null, otherUserId=null;
+
+function getConvId(){return new URLSearchParams(window.location.search).get('id');}
+
+async function init(){
+  const{data:{session}}=await sb.auth.getSession();
+  if(!session){window.location.href='auth.html';return;}
+  currentUser=session.user;
+  conversationId=getConvId();
+  if(!conversationId){window.location.href='messages.html';return;}
+
+  // جلب المحادثة
+  const{data:conv}=await sb.from('conversations').select('*').eq('id',conversationId).single();
+  if(!conv){window.location.href='messages.html';return;}
+
+  otherUserId=conv.user1_id===currentUser.id?conv.user2_id:conv.user1_id;
+
+  // جلب بيانات الطرف الآخر
+  const{data:p}=await sb.from('profiles').select('full_name,avatar').eq('id',otherUserId).single();
+  const name=p?.full_name||'مستخدم';
+  const avatar=p?.avatar||name.substring(0,2);
+  const grad=GRADS[otherUserId.charCodeAt(0)%GRADS.length];
+  document.getElementById('navName').textContent=name;
+  document.getElementById('navAv').style.background=grad;
+  document.getElementById('navAv').textContent=avatar;
+
+  await loadMessages();
+  // تحديث كل 3 ثوان
+  setInterval(loadMessages,3000);
+}
+
+async function loadMessages(){
+  const{data:messages}=await sb.from('direct_messages').select('*').eq('conversation_id',conversationId).order('created_at',{ascending:true});
+  const wrap=document.getElementById('messagesWrap');
+
+  if(!messages||messages.length===0){
+    wrap.innerHTML=`<div class="empty-chat"><div class="ei">💬</div><p>ابدأ محادثة جديدة!<br>أرسل أول رسالة 👋</p></div>`;
+    return;
+  }
+
+  const wasAtBottom=wrap.scrollTop+wrap.clientHeight>=wrap.scrollHeight-50;
+
+  wrap.innerHTML=messages.map(m=>{
+    const isMine=m.sender_id===currentUser.id;
+    const time=new Date(m.created_at).toLocaleTimeString('ar-KW',{hour:'numeric',minute:'2-digit'});
+    return`<div class="msg ${isMine?'mine':'theirs'}">${escapeHtml(m.content)}</div>
+      <div class="msg-time ${isMine?'mine':'theirs'}">${time}</div>`;
+  }).join('');
+
+  if(wasAtBottom) wrap.scrollTop=wrap.scrollHeight;
+}
+
+async function sendMessage(){
+  const input=document.getElementById('msgInput');
+  const content=input.value.trim();
+  if(!content) return;
+  input.value='';
+
+  await sb.from('direct_messages').insert({
+    conversation_id:conversationId,
+    sender_id:currentUser.id,
+    content
+  });
+
+  // تحديث آخر رسالة في المحادثة
+  await sb.from('conversations').update({
+    last_message:content.substring(0,80),
+    last_message_at:new Date().toISOString()
+  }).eq('id',conversationId);
+
+  await loadMessages();
+  document.getElementById('messagesWrap').scrollTop=document.getElementById('messagesWrap').scrollHeight;
+}
+
+function openProfile(){
+  if(otherUserId) window.location.href=`user.html?id=${otherUserId}`;
+}
+
+function escapeHtml(s){
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+init();
+</script>
+</body>
+</html>

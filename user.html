@@ -94,6 +94,10 @@ body{font-family:'Tajawal',sans-serif;background:var(--dk);color:white;min-heigh
       <div class="meta-item">📍 <span id="profileCountry"></span></div>
       <div class="meta-item">📅 <span id="profileJoined"></span></div>
     </div>
+    <div style="display:flex;gap:8px;margin-top:14px;" id="actionBtns">
+      <button id="followBtn" onclick="toggleFollow()" style="flex:1;padding:11px;border-radius:13px;background:var(--or);color:white;border:none;font-family:'Tajawal',sans-serif;font-size:13px;font-weight:800;cursor:pointer;">+ متابعة</button>
+      <button onclick="openDM()" style="flex:1;padding:11px;border-radius:13px;background:rgba(0,201,177,0.1);color:var(--tl);border:1px solid rgba(0,201,177,0.2);font-family:'Tajawal',sans-serif;font-size:13px;font-weight:800;cursor:pointer;">💬 رسالة خاصة</button>
+    </div>
   </div>
   <div class="stats" id="statsRow"></div>
   <div class="countries-wrap" id="countriesWrap" style="display:none">
@@ -138,10 +142,25 @@ async function init(){
     if(likes) likes.forEach(l=>myLikes.add(l.post_id));
   }
   renderProfile(p,uid);
+  const[followers,following]=await Promise.all([
+    sb.from('follows').select('*',{count:'exact',head:true}).eq('following_id',uid),
+    sb.from('follows').select('*',{count:'exact',head:true}).eq('follower_id',uid)
+  ]);
   document.getElementById('statsRow').innerHTML=`
     <div class="stat"><span class="sv">${toAr((posts||[]).length)}</span><div class="sl">منشور</div></div>
-    <div class="stat"><span class="sv">${toAr((trips||[]).length)}</span><div class="sl">رحلة</div></div>
+    <div class="stat"><span class="sv">${toAr(followers.count||0)}</span><div class="sl">متابع</div></div>
+    <div class="stat"><span class="sv">${toAr(following.count||0)}</span><div class="sl">يتابع</div></div>
     <div class="stat"><span class="sv">${toAr((p?.visited_countries||[]).length)}</span><div class="sl">دولة</div></div>`;
+  // فحص حالة المتابعة
+  if(currentUser){
+    const{data:f}=await sb.from('follows').select('id').eq('follower_id',currentUser.id).eq('following_id',uid);
+    if(f&&f.length>0){
+      const btn=document.getElementById('followBtn');
+      btn.textContent='✓ تتابعه';
+      btn.style.background='rgba(255,255,255,0.07)';
+      btn.style.border='1px solid rgba(255,255,255,0.15)';
+    }
+  }
   renderPosts(posts||[]);
   renderTrips(trips||[]);
   document.getElementById('loading').classList.add('hide');
@@ -194,6 +213,42 @@ async function toggleLike(postId,cur){
   if(liked){myLikes.delete(postId);await sb.from('post_likes').delete().eq('post_id',postId).eq('user_id',currentUser.id);await sb.from('posts').update({likes:Math.max(0,cur-1)}).eq('id',postId);btn.className='like-btn';btn.innerHTML=`🤍 ${toAr(Math.max(0,cur-1))}`;}
   else{myLikes.add(postId);await sb.from('post_likes').insert({post_id:postId,user_id:currentUser.id});await sb.from('posts').update({likes:cur+1}).eq('id',postId);btn.className='like-btn liked';btn.innerHTML=`❤️ ${toAr(cur+1)}`;}
 }
+async function toggleFollow(){
+  if(!currentUser){window.location.href='auth.html';return;}
+  const uid=getUserId();
+  const btn=document.getElementById('followBtn');
+  const{data:existing}=await sb.from('follows').select('id').eq('follower_id',currentUser.id).eq('following_id',uid);
+  if(existing&&existing.length>0){
+    await sb.from('follows').delete().eq('follower_id',currentUser.id).eq('following_id',uid);
+    btn.textContent='+ متابعة';
+    btn.style.background='var(--or)';
+    btn.style.border='none';
+    showToast('✓ تم إلغاء المتابعة');
+  }else{
+    await sb.from('follows').insert({follower_id:currentUser.id,following_id:uid});
+    btn.textContent='✓ تتابعه';
+    btn.style.background='rgba(255,255,255,0.07)';
+    btn.style.border='1px solid rgba(255,255,255,0.15)';
+    showToast('🎉 تتابعه الآن!');
+  }
+}
+
+async function openDM(){
+  if(!currentUser){window.location.href='auth.html';return;}
+  const uid=getUserId();
+  // إنشاء أو جلب المحادثة
+  const u1=currentUser.id<uid?currentUser.id:uid;
+  const u2=currentUser.id<uid?uid:currentUser.id;
+  let{data:conv}=await sb.from('conversations').select('id').eq('user1_id',u1).eq('user2_id',u2);
+  if(!conv||conv.length===0){
+    const{data:newConv}=await sb.from('conversations').insert({user1_id:u1,user2_id:u2}).select('id');
+    conv=newConv;
+  }
+  if(conv&&conv.length>0){
+    window.location.href=`dm.html?id=${conv[0].id}`;
+  }
+}
+
 function toAr(n){return n.toString().replace(/\d/g,d=>'٠١٢٣٤٥٦٧٨٩'[d]);}
 function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3500);}
 init();
