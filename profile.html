@@ -447,7 +447,7 @@ body{font-family:'Tajawal',sans-serif;background:var(--dk);color:white;min-heigh
       <div class="img-upload" onclick="document.getElementById('imgInput').click()">
         <input type="file" id="imgInput" accept="image/*" multiple onchange="previewImgs(this)">
         <div style="font-size:26px;margin-bottom:5px">📸</div>
-        <p style="font-size:12px;color:var(--muted)">اضغط لإضافة صور (حتى ٤ صور)</p>
+        <p style="font-size:12px;color:var(--muted)">اضغط لإضافة صور (حتى ٨ صور)</p>
       </div>
       <div class="img-preview" id="imgPreview"></div>
       <button class="save-btn sb-or" id="postBtn" onclick="submitPost()">🚀 نشر المنشور</button>
@@ -634,7 +634,7 @@ async function loadPosts(){
       `<div class="post-img-grid">${imgs.slice(0,4).map(i=>`<img src="${i}" loading="lazy">`).join('')}</div>`;
     const liked=myLikes.has(p.id);
     const dt=new Date(p.created_at).toLocaleDateString('ar-KW',{day:'numeric',month:'long'});
-    return`<div class="post-card">${imgHtml}
+    return`<div class="post-card" onclick="window.location.href='post.html?id=${p.id}'" style="cursor:pointer;">${imgHtml}
       <div class="post-body">
         ${p.destination?`<div class="post-dest">📍 ${p.destination}</div>`:''}
         <div class="post-title">${p.title}</div>
@@ -867,18 +867,25 @@ async function saveAccountType(){
 // ══ POST ══
 function openPostModal(){document.getElementById('postOverlay').classList.add('open');}
 function previewImgs(input){
-  imgFiles=Array.from(input.files).slice(0,4);
+  const newFiles=Array.from(input.files);
+  // أضف الصور الجديدة للموجودة بحد أقصى ٨
+  imgFiles=[...imgFiles,...newFiles].slice(0,8);
+  input.value=''; // إعادة تعيين لقبول نفس الملف مجدداً
+  renderImgPreview();
+}
+
+function renderImgPreview(){
   document.getElementById('imgPreview').innerHTML=imgFiles.map((f,i)=>{
     const url=URL.createObjectURL(f);
     return`<div class="img-prev"><img src="${url}"><button onclick="removeImg(${i})">✕</button></div>`;
   }).join('');
+  // تحديث نص زر الرفع
+  const uploadEl=document.querySelector('.img-upload p');
+  if(uploadEl) uploadEl.textContent=imgFiles.length>0?`${toAr(imgFiles.length)} صورة — اضغط لإضافة المزيد (حتى ٨)`:'اضغط لإضافة صور (حتى ٨ صور)';
 }
 function removeImg(idx){
   imgFiles.splice(idx,1);
-  document.getElementById('imgPreview').innerHTML=imgFiles.map((f,i)=>{
-    const url=URL.createObjectURL(f);
-    return`<div class="img-prev"><img src="${url}"><button onclick="removeImg(${i})">✕</button></div>`;
-  }).join('');
+  renderImgPreview();
 }
 async function submitPost(){
   const title=document.getElementById('postTitle').value.trim();

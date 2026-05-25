@@ -198,7 +198,7 @@ function renderPosts(posts){
     const imgs=p.images||[];
     let img=imgs.length===0?`<div class="post-no-img">🌍</div>`:imgs.length===1?`<img class="post-img-single" src="${imgs[0]}" loading="lazy">`:`<div class="post-img-grid">${imgs.slice(0,4).map(i=>`<img src="${i}" loading="lazy">`).join('')}</div>`;
     const liked=myLikes.has(p.id);
-    return`<div class="post-card">${img}<div class="post-body">${p.destination?`<div class="post-dest">📍 ${p.destination}</div>`:''}<div class="post-title">${p.title}</div>${p.content?`<div class="post-text">${p.content}</div>`:''}<div class="post-foot"><div class="post-time">${new Date(p.created_at).toLocaleDateString('ar-KW',{day:'numeric',month:'long'})}</div><button class="like-btn ${liked?'liked':''}" id="lk-${p.id}" onclick="toggleLike('${p.id}',${p.likes||0})">${liked?'❤️':'🤍'} ${toAr(p.likes||0)}</button></div></div></div>`;
+    return`<div class="post-card" onclick="window.location.href='post.html?id=${p.id}'" style="cursor:pointer;">${img}<div class="post-body">${p.destination?`<div class="post-dest">📍 ${p.destination}</div>`:''}<div class="post-title">${p.title}</div>${p.content?`<div class="post-text">${p.content}</div>`:''}<div class="post-foot"><div class="post-time">${new Date(p.created_at).toLocaleDateString('ar-KW',{day:'numeric',month:'long'})}</div><button class="like-btn ${liked?'liked':''}" id="lk-${p.id}" onclick="toggleLike('${p.id}',${p.likes||0})">${liked?'❤️':'🤍'} ${toAr(p.likes||0)}</button></div></div></div>`;
   }).join('');
 }
 function renderTrips(trips){
