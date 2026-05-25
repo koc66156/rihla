@@ -327,7 +327,7 @@ function renderTrip(){
   document.getElementById('orgAv').textContent='✈️';
   document.getElementById('orgName').textContent='منظم الرحلة';
   document.getElementById('orgName').style.cursor='pointer';
-  document.getElementById('orgName').onclick=()=>window.location.href=`user.html?id=${trip.user_id}`;
+  document.getElementById('orgName').onclick=()=>if(trip.user_id){window.location.href='user.html?id='+trip.user_id;}else{showToast('لا يمكن فتح الملف الشخصي');};
 
   // Action area
   renderActionArea(seatsLeft);

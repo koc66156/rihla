@@ -11,7 +11,7 @@
 <style>
 :root{--or:#FF5C1A;--yl:#FFD000;--tl:#00C9B1;--dk:#0E0E0E;--muted:rgba(255,255,255,0.45);--card:rgba(255,255,255,0.05);--border:rgba(255,255,255,0.08);--nav-h:64px;--bot-h:68px;}
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
-body{font-family:'Tajawal',sans-serif;background:var(--dk);color:white;min-height:100vh;padding-top:var(--nav-h);padding-bottom:calc(var(--bot-h)+48px);}
+body{font-family:'Tajawal',sans-serif;background:var(--dk);color:white;min-height:100vh;padding-top:var(--nav-h);padding-bottom:calc(var(--bot-h)+80px);}
 
 /* NAV */
 
@@ -175,8 +175,17 @@ const GRADS={
 };
 
 let all=[], filtered=[], activeFilter='الكل';
+let myTripBks=new Set(), tripsCurrentUser=null;
 
 async function init(){
+  // جلب بيانات المستخدم والمفضلة
+  const{data:{session}}=await sb.auth.getSession();
+  tripsCurrentUser=session?.user||null;
+  if(tripsCurrentUser){
+    const{data:bks}=await sb.from('bookmarks').select('item_id').eq('user_id',tripsCurrentUser.id).eq('item_type','trip');
+    if(bks) bks.forEach(b=>myTripBks.add(b.item_id));
+  }
+
   const{data,error}=await sb
     .from('trips')
     .select('id,title,destination,country,emoji,date,duration,seats,seats_taken,tags')
@@ -217,6 +226,7 @@ function render(){
         <div class="tc-foot">
           <div class="tc-org"><div class="tc-av">✈️</div><span>${t.destination||''}</span></div>
           <button class="tc-join" onclick="event.stopPropagation();window.location.href='trip.html?id=${t.id}'">انضم ✈️</button>
+          <button class="tc-bk" id="tbk-${t.id}" onclick="event.stopPropagation();toggleTripBk('${t.id}')" style="padding:7px 10px;border-radius:12px;background:rgba(255,255,255,0.06);border:1px solid var(--border);font-size:14px;cursor:pointer;">${myTripBks.has(t.id)?'🔖':'📌'}</button>
         </div>
       </div>
     </div>`;
@@ -251,6 +261,29 @@ function showToast(msg){
   const t=document.getElementById('toast');
   t.textContent=msg;t.classList.add('show');
   setTimeout(()=>t.classList.remove('show'),3500);
+}
+
+async function toggleTripBk(tripId){
+  if(!tripsCurrentUser){showToast('سجّل دخولك لحفظ الرحلات 👤');return;}
+  const btn=document.getElementById(`tbk-${tripId}`);
+  if(myTripBks.has(tripId)){
+    await sb.from('bookmarks').delete().eq('user_id',tripsCurrentUser.id).eq('item_id',tripId).eq('item_type','trip');
+    myTripBks.delete(tripId);
+    if(btn) btn.textContent='📌';
+    showToast('تم الحذف من المفضلة');
+  }else{
+    await sb.from('bookmarks').insert({user_id:tripsCurrentUser.id,item_id:tripId,item_type:'trip'});
+    myTripBks.add(tripId);
+    if(btn) btn.textContent='🔖';
+    showToast('✅ تم حفظ الرحلة في المفضلة!');
+  }
+}
+
+function showToast(msg){
+  let t=document.getElementById('tripsToast');
+  if(!t){t=document.createElement('div');t.id='tripsToast';t.style.cssText='position:fixed;bottom:80px;left:50%;transform:translateX(-50%) translateY(80px);background:#1a1a1a;color:white;padding:11px 20px;border-radius:20px;font-size:13px;font-weight:700;z-index:9999;border:1px solid rgba(255,255,255,0.08);transition:transform .4s;pointer-events:none;';document.body.appendChild(t);}
+  t.textContent=msg;t.style.transform='translateX(-50%) translateY(0)';
+  setTimeout(()=>t.style.transform='translateX(-50%) translateY(80px)',3000);
 }
 
 init();
