@@ -57,6 +57,8 @@ body{font-family:'Tajawal',sans-serif;background:var(--dk);color:white;min-heigh
 .gallery-more-item img{width:100%;height:200px;object-fit:cover;cursor:pointer;}
 .gallery-overlay{position:absolute;inset:0;background:rgba(0,0,0,0.55);display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:900;color:white;cursor:pointer;}
 
+.report-opt{padding:12px 16px;border-radius:12px;background:rgba(255,255,255,0.04);border:1.5px solid var(--border);font-size:14px;cursor:pointer;transition:all .2s;}
+.report-opt:hover,.report-opt.selected{background:rgba(239,83,80,0.1);border-color:rgba(239,83,80,0.3);color:#ff6b6b;}
 /* OWNER MENU */
 .owner-menu-btn{width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,0.07);border:1px solid var(--border);color:rgba(255,255,255,0.6);font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
 .owner-menu{position:absolute;top:calc(100% + 8px);right:auto;left:0;background:#1e1e1e;border:1px solid var(--border);border-radius:16px;overflow:hidden;z-index:100;min-width:160px;box-shadow:0 8px 24px rgba(0,0,0,0.4);}
@@ -129,6 +131,27 @@ body{font-family:'Tajawal',sans-serif;background:var(--dk);color:white;min-heigh
 
 <div id="mainContent">
   <div class="loading" id="loadingEl"><div class="spinner"></div></div>
+</div>
+
+<!-- REPORT OVERLAY -->
+<div class="edit-overlay" id="reportOverlay" onclick="if(event.target===this)this.classList.remove('open')">
+  <div class="edit-sheet">
+    <div class="handle"></div>
+    <div class="edit-body">
+      <div class="edit-title">🚨 الإبلاغ عن منشور</div>
+      <p style="font-size:13px;color:var(--muted);margin-bottom:16px">ساعدنا في الحفاظ على مجتمع آمن ونظيف</p>
+      <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px;" id="reportReasons">
+        <div class="report-opt" onclick="selectReason(this,'محتوى مسيء أو غير لائق')">😤 محتوى مسيء أو غير لائق</div>
+        <div class="report-opt" onclick="selectReason(this,'معلومات مضللة أو كاذبة')">❌ معلومات مضللة أو كاذبة</div>
+        <div class="report-opt" onclick="selectReason(this,'احتيال أو نصب')">⚠️ احتيال أو نصب</div>
+        <div class="report-opt" onclick="selectReason(this,'محتوى مكرر أو سبام')">🔁 محتوى مكرر أو سبام</div>
+        <div class="report-opt" onclick="selectReason(this,'انتهاك الخصوصية')">🔒 انتهاك الخصوصية</div>
+        <div class="report-opt" onclick="selectReason(this,'أخرى')">📝 أخرى</div>
+      </div>
+      <div class="efield"><label>تفاصيل إضافية (اختياري)</label><textarea id="reportDetails" placeholder="أخبرنا بالمزيد..."></textarea></div>
+      <button class="save-edit-btn" onclick="submitReport()" style="background:linear-gradient(135deg,#ef5350,#e53935)">إرسال البلاغ 🚨</button>
+    </div>
+  </div>
 </div>
 
 <!-- EDIT OVERLAY -->
@@ -283,6 +306,7 @@ function render(p,author,comments,cProfiles){
         ${bookmarked?'🔖':'📌'}
       </button>
       <button class="action-btn" onclick="sharePost()">📤</button>
+      ${currentUser&&currentUser.id!==p.user_id?`<button class="action-btn" onclick="openReport()" style="color:rgba(255,100,100,0.6)">🚨</button>`:''}
     </div>
 
     <!-- COMMENTS -->
@@ -349,6 +373,34 @@ async function toggleLike(){
     btn.className='action-btn liked';
     btn.innerHTML=`❤️ <span id="likeCount">${toAr(post.likes)}</span>`;
   }
+}
+
+// ══ REPORT ══
+let selectedReason = '';
+function openReport(){
+  if(!currentUser){window.location.href='auth.html';return;}
+  selectedReason='';
+  document.querySelectorAll('.report-opt').forEach(el=>el.classList.remove('selected'));
+  document.getElementById('reportDetails').value='';
+  document.getElementById('reportOverlay').classList.add('open');
+}
+function selectReason(el,reason){
+  selectedReason=reason;
+  document.querySelectorAll('.report-opt').forEach(e=>e.classList.remove('selected'));
+  el.classList.add('selected');
+}
+async function submitReport(){
+  if(!selectedReason){showToast('⚠️ اختر سبب البلاغ');return;}
+  const details=document.getElementById('reportDetails').value.trim();
+  await sb.from('reports').insert({
+    reporter_id:currentUser.id,
+    item_id:post.id,
+    item_type:'post',
+    reason:selectedReason,
+    details
+  });
+  document.getElementById('reportOverlay').classList.remove('open');
+  showToast('✅ تم إرسال البلاغ — شكراً لمساعدتك!');
 }
 
 // ══ BOOKMARK ══

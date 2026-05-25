@@ -97,6 +97,7 @@ body{font-family:'Tajawal',sans-serif;background:var(--dk);color:white;min-heigh
     <div style="display:flex;gap:8px;margin-top:14px;" id="actionBtns">
       <button id="followBtn" onclick="toggleFollow()" style="flex:1;padding:11px;border-radius:13px;background:var(--or);color:white;border:none;font-family:'Tajawal',sans-serif;font-size:13px;font-weight:800;cursor:pointer;">+ متابعة</button>
       <button onclick="openDM()" style="flex:1;padding:11px;border-radius:13px;background:rgba(0,201,177,0.1);color:var(--tl);border:1px solid rgba(0,201,177,0.2);font-family:'Tajawal',sans-serif;font-size:13px;font-weight:800;cursor:pointer;">💬 رسالة خاصة</button>
+      <button onclick="openUserReport()" style="width:42px;padding:11px;border-radius:13px;background:rgba(239,83,80,0.08);border:1px solid rgba(239,83,80,0.15);font-size:16px;cursor:pointer;">🚨</button>
     </div>
   </div>
   <div class="stats" id="statsRow"></div>
@@ -251,7 +252,52 @@ async function openDM(){
 
 function toAr(n){return n.toString().replace(/\d/g,d=>'٠١٢٣٤٥٦٧٨٩'[d]);}
 function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3500);}
+// ══ USER REPORT ══
+let userSelectedReason='';
+function openUserReport(){
+  if(!currentUser){window.location.href='auth.html';return;}
+  userSelectedReason='';
+  document.querySelectorAll('.uropt').forEach(el=>el.style.borderColor='rgba(255,255,255,0.08)');
+  document.getElementById('userReportDetails').value='';
+  const overlay=document.getElementById('userReportOverlay');
+  const sheet=document.getElementById('userReportSheet');
+  overlay.style.opacity='1';overlay.style.pointerEvents='all';
+  sheet.style.transform='translateY(0)';
+}
+function selectUReason(el,reason){
+  userSelectedReason=reason;
+  document.querySelectorAll('.uropt').forEach(e=>e.style.borderColor='rgba(255,255,255,0.08)');
+  el.style.borderColor='rgba(239,83,80,0.4)';
+}
+async function submitUserReport(){
+  if(!userSelectedReason){showToast('⚠️ اختر سبب البلاغ');return;}
+  const uid=getUserId();
+  await sb.from('reports').insert({reporter_id:currentUser.id,item_id:uid,item_type:'user',reason:userSelectedReason,details:document.getElementById('userReportDetails').value.trim()});
+  const overlay=document.getElementById('userReportOverlay');
+  const sheet=document.getElementById('userReportSheet');
+  overlay.style.opacity='0';overlay.style.pointerEvents='none';
+  sheet.style.transform='translateY(100%)';
+  showToast('✅ تم إرسال البلاغ — شكراً!');
+}
+
 init();
 </script>
+<!-- REPORT OVERLAY -->
+<div id="userReportOverlay" onclick="if(event.target===this)this.classList.remove('open')" style="position:fixed;inset:0;z-index:2000;background:rgba(0,0,0,0.8);backdrop-filter:blur(8px);display:flex;align-items:flex-end;justify-content:center;opacity:0;pointer-events:none;transition:opacity .3s;">
+  <div style="background:#161616;border-radius:22px 22px 0 0;width:100%;max-width:520px;max-height:80vh;overflow-y:auto;transform:translateY(100%);transition:transform .4s cubic-bezier(.34,1.2,.64,1);" id="userReportSheet">
+    <div style="width:36px;height:4px;border-radius:2px;background:rgba(255,255,255,0.1);margin:12px auto;"></div>
+    <div style="padding:0 18px 28px;">
+      <div style="font-size:19px;font-weight:900;margin-bottom:16px;">🚨 الإبلاغ عن مستخدم</div>
+      <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px;" id="userReportReasons">
+        <div class="uropt" onclick="selectUReason(this,'سلوك مسيء أو تحرش')" style="padding:12px 16px;border-radius:12px;background:rgba(255,255,255,0.04);border:1.5px solid rgba(255,255,255,0.08);font-size:14px;cursor:pointer;">😤 سلوك مسيء أو تحرش</div>
+        <div class="uropt" onclick="selectUReason(this,'حساب مزيف أو انتحال شخصية')" style="padding:12px 16px;border-radius:12px;background:rgba(255,255,255,0.04);border:1.5px solid rgba(255,255,255,0.08);font-size:14px;cursor:pointer;">🎭 حساب مزيف أو انتحال شخصية</div>
+        <div class="uropt" onclick="selectUReason(this,'احتيال أو نصب')" style="padding:12px 16px;border-radius:12px;background:rgba(255,255,255,0.04);border:1.5px solid rgba(255,255,255,0.08);font-size:14px;cursor:pointer;">⚠️ احتيال أو نصب</div>
+        <div class="uropt" onclick="selectUReason(this,'أخرى')" style="padding:12px 16px;border-radius:12px;background:rgba(255,255,255,0.04);border:1.5px solid rgba(255,255,255,0.08);font-size:14px;cursor:pointer;">📝 أخرى</div>
+      </div>
+      <textarea id="userReportDetails" placeholder="تفاصيل إضافية..." style="width:100%;padding:12px 14px;border-radius:12px;border:1.5px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.06);font-family:'Tajawal',sans-serif;font-size:14px;color:white;outline:none;resize:vertical;min-height:80px;margin-bottom:12px;"></textarea>
+      <button onclick="submitUserReport()" style="width:100%;padding:13px;border-radius:13px;border:none;font-family:'Tajawal',sans-serif;font-size:15px;font-weight:900;cursor:pointer;background:linear-gradient(135deg,#ef5350,#e53935);color:white;">إرسال البلاغ 🚨</button>
+    </div>
+  </div>
+</div>
 </body>
 </html>
