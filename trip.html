@@ -11,7 +11,7 @@
 <style>
 :root{--or:#FF5C1A;--yl:#FFD000;--tl:#00C9B1;--dk:#0E0E0E;--muted:rgba(255,255,255,0.45);--card:rgba(255,255,255,0.05);--border:rgba(255,255,255,0.08);--nav-h:64px;--bot-h:68px;}
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
-body{font-family:'Tajawal',sans-serif;background:var(--dk);color:white;min-height:100vh;padding-bottom:calc(var(--bot-h) + 48px);}
+body{font-family:'Tajawal',sans-serif;background:var(--dk);color:white;min-height:100vh;padding-top:var(--nav-h);padding-bottom:calc(var(--bot-h)+48px);}
 
 .bg{position:fixed;inset:0;z-index:0;overflow:hidden;pointer-events:none;}
 .blob{position:absolute;border-radius:50%;filter:blur(80px);opacity:0.3;animation:drift 10s ease-in-out infinite alternate;}
@@ -32,7 +32,7 @@ body{font-family:'Tajawal',sans-serif;background:var(--dk);color:white;min-heigh
 @keyframes spin{to{transform:rotate(360deg);}}
 
 /* HERO IMG */
-.trip-hero{height:240px;display:flex;align-items:center;justify-content:center;font-size:80px;position:relative;margin-top:calc(var(--nav-h) + 4px);}
+.trip-hero{height:240px;display:flex;align-items:center;justify-content:center;font-size:80px;position:relative;margin-top:12px;}
 .trip-hero .country-badge{position:absolute;bottom:16px;right:16px;background:rgba(0,0,0,0.5);color:white;padding:6px 16px;border-radius:20px;font-size:13px;font-weight:700;backdrop-filter:blur(8px);}
 .trip-hero .seats-badge{position:absolute;top:16px;left:16px;padding:6px 16px;border-radius:20px;font-size:12px;font-weight:800;}
 
