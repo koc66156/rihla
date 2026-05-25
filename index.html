@@ -224,7 +224,7 @@ const GRADS={
 
 const AV_GRADS=['linear-gradient(135deg,#FF5C1A,#FFD000)','linear-gradient(135deg,#1A6BFF,#00C9B1)','linear-gradient(135deg,#7C3AED,#FF5C1A)','linear-gradient(135deg,#00838F,#4DD0E1)','linear-gradient(135deg,#558B2F,#FFD000)'];
 
-let currentUser=null, myLikes=new Set();
+let currentUser=null, myLikes=new Set(), myFollows=new Set();
 let postsPage=0, postsPerPage=10, allPostsLoaded=false;
 let userProfiles={};
 
@@ -245,6 +245,8 @@ async function checkSession(){
     // جلب إعجاباتي
     const{data:likes}=await sb.from('post_likes').select('post_id').eq('user_id',currentUser.id);
     if(likes) likes.forEach(l=>myLikes.add(l.post_id));
+    const{data:follows}=await sb.from('follows').select('following_id').eq('follower_id',currentUser.id);
+    if(follows) follows.forEach(f=>myFollows.add(f.following_id));
   }
 }
 
@@ -354,7 +356,7 @@ function renderPost(p){
           <div class="feed-name">${name} ${isAgent?'🧭':''}</div>
           <div class="feed-meta">${dt} ${p.destination?'· 📍 '+p.destination:''}</div>
         </div>
-        ${currentUser&&currentUser.id!==p.user_id?`<button class="feed-follow" onclick="event.stopPropagation()">متابعة+</button>`:''}
+        ${currentUser&&currentUser.id!==p.user_id?`<button class="feed-follow" id="follow-${p.user_id}" onclick="event.stopPropagation();toggleFollowFeed('${p.user_id}')">${myFollows.has(p.user_id)?'✓ تتابعه':'متابعة+'}</button>`:''}
       </div>
       ${imgHtml}
       <div class="${imgs.length>0?'':''}">
@@ -395,6 +397,25 @@ async function toggleLike(postId,cur){
     await sb.from('posts').update({likes:cur+1}).eq('id',postId);
     btn.className='feed-action liked';
     btn.innerHTML=`❤️ ${toAr(cur+1)}`;
+  }
+}
+
+// ══ FOLLOW ══
+async function toggleFollowFeed(userId){
+  if(!currentUser){window.location.href='auth.html';return;}
+  const btn=document.getElementById(`follow-${userId}`);
+  // قد يكون هناك أكثر من زر لنفس المستخدم
+  const allBtns=document.querySelectorAll(`#follow-${userId}`);
+  if(myFollows.has(userId)){
+    await sb.from('follows').delete().eq('follower_id',currentUser.id).eq('following_id',userId);
+    myFollows.delete(userId);
+    allBtns.forEach(b=>b.textContent='متابعة+');
+    showToast('✓ تم إلغاء المتابعة');
+  }else{
+    await sb.from('follows').insert({follower_id:currentUser.id,following_id:userId});
+    myFollows.add(userId);
+    allBtns.forEach(b=>b.textContent='✓ تتابعه');
+    showToast('🎉 تتابعه الآن!');
   }
 }
 

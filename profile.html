@@ -880,7 +880,14 @@ async function submitPost(){
     const ext=file.name.split('.').pop();
     const path=`${currentUser.id}/${Date.now()}.${ext}`;
     const{data,error}=await sb.storage.from('posts').upload(path,file,{upsert:true});
-    if(!error){const{data:u}=sb.storage.from('posts').getPublicUrl(path);urls.push(u.publicUrl);}
+    if(error){
+      console.error('Upload error:',error);
+      showToast('⚠️ خطأ رفع الصورة: '+error.message);
+    }else{
+      const{data:u}=sb.storage.from('posts').getPublicUrl(path);
+      urls.push(u.publicUrl);
+      console.log('Uploaded:',u.publicUrl);
+    }
   }
   const{error}=await sb.from('posts').insert({
     user_id:currentUser.id,title,
