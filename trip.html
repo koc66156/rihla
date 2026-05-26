@@ -135,9 +135,11 @@ body{font-family:'Tajawal',sans-serif;background:var(--dk);color:white;min-heigh
 </div>
 
 <nav class="topnav">
-  <button onclick="window.history.back()" style="width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.1);color:white;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;">→</button>
-  <button class="nav-logo" onclick="window.location.href='index.html'">Rihla</button>
   <button class="nav-profile-btn" id="navProfileBtn" onclick="goToProfile()">تسجيل دخول 👤</button>
+  <div style="display:flex;align-items:center;gap:8px;">
+    <button class="nav-logo" onclick="window.location.href='index.html'">Rihla</button>
+    <button onclick="window.history.back()" style="width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.1);color:white;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;">→</button>
+  </div>
 </nav>
 
 <div id="mainContent" style="display:none">
@@ -190,6 +192,10 @@ body{font-family:'Tajawal',sans-serif;background:var(--dk);color:white;min-heigh
 
     <!-- يظهر حسب الحالة -->
     <div id="actionArea" style="margin-bottom:24px;"></div>
+    <div class="requests-box" id="requestsBox" style="display:none;padding-bottom:80px;">
+      <div class="sec-title">طلبات الانضمام</div>
+      <div id="requestsList"></div>
+    </div>
     <div style="height:30px"></div>
   </div>
 </div>
@@ -494,7 +500,10 @@ async function loadRequests(){
         <button class="req-accept" onclick="updateRequest('${r.id}','accepted','${uid}')">قبول ✓</button>
         <button class="req-reject" onclick="updateRequest('${r.id}','rejected','${uid}')">رفض ✗</button>
       </div>`,
-      accepted:`<span class="req-status rs-accepted">✅ مقبول</span>`,
+      accepted:`<div style="display:flex;flex-direction:column;gap:4px;align-items:flex-end;">
+        <span class="req-status rs-accepted">✅ مقبول</span>
+        <button onclick="kickMember('${r.id}','${uid}')" style="padding:4px 10px;border-radius:8px;background:rgba(229,57,53,0.1);border:1px solid rgba(229,57,53,0.2);color:#ff6b6b;font-family:'Tajawal',sans-serif;font-size:11px;font-weight:700;cursor:pointer;">🚫 طرد</button>
+      </div>`,
       rejected:`<span class="req-status rs-rejected">❌ مرفوض</span>`,
     };
 
@@ -508,6 +517,15 @@ async function loadRequests(){
         ${statusMap[r.status]||''}
       </div>`;
   }).join('');
+}
+
+// ── KICK MEMBER ──
+async function kickMember(reqId, uid){
+  if(!confirm('هل أنت متأكد من طرد هذا العضو من الرحلة؟')) return;
+  await sb.from('join_requests').update({status:'rejected'}).eq('id',reqId);
+  await sb.from('trips').update({seats_taken:Math.max(0,(trip.seats_taken||1)-1)}).eq('id',trip.id);
+  showToast('تم طرد العضو من الرحلة');
+  loadRequests();
 }
 
 // ── UPDATE REQUEST ──

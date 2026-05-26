@@ -214,8 +214,8 @@ async function init(){
   // تحميل الرسائل
   await loadMessages();
 
-  // الاشتراك في الرسائل الجديدة (Realtime)
-  subscribeToMessages();
+  // تحديث تلقائي كل 3 ثوان (fallback)
+  setInterval(()=>loadNewMessages(), 3000);
 }
 
 // ── LOAD MESSAGES ──
@@ -250,6 +250,24 @@ async function loadMessages(){
     appendMessage(m);
   });
   scrollToBottom();
+}
+
+// ── LOAD NEW MESSAGES (polling) ──
+async function loadNewMessages(){
+  if(!tripId||!currentUser) return;
+  const{data}=await sb.from('messages').select('*')
+    .eq('trip_id',tripId).order('created_at',{ascending:true}).limit(100);
+  if(!data) return;
+  const area=document.getElementById('messagesArea');
+  const wasAtBottom=area.scrollTop+area.clientHeight>=area.scrollHeight-50;
+  // أضف فقط الرسائل الجديدة
+  const newMsgs=data.filter(m=>!messageIds.has(m.id));
+  if(newMsgs.length>0){
+    const emptyEl=area.querySelector('.empty-chat');
+    if(emptyEl) emptyEl.remove();
+    newMsgs.forEach(m=>{messageIds.add(m.id);appendMessage(m);});
+    if(wasAtBottom) scrollToBottom();
+  }
 }
 
 // ── APPEND MESSAGE ──
@@ -319,7 +337,7 @@ async function sendMessage(){
 
 // ── REALTIME ──
 function subscribeToMessages(){
-  sb.channel(`chat-${tripId}`)
+  try{sb.channel(`chat-${tripId}`)
     .on('postgres_changes',{
       event:'INSERT',
       schema:'public',
