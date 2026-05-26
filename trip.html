@@ -472,32 +472,46 @@ async function loadRequests(){
     return;
   }
 
+  // جلب بيانات المتقدمين
+  const uids=[...new Set(requests.map(r=>r.requester_id||r.user_id).filter(Boolean))];
+  let profiles={};
+  if(uids.length>0){
+    const{data:ps}=await sb.from('profiles').select('id,full_name,avatar,country').in('id',uids);
+    if(ps) ps.forEach(p=>profiles[p.id]=p);
+  }
+
+  const GRADS=['linear-gradient(135deg,#FF5C1A,#FFD000)','linear-gradient(135deg,#1A6BFF,#00C9B1)','linear-gradient(135deg,#7C3AED,#FF5C1A)','linear-gradient(135deg,#00838F,#4DD0E1)'];
+
   list.innerHTML=requests.map(r=>{
+    const uid=r.requester_id||r.user_id;
+    const p=profiles[uid]||{};
+    const name=p.full_name||'مستخدم';
+    const av=p.avatar||name.substring(0,2);
+    const grad=GRADS[(uid||'').charCodeAt(0)%GRADS.length];
+
     const statusMap={
-      pending:`<span class="req-status rs-pending">⏳ قيد المراجعة</span>`,
+      pending:`<div class="req-actions">
+        <button class="req-accept" onclick="updateRequest('${r.id}','accepted','${uid}')">قبول ✓</button>
+        <button class="req-reject" onclick="updateRequest('${r.id}','rejected','${uid}')">رفض ✗</button>
+      </div>`,
       accepted:`<span class="req-status rs-accepted">✅ مقبول</span>`,
       rejected:`<span class="req-status rs-rejected">❌ مرفوض</span>`,
     };
-    const actions=r.status==='pending'?`
-      <div class="req-actions">
-        <button class="req-accept" onclick="updateRequest('${r.id}','accepted')">قبول ✓</button>
-        <button class="req-reject" onclick="updateRequest('${r.id}','rejected')">رفض ✗</button>
-      </div>`:statusMap[r.status];
 
     return`
       <div class="req-item" id="req-${r.id}">
-        <div class="req-av">✈️</div>
-        <div class="req-info">
-          <strong>طلب انضمام</strong>
-          <span>${r.message||'بدون رسالة'}</span>
+        <div class="req-av" style="background:${grad};cursor:pointer;" onclick="window.location.href='user.html?id=${uid}'">${av}</div>
+        <div class="req-info" style="cursor:pointer;" onclick="window.location.href='user.html?id=${uid}'">
+          <strong>${name}</strong>
+          <span>${p.country?'📍 '+p.country+' · ':''} ${r.message||'بدون رسالة'}</span>
         </div>
-        ${actions}
+        ${statusMap[r.status]||''}
       </div>`;
   }).join('');
 }
 
 // ── UPDATE REQUEST ──
-async function updateRequest(reqId, status){
+async function updateRequest(reqId, status, uid){
   const{error}=await sb.from('join_requests').update({status}).eq('id',reqId);
   if(error){showToast('❌ حدث خطأ');return;}
 

@@ -195,11 +195,24 @@ async function init(){
     .eq('status','accepted');
   document.getElementById('tripMembers').textContent=`${(count||0)+1} أعضاء في المجموعة`;
 
+  // التحقق من صلاحية الوصول
+  const isOwner = currentUser.id === t.user_id;
+  const{data:accepted}=await sb.from('join_requests')
+    .select('id').eq('trip_id',tripId).eq('requester_id',currentUser.id).eq('status','accepted').single();
+
+  if(!isOwner && !accepted){
+    const area=document.getElementById('messagesArea');
+    area.innerHTML=`<div class="empty-chat">
+      <div class="eicon">🔒</div>
+      <h3>غير مصرح</h3>
+      <p>يجب قبول طلب انضمامك للوصول للدردشة</p>
+      <button onclick="window.history.back()" style="margin-top:16px;padding:10px 24px;border-radius:20px;background:var(--or);color:white;border:none;font-family:'Tajawal',sans-serif;font-size:14px;font-weight:800;cursor:pointer;">→ رجوع</button>
+    </div>`;
+    return;
+  }
+
   // تحميل الرسائل
   await loadMessages();
-
-  // إظهار منطقة الإدخال
-  document.getElementById('inputArea').style.display='flex';
 
   // الاشتراك في الرسائل الجديدة (Realtime)
   subscribeToMessages();
@@ -217,7 +230,7 @@ async function loadMessages(){
   const area=document.getElementById('messagesArea');
 
   if(error){
-    area.innerHTML=`<div class="empty-chat"><div class="eicon">⚠️</div><h3>تعذّر التحميل</h3><p>${error.message}</p></div>`;
+    area.innerHTML=`<div class="empty-chat"><div class="eicon">⚠️</div><h3>تعذّر التحميل</h3><p>${error.message}</p><button onclick="loadMessages()" style="margin-top:12px;padding:8px 20px;border-radius:14px;background:var(--or);color:white;border:none;font-family:'Tajawal',sans-serif;font-weight:800;cursor:pointer;">إعادة المحاولة</button></div>`;
     return;
   }
 
