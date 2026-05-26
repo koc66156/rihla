@@ -9,528 +9,440 @@
 <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&family=Righteous&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
-:root{--or:#FF5C1A;--yl:#FFD000;--tl:#00C9B1;--dk:#0E0E0E;--muted:rgba(255,255,255,0.45);--card:rgba(255,255,255,0.05);--border:rgba(255,255,255,0.08);--nav-h:64px;--bot-h:68px;}
+:root{--or:#FF5C1A;--yl:#FFD000;--tl:#00C9B1;--dk:#0E0E0E;--muted:rgba(255,255,255,0.45);--card:rgba(255,255,255,0.05);--border:rgba(255,255,255,0.08);--nav-h:64px;--bot-h:64px;}
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
-body{font-family:'Tajawal',sans-serif;background:var(--dk);color:white;min-height:100vh;padding-top:var(--nav-h);padding-bottom:calc(var(--bot-h)+48px);}
+body{font-family:'Tajawal',sans-serif;background:var(--dk);color:white;min-height:100vh;padding-top:var(--nav-h);padding-bottom:calc(var(--bot-h)+80px);}
 
-.bg{position:fixed;inset:0;z-index:0;overflow:hidden;pointer-events:none;}
-.blob{position:absolute;border-radius:50%;filter:blur(80px);opacity:0.3;animation:drift 10s ease-in-out infinite alternate;}
-.b1{width:350px;height:350px;background:var(--or);top:-80px;right:-80px;}
-.b2{width:280px;height:280px;background:var(--tl);bottom:100px;left:-60px;animation-delay:-5s;}
-@keyframes drift{from{transform:translate(0,0);}to{transform:translate(20px,20px);}}
+.topnav{position:fixed;top:0;width:100%;z-index:1000;height:var(--nav-h);padding:0 16px;display:flex;align-items:center;justify-content:space-between;background:rgba(14,14,14,0.95);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);}
+.nav-logo{font-family:'Righteous',cursive;font-size:22px;background:linear-gradient(90deg,var(--or),var(--yl));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;border:none;background-color:transparent;cursor:pointer;}
+.nav-back{color:rgba(255,255,255,0.6);font-size:13px;font-weight:700;background:none;border:none;cursor:pointer;}
 
-/* NAV */
-
-
-
-
-
-/* NOT LOGGED */
-.not-logged{display:none;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:40px 20px;text-align:center;}
-.not-logged.show{display:flex;}
-.not-logged .icon{font-size:64px;margin-bottom:20px;}
-.not-logged h2{font-size:22px;font-weight:900;margin-bottom:10px;}
-.not-logged p{font-size:14px;color:var(--muted);margin-bottom:24px;}
-.auth-btn{padding:14px 32px;border-radius:28px;background:var(--or);color:white;font-family:'Tajawal',sans-serif;font-size:16px;font-weight:800;border:none;cursor:pointer;text-decoration:none;display:inline-block;}
-
-/* MAIN */
-.main{position:relative;z-index:1;padding:calc(var(--nav-h) + 36px) 20px 0;}
-
-/* STEPS HEADER */
-.steps-bar{display:flex;gap:8px;margin-bottom:28px;}
+/* STEPS */
+.steps-bar{display:flex;gap:4px;padding:16px 16px 0;}
 .step-dot{flex:1;height:4px;border-radius:2px;background:rgba(255,255,255,0.1);transition:background .3s;}
-.step-dot.done{background:var(--tl);}
-.step-dot.active{background:var(--or);}
+.step-dot.done{background:var(--or);}
+.step-dot.active{background:var(--yl);}
 
-.step-label{font-size:12px;color:var(--muted);margin-bottom:6px;letter-spacing:1px;}
-.step-title{font-size:22px;font-weight:900;margin-bottom:24px;}
+.step-header{padding:16px 16px 20px;}
+.step-num{font-size:11px;font-weight:800;color:var(--or);letter-spacing:2px;margin-bottom:4px;}
+.step-title{font-size:20px;font-weight:900;margin-bottom:4px;}
+.step-sub{font-size:13px;color:var(--muted);}
 
-/* FORM STEPS */
-.form-step{display:none;}
-.form-step.active{display:block;animation:fadeUp .3s ease both;}
-@keyframes fadeUp{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);}}
+/* FORM */
+.form-section{padding:0 16px;}
+.field{margin-bottom:16px;}
+.field label{display:block;font-size:12px;font-weight:800;color:rgba(255,255,255,0.5);margin-bottom:6px;letter-spacing:.5px;}
+.field input,.field textarea,.field select{width:100%;padding:13px 15px;border-radius:14px;border:1.5px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.06);font-family:'Tajawal',sans-serif;font-size:14px;color:white;outline:none;transition:border-color .2s;}
+.field input:focus,.field textarea:focus,.field select:focus{border-color:var(--or);}
+.field input::placeholder,.field textarea::placeholder{color:rgba(255,255,255,0.2);}
+.field textarea{resize:vertical;min-height:100px;}
+.field select option{background:#222;}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+
+/* CHIPS SELECTOR */
+.chips-wrap{display:flex;gap:8px;flex-wrap:wrap;}
+.chip{padding:9px 16px;border-radius:20px;border:1.5px solid rgba(255,255,255,0.1);background:transparent;font-family:'Tajawal',sans-serif;font-size:13px;font-weight:700;cursor:pointer;color:rgba(255,255,255,0.6);transition:all .2s;}
+.chip.selected{background:var(--or);color:white;border-color:var(--or);}
 
 /* EMOJI PICKER */
-.emoji-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin-bottom:20px;}
-.emoji-opt{padding:12px;border-radius:14px;background:var(--card);border:2px solid transparent;font-size:24px;text-align:center;cursor:pointer;transition:all .2s;}
-.emoji-opt:hover{border-color:rgba(255,92,26,0.3);}
-.emoji-opt.selected{border-color:var(--or);background:rgba(255,92,26,0.12);}
+.emoji-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin-top:8px;}
+.emoji-opt{height:44px;border-radius:12px;background:rgba(255,255,255,0.05);border:2px solid transparent;font-size:22px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s;}
+.emoji-opt.selected{border-color:var(--or);background:rgba(255,92,26,0.15);}
 
-/* FIELD */
-.field{margin-bottom:18px;}
-.field label{display:block;font-size:13px;font-weight:800;color:rgba(255,255,255,0.6);margin-bottom:8px;letter-spacing:0.5px;}
-.field input,.field select,.field textarea{width:100%;padding:14px 16px;border-radius:14px;border:1.5px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.06);font-family:'Tajawal',sans-serif;font-size:15px;color:white;outline:none;transition:all .2s;}
-.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--or);background:rgba(255,92,26,0.06);box-shadow:0 0 0 3px rgba(255,92,26,0.1);}
-.field input::placeholder,.field textarea::placeholder{color:rgba(255,255,255,0.2);}
-.field select option{background:#222;}
-.field textarea{resize:vertical;min-height:110px;}
-.field-hint{font-size:11px;color:var(--muted);margin-top:6px;}
-
-/* SEATS CONTROL */
-.seats-control{display:flex;align-items:center;gap:16px;}
-.seat-btn{width:44px;height:44px;border-radius:14px;background:var(--card);border:1.5px solid var(--border);color:white;font-size:22px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;font-family:'Tajawal',sans-serif;}
-.seat-btn:hover{border-color:var(--or);color:var(--or);}
-.seat-num{font-size:28px;font-weight:900;background:linear-gradient(135deg,var(--or),var(--yl));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;min-width:40px;text-align:center;}
-
-/* TAGS */
-.tags-grid{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:4px;}
-.tag-opt{padding:9px 18px;border-radius:20px;border:1.5px solid rgba(255,255,255,0.12);background:transparent;font-family:'Tajawal',sans-serif;font-size:13px;font-weight:700;cursor:pointer;color:rgba(255,255,255,0.7);transition:all .2s;}
-.tag-opt.selected{background:var(--or);color:white;border-color:var(--or);}
-
-/* PREVIEW CARD */
-.preview-card{background:var(--card);border:1px solid var(--border);border-radius:22px;overflow:hidden;margin-bottom:24px;}
-.preview-img{height:140px;display:flex;align-items:center;justify-content:center;font-size:56px;}
-.preview-body{padding:18px;}
-.preview-title{font-size:18px;font-weight:900;margin-bottom:8px;}
-.preview-meta{display:flex;gap:14px;margin-bottom:12px;}
+/* PREVIEW */
+.trip-preview{background:var(--card);border:1px solid var(--border);border-radius:20px;overflow:hidden;margin:0 16px 20px;}
+.preview-hero{height:120px;display:flex;align-items:center;justify-content:center;font-size:52px;position:relative;}
+.preview-body{padding:16px;}
+.preview-title{font-size:18px;font-weight:900;margin-bottom:6px;}
+.preview-meta{display:flex;gap:12px;flex-wrap:wrap;}
 .preview-meta span{font-size:12px;color:var(--muted);}
-.preview-tags{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:14px;}
-.ptag{padding:4px 12px;border-radius:10px;background:rgba(255,92,26,0.12);color:var(--or);font-size:11px;font-weight:700;}
-.preview-desc{font-size:13px;color:rgba(255,255,255,0.6);line-height:1.7;}
+.preview-tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px;}
+.preview-tag{padding:4px 10px;border-radius:9px;background:rgba(0,201,177,0.1);color:var(--tl);font-size:11px;font-weight:700;}
+.preview-info{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px;}
+.pi{background:rgba(255,255,255,0.04);border-radius:10px;padding:10px;text-align:center;}
+.pi .pv{font-size:14px;font-weight:800;display:block;margin-bottom:2px;}
+.pi .pl{font-size:10px;color:var(--muted);}
 
-/* NAV BTNS */
+/* BUTTONS */
+.btn-row{display:flex;gap:10px;padding:0 16px;margin-top:8px;}
+.btn-back{flex:1;padding:13px;border-radius:14px;background:rgba(255,255,255,0.06);border:1px solid var(--border);color:rgba(255,255,255,0.7);font-family:'Tajawal',sans-serif;font-size:15px;font-weight:800;cursor:pointer;}
+.btn-next{flex:2;padding:13px;border-radius:14px;background:linear-gradient(135deg,var(--or),#ff8c42);color:white;border:none;font-family:'Tajawal',sans-serif;font-size:15px;font-weight:900;cursor:pointer;}
+.btn-next:disabled{opacity:0.5;cursor:not-allowed;}
+.btn-publish{width:calc(100% - 32px);margin:0 16px;padding:15px;border-radius:16px;background:linear-gradient(135deg,var(--or),#ff8c42);color:white;border:none;font-family:'Tajawal',sans-serif;font-size:17px;font-weight:900;cursor:pointer;box-shadow:0 8px 24px rgba(255,92,26,0.3);}
+.btn-publish:disabled{opacity:0.5;cursor:not-allowed;}
 
-.btn-next{flex:1;padding:15px;border-radius:16px;background:linear-gradient(135deg,var(--or),#ff8c42);color:white;border:none;font-family:'Tajawal',sans-serif;font-size:17px;font-weight:900;cursor:pointer;transition:all .2s;box-shadow:0 6px 20px rgba(255,92,26,0.3);}
-.btn-next:hover{transform:translateY(-2px);}
-.btn-next:disabled{opacity:0.6;cursor:not-allowed;transform:none;}
-.btn-back{padding:15px 20px;border-radius:16px;background:var(--card);border:1.5px solid var(--border);color:white;font-family:'Tajawal',sans-serif;font-size:15px;font-weight:700;cursor:pointer;transition:all .2s;}
-.btn-back:hover{border-color:rgba(255,255,255,0.3);}
+/* NOT LOGGED */
+.not-logged{display:none;flex-direction:column;align-items:center;justify-content:center;min-height:80vh;padding:40px;text-align:center;}
+.not-logged.show{display:flex;}
+.not-logged .ni{font-size:64px;margin-bottom:20px;}
+.not-logged h2{font-size:22px;font-weight:900;margin-bottom:10px;}
+.not-logged p{font-size:14px;color:var(--muted);margin-bottom:24px;}
+.auth-btn{padding:14px 32px;border-radius:28px;background:var(--or);color:white;font-family:'Tajawal',sans-serif;font-size:16px;font-weight:800;border:none;cursor:pointer;}
 
-/* SUCCESS */
-.success-screen{display:none;text-align:center;padding:40px 20px;min-height:60vh;flex-direction:column;align-items:center;justify-content:center;}
-.success-screen.show{display:flex;}
-.success-icon{font-size:80px;margin-bottom:20px;animation:pop .6s cubic-bezier(.34,1.56,.64,1) both;}
-@keyframes pop{from{transform:scale(0)rotate(-10deg);}to{transform:scale(1)rotate(0);}}
-.success-screen h2{font-size:26px;font-weight:900;margin-bottom:10px;}
-.success-screen p{font-size:14px;color:var(--muted);line-height:1.7;margin-bottom:32px;}
-.success-actions{display:flex;flex-direction:column;gap:12px;width:100%;}
-.suc-btn{padding:14px;border-radius:16px;font-family:'Tajawal',sans-serif;font-size:16px;font-weight:800;border:none;cursor:pointer;text-decoration:none;display:block;text-align:center;transition:all .2s;}
-.suc-btn-p{background:var(--or);color:white;}
-.suc-btn-s{background:var(--card);color:white;border:1.5px solid var(--border);}
-
-/* LOADING BTN */
-.btn-next .bl{display:none;width:20px;height:20px;border:2.5px solid rgba(255,255,255,0.3);border-top-color:white;border-radius:50%;animation:spin .7s linear infinite;margin:0 auto;}
-.btn-next.loading .bt{display:none;}
-.btn-next.loading .bl{display:block;}
-@keyframes spin{to{transform:rotate(360deg);}}
-
-/* BOTTOM NAV */
-
-
-
-
-
-
-/* TOAST */
-.toast{position:fixed;bottom:calc(var(--bot-h)+14px);left:50%;transform:translateX(-50%) translateY(80px);background:#1a1a1a;color:white;padding:11px 20px;border-radius:20px;font-size:13px;font-weight:700;box-shadow:0 8px 24px rgba(0,0,0,0.4);transition:transform .4s cubic-bezier(.34,1.56,.64,1);z-index:9999;border:1px solid rgba(255,255,255,0.08);pointer-events:none;opacity:0;}
-.toast.show{transform:translateX(-50%) translateY(0);opacity:1;pointer-events:all;}
-
-/* ALERT */
-.alert{padding:12px 16px;border-radius:14px;font-size:13px;font-weight:700;margin-bottom:16px;display:none;align-items:center;gap:8px;background:rgba(229,57,53,0.12);border:1px solid rgba(229,57,53,0.25);color:#ff6b6b;}
-.alert.show{display:flex;}
-/* ── SHARED NAV ── */
-.topnav{position:fixed;top:0;width:100%;z-index:1000;height:var(--nav-h);padding:0 16px;display:flex;align-items:center;justify-content:space-between;background:rgba(14,14,14,0.95);backdrop-filter:blur(16px);border-bottom:1px solid rgba(255,255,255,0.07);}
-.nav-logo{font-family:'Righteous',cursive;font-size:22px;background:linear-gradient(90deg,#FF5C1A,#FFD000);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;border:none;background-color:transparent;cursor:pointer;padding:0;}
-.nav-profile-btn{padding:7px 16px;border-radius:20px;background:rgba(255,92,26,0.12);border:1.5px solid rgba(255,92,26,0.25);color:#FF5C1A;font-family:'Tajawal',sans-serif;font-size:13px;font-weight:800;cursor:pointer;white-space:nowrap;transition:all .2s;}
-.botnav{position:fixed;bottom:0;width:100%;z-index:1000;height:var(--bot-h);background:rgba(14,14,14,0.97);backdrop-filter:blur(20px);border-top:1px solid rgba(255,255,255,0.07);display:flex;align-items:center;padding-bottom:env(safe-area-inset-bottom);}
-.bitem{display:flex;flex-direction:column;align-items:center;gap:3px;flex:1;text-decoration:none;padding:6px 0;transition:all .2s;}
+.botnav{position:fixed;bottom:0;width:100%;z-index:1000;height:var(--bot-h);background:rgba(14,14,14,0.97);backdrop-filter:blur(20px);border-top:1px solid var(--border);display:flex;align-items:center;}
+.bitem{display:flex;flex-direction:column;align-items:center;gap:3px;flex:1;text-decoration:none;padding:6px 0;}
 .bitem .bi{font-size:20px;line-height:1;}
 .bitem .bl{font-size:10px;font-weight:700;color:rgba(255,255,255,0.4);}
-.bitem.active .bl{color:#FF5C1A;}
+.bitem.active .bl{color:var(--or);}
+
+.toast{position:fixed;bottom:calc(var(--bot-h)+14px);left:50%;transform:translateX(-50%) translateY(80px);background:#1a1a1a;color:white;padding:11px 20px;border-radius:20px;font-size:13px;font-weight:700;box-shadow:0 8px 24px rgba(0,0,0,0.4);transition:transform .4s cubic-bezier(.34,1.56,.64,1);z-index:9999;border:1px solid rgba(255,255,255,0.08);pointer-events:none;opacity:0;}
+.toast.show{transform:translateX(-50%) translateY(0);opacity:1;}
 </style>
 </head>
 <body>
 
-<div class="bg"><div class="blob b1"></div><div class="blob b2"></div></div>
-
-<!-- NOT LOGGED -->
 <div class="not-logged" id="notLogged">
-  <div class="icon">✈️</div>
+  <div class="ni">✈️</div>
   <h2>سجّل دخولك أولاً</h2>
   <p>تحتاج حساباً لنشر رحلتك</p>
-  <a href="auth.html" class="auth-btn">تسجيل / دخول</a>
+  <button class="auth-btn" onclick="window.location.href='auth.html'">تسجيل / دخول</button>
 </div>
 
-<!-- NAV -->
 <nav class="topnav">
   <button class="nav-logo" onclick="window.location.href='index.html'">Rihla</button>
-  <button class="nav-profile-btn" id="navProfileBtn" onclick="goToProfile()">تسجيل دخول 👤</button>
+  <button class="nav-back" onclick="goBack()">← رجوع</button>
 </nav>
 
-<!-- MAIN -->
-<div class="main" id="mainContent" style="display:none">
+<div id="mainContent" style="display:none">
 
-  <!-- STEPS BAR -->
-  <div class="steps-bar">
-    <div class="step-dot active" id="sd1"></div>
-    <div class="step-dot" id="sd2"></div>
-    <div class="step-dot" id="sd3"></div>
-    <div class="step-dot" id="sd4"></div>
+<!-- STEPS BAR -->
+<div class="steps-bar">
+  <div class="step-dot active" id="dot0"></div>
+  <div class="step-dot" id="dot1"></div>
+  <div class="step-dot" id="dot2"></div>
+  <div class="step-dot" id="dot3"></div>
+</div>
+
+<!-- ══ STEP 0: الوجهة ══ -->
+<div id="step0">
+  <div class="step-header">
+    <div class="step-num">الخطوة ١ من ٤</div>
+    <div class="step-title">🗺️ الوجهة والتاريخ</div>
+    <div class="step-sub">أين وتى تريد السفر؟</div>
   </div>
-
-  <div class="alert" id="alert">⚠️ <span id="alertMsg"></span></div>
-
-  <!-- STEP 1 — الوجهة والرمز -->
-  <div class="form-step active" id="step1">
-    <div class="step-label">الخطوة ١ من ٤</div>
-    <div class="step-title">إلى أين تسافر؟ 🌍</div>
-
+  <div class="form-section">
+    <div class="field"><label>عنوان الرحلة *</label><input type="text" id="f_title" placeholder="مثال: مغامرة طوكيو — الربيع 🌸"></div>
+    <div class="field"><label>الوجهة / المدينة *</label><input type="text" id="f_dest" placeholder="مثال: طوكيو، أوساكا"></div>
+    <div class="field"><label>الدولة *</label><input type="text" id="f_country" placeholder="مثال: اليابان"></div>
+    <div class="field-row">
+      <div class="field"><label>تاريخ السفر *</label><input type="date" id="f_date"></div>
+      <div class="field"><label>تاريخ العودة</label><input type="date" id="f_return"></div>
+    </div>
+    <div class="field"><label>المدة</label><input type="text" id="f_duration" placeholder="مثال: ٧ أيام"></div>
     <div class="field">
-      <label>اختر رمز الرحلة</label>
+      <label>رمز الرحلة</label>
       <div class="emoji-grid" id="emojiGrid"></div>
     </div>
-
-    <div class="field">
-      <label>اسم الرحلة</label>
-      <input type="text" id="tripTitle" placeholder="مثال: كبادوكيا والبالون السحري">
-    </div>
-
-    <div class="field">
-      <label>الوجهة</label>
-      <input type="text" id="tripDest" placeholder="مثال: إسطنبول، تركيا">
-    </div>
-
-    <div class="field">
-      <label>الدولة</label>
-      <select id="tripCountry">
-        <option value="">اختر الدولة</option>
-        <option>تركيا 🇹🇷</option><option>اليابان 🇯🇵</option><option>فرنسا 🇫🇷</option>
-        <option>إيطاليا 🇮🇹</option><option>إسبانيا 🇪🇸</option><option>المالديف 🇲🇻</option>
-        <option>تايلاند 🇹🇭</option><option>إندونيسيا 🇮🇩</option><option>ماليزيا 🇲🇾</option>
-        <option>سنغافورة 🇸🇬</option><option>كوريا الجنوبية 🇰🇷</option><option>الصين 🇨🇳</option>
-        <option>الهند 🇮🇳</option><option>أستراليا 🇦🇺</option><option>كندا 🇨🇦</option>
-        <option>الولايات المتحدة 🇺🇸</option><option>المملكة المتحدة 🇬🇧</option><option>ألمانيا 🇩🇪</option>
-        <option>هولندا 🇳🇱</option><option>سويسرا 🇨🇭</option><option>اليونان 🇬🇷</option>
-        <option>البرتغال 🇵🇹</option><option>المغرب 🇲🇦</option><option>مصر 🇪🇬</option>
-        <option>كينيا 🇰🇪</option><option>جورجيا 🇬🇪</option><option>أوزبكستان 🇺🇿</option>
-        <option>أذربيجان 🇦🇿</option><option>أرمينيا 🇦🇲</option><option>البرازيل 🇧🇷</option>
-        <option>دولة أخرى 🌍</option>
-      </select>
-    </div>
-
-    <div class="nav-btns">
-      <button class="btn-next" onclick="goStep(2)"><span class="bt">التالي ←</span><div class="bl"></div></button>
-    </div>
   </div>
+  <div class="btn-row"><button class="btn-next" onclick="goNext(0)">التالي ←</button></div>
+</div>
 
-  <!-- STEP 2 — التاريخ والمدة -->
-  <div class="form-step" id="step2">
-    <div class="step-label">الخطوة ٢ من ٤</div>
-    <div class="step-title">متى موعد الرحلة؟ 📅</div>
-
-    <div class="field">
-      <label>تاريخ السفر</label>
-      <input type="date" id="tripDate">
-      <div class="field-hint">اختر تاريخ المغادرة</div>
-    </div>
-
-    <div class="field">
-      <label>مدة الرحلة</label>
-      <select id="tripDuration">
-        <option value="">اختر المدة</option>
-        <option>٣ أيام</option><option>٤ أيام</option><option>٥ أيام</option>
-        <option>أسبوع</option><option>١٠ أيام</option><option>أسبوعان</option>
-        <option>٣ أسابيع</option><option>شهر</option>
-      </select>
-    </div>
-
-    <div class="field">
-      <label>عدد الأماكن المتاحة</label>
-      <div class="seats-control">
-        <button class="seat-btn" onclick="changeSeat(-1)">−</button>
-        <div class="seat-num" id="seatNum">٥</div>
-        <button class="seat-btn" onclick="changeSeat(1)">+</button>
-      </div>
-      <div class="field-hint">كم شخصاً تريد معك في هذه الرحلة؟</div>
-    </div>
-
-    <div class="nav-btns">
-      <button class="btn-back" onclick="goStep(1)">→ رجوع</button>
-      <button class="btn-next" onclick="goStep(3)"><span class="bt">التالي ←</span><div class="bl"></div></button>
-    </div>
+<!-- ══ STEP 1: الرفقة ══ -->
+<div id="step1" style="display:none">
+  <div class="step-header">
+    <div class="step-num">الخطوة ٢ من ٤</div>
+    <div class="step-title">👥 تفاصيل الرفقة</div>
+    <div class="step-sub">من تبحث عنه كرفيق سفر؟</div>
   </div>
-
-  <!-- STEP 3 — التصنيف والوصف -->
-  <div class="form-step" id="step3">
-    <div class="step-label">الخطوة ٣ من ٤</div>
-    <div class="step-title">صف رحلتك 📝</div>
-
+  <div class="form-section">
     <div class="field">
-      <label>نوع الرحلة (اختر أكثر من واحد)</label>
-      <div class="tags-grid">
-        <button class="tag-opt" onclick="toggleTag(this,'مغامرة')">🔥 مغامرة</button>
-        <button class="tag-opt" onclick="toggleTag(this,'شاطئ')">🌊 شاطئ</button>
-        <button class="tag-opt" onclick="toggleTag(this,'ثقافة')">🏛️ ثقافة</button>
-        <button class="tag-opt" onclick="toggleTag(this,'طبيعة')">🌿 طبيعة</button>
-        <button class="tag-opt" onclick="toggleTag(this,'طعام')">🍜 طعام</button>
-        <button class="tag-opt" onclick="toggleTag(this,'عائلي')">👨‍👩‍👧 عائلي</button>
-        <button class="tag-opt" onclick="toggleTag(this,'تاريخ')">🏺 تاريخ</button>
-        <button class="tag-opt" onclick="toggleTag(this,'تسوق')">🛍️ تسوق</button>
+      <label>عدد الأماكن المتاحة *</label>
+      <input type="number" id="f_seats" min="1" max="20" value="4" placeholder="٤">
+    </div>
+    <div class="field">
+      <label>الجنس المقبول</label>
+      <div class="chips-wrap" id="genderChips">
+        <button class="chip selected" onclick="selectChip('gender','الكل',this)">🌍 الكل</button>
+        <button class="chip" onclick="selectChip('gender','رجال فقط',this)">👨 رجال فقط</button>
+        <button class="chip" onclick="selectChip('gender','نساء فقط',this)">👩 نساء فقط</button>
+        <button class="chip" onclick="selectChip('gender','عائلات',this)">👨‍👩‍👧 عائلات</button>
       </div>
     </div>
-
     <div class="field">
-      <label>وصف الرحلة</label>
-      <textarea id="tripDesc" placeholder="أخبر المسافرين عن برنامج الرحلة، الأماكن التي ستزورها، وأسلوب السفر..."></textarea>
-    </div>
-
-    <div class="nav-btns">
-      <button class="btn-back" onclick="goStep(2)">→ رجوع</button>
-      <button class="btn-next" onclick="goStep(4)"><span class="bt">معاينة ←</span><div class="bl"></div></button>
-    </div>
-  </div>
-
-  <!-- STEP 4 — المعاينة والنشر -->
-  <div class="form-step" id="step4">
-    <div class="step-label">الخطوة ٤ من ٤</div>
-    <div class="step-title">معاينة الرحلة 👀</div>
-
-    <div class="preview-card" id="previewCard">
-      <div class="preview-img" id="previewImg"></div>
-      <div class="preview-body">
-        <div class="preview-title" id="previewTitle"></div>
-        <div class="preview-meta">
-          <span id="previewDate"></span>
-          <span id="previewDur"></span>
-          <span id="previewSeats"></span>
-        </div>
-        <div class="preview-tags" id="previewTags"></div>
-        <div class="preview-desc" id="previewDesc"></div>
+      <label>نوع الرحلة</label>
+      <div class="chips-wrap" id="tripTypeChips">
+        <button class="chip selected" onclick="selectChip('tripType','مختلط',this)">🌍 مختلط</button>
+        <button class="chip" onclick="selectChip('tripType','عائلي',this)">👨‍👩‍👧 عائلي</button>
+        <button class="chip" onclick="selectChip('tripType','شباب',this)">🔥 شباب</button>
+        <button class="chip" onclick="selectChip('tripType','نساء',this)">👩 نساء</button>
       </div>
     </div>
-
-    <div class="nav-btns">
-      <button class="btn-back" onclick="goStep(3)">→ تعديل</button>
-      <button class="btn-next" id="publishBtn" onclick="publishTrip()">
-        <span class="bt">🚀 انشر الرحلة</span>
-        <div class="bl"></div>
-      </button>
+    <div class="field">
+      <label>الفئة العمرية المقبولة</label>
+      <div class="field-row" style="margin-top:6px">
+        <div class="field" style="margin:0"><label>من</label><input type="number" id="f_minAge" min="16" max="80" value="18" placeholder="١٨"></div>
+        <div class="field" style="margin:0"><label>إلى</label><input type="number" id="f_maxAge" min="16" max="90" value="45" placeholder="٤٥"></div>
+      </div>
+    </div>
+    <div class="field">
+      <label>الميزانية التقريبية للرحلة</label>
+      <div class="chips-wrap" id="budgetChips">
+        <button class="chip selected" onclick="selectChip('budget','متوسط',this)">💰 متوسط</button>
+        <button class="chip" onclick="selectChip('budget','اقتصادي',this)">🪙 اقتصادي</button>
+        <button class="chip" onclick="selectChip('budget','مرتفع',this)">💎 مرتفع</button>
+      </div>
+    </div>
+    <div class="field">
+      <label>🏨 نوع الإقامة</label>
+      <div class="chips-wrap" id="accommodationChips">
+        <button class="chip selected" onclick="selectChip('accommodation','غير محدد',this)">❓ غير محدد</button>
+        <button class="chip" onclick="selectChip('accommodation','فندق',this)">🏨 فندق</button>
+        <button class="chip" onclick="selectChip('accommodation','شقة مفروشة',this)">🏠 شقة مفروشة</button>
+        <button class="chip" onclick="selectChip('accommodation','بيت ضيافة',this)">🏡 بيت ضيافة</button>
+        <button class="chip" onclick="selectChip('accommodation','منتجع',this)">🌴 منتجع</button>
+      </div>
+    </div>
+    <div class="field">
+      <label>✈️ نوع الطيران</label>
+      <div class="chips-wrap" id="flightChips">
+        <button class="chip selected" onclick="selectChip('flightType','غير محدد',this)">❓ غير محدد</button>
+        <button class="chip" onclick="selectChip('flightType','مباشر',this)">🟢 رحلة مباشرة</button>
+        <button class="chip" onclick="selectChip('flightType','ترانزيت',this)">🔄 ترانزيت</button>
+        <button class="chip" onclick="selectChip('flightType','كل مسافر يحجز',this)">👤 كل مسافر يحجز بنفسه</button>
+      </div>
+    </div>
+    <div class="field">
+      <label>💳 طريقة التكاليف</label>
+      <div class="chips-wrap" id="costChips">
+        <button class="chip selected" onclick="selectChip('costType','كل مسافر يدفع بنفسه',this)">👤 كل مسافر يدفع بنفسه</button>
+        <button class="chip" onclick="selectChip('costType','التكاليف مقسّمة',this)">🤝 التكاليف مقسّمة</button>
+        <button class="chip" onclick="selectChip('costType','شامل',this)">🎫 شامل (الدفع للمنظم)</button>
+      </div>
     </div>
   </div>
-
-  <!-- SUCCESS -->
-  <div class="success-screen" id="successScreen">
-    <div class="success-icon">🎉</div>
-    <h2>تم نشر رحلتك!</h2>
-    <p>رحلتك الآن مرئية لجميع المسافرين في رِحلة — انتظر طلبات الانضمام!</p>
-    <div class="success-actions">
-      <a href="index.html" class="suc-btn suc-btn-p">🌍 تصفح الرحلات</a>
-      <a href="profile.html" class="suc-btn suc-btn-s">👤 ملفي الشخصي</a>
-    </div>
+  <div class="btn-row">
+    <button class="btn-back" onclick="goPrev(1)">← رجوع</button>
+    <button class="btn-next" onclick="goNext(1)">التالي ←</button>
   </div>
+</div>
+
+<!-- ══ STEP 2: التفاصيل ══ -->
+<div id="step2" style="display:none">
+  <div class="step-header">
+    <div class="step-num">الخطوة ٣ من ٤</div>
+    <div class="step-title">📝 تفاصيل الرحلة</div>
+    <div class="step-sub">اشرح رحلتك وما يميزها</div>
+  </div>
+  <div class="form-section">
+    <div class="field">
+      <label>نوع النشاط</label>
+      <div class="chips-wrap" id="tagsChips">
+        <button class="chip" onclick="toggleTag(this,'مغامرة')">🔥 مغامرة</button>
+        <button class="chip" onclick="toggleTag(this,'ثقافة')">🏛️ ثقافة</button>
+        <button class="chip" onclick="toggleTag(this,'شاطئ')">🌊 شاطئ</button>
+        <button class="chip" onclick="toggleTag(this,'طبيعة')">🌿 طبيعة</button>
+        <button class="chip" onclick="toggleTag(this,'طعام')">🍜 طعام</button>
+        <button class="chip" onclick="toggleTag(this,'تسوق')">🛍️ تسوق</button>
+        <button class="chip" onclick="toggleTag(this,'رياضة')">⚽ رياضة</button>
+        <button class="chip" onclick="toggleTag(this,'فن')">🎭 فن</button>
+      </div>
+    </div>
+    <div class="field"><label>وصف الرحلة *</label><textarea id="f_desc" placeholder="اشرح خططك وما ستزوره، ما تتوقعه من رفيق السفر، وأي تفاصيل مهمة..."></textarea></div>
+    <div class="field"><label>متطلبات خاصة (اختياري)</label><input type="text" id="f_requirements" placeholder="مثال: مستوى لياقة جيد، معرفة اللغة الإنجليزية"></div>
+    <div class="field"><label>معلومات إضافية (اختياري)</label><textarea id="f_extra" placeholder="مثال: سنقيم في فندق ٤ نجوم، التكلفة تشمل الإقامة فقط..."></textarea></div>
+  </div>
+  <div class="btn-row">
+    <button class="btn-back" onclick="goPrev(2)">← رجوع</button>
+    <button class="btn-next" onclick="goNext(2)">التالي ←</button>
+  </div>
+</div>
+
+<!-- ══ STEP 3: المراجعة ══ -->
+<div id="step3" style="display:none">
+  <div class="step-header">
+    <div class="step-num">الخطوة ٤ من ٤</div>
+    <div class="step-title">👀 راجع رحلتك</div>
+    <div class="step-sub">تأكد من المعلومات قبل النشر</div>
+  </div>
+  <div class="trip-preview" id="tripPreview"></div>
+  <button class="btn-publish" id="publishBtn" onclick="publishTrip()">🚀 انشر الرحلة الآن</button>
+  <div class="btn-row" style="margin-top:10px">
+    <button class="btn-back" onclick="goPrev(3)">← تعديل</button>
+  </div>
+</div>
 
 </div>
 
-<!-- BOTTOM NAV -->
 <nav class="botnav">
   <a href="index.html" class="bitem"><div class="bi">🏠</div><div class="bl">الرئيسية</div></a>
   <a href="trips.html" class="bitem active"><div class="bi">✈️</div><div class="bl">الرحلات</div></a>
   <a href="destinations.html" class="bitem"><div class="bi">🗺️</div><div class="bl">الوجهات</div></a>
   <a href="flights.html" class="bitem"><div class="bi">🛫</div><div class="bl">طيران</div></a>
-  <a href="agents.html" class="bitem"><div class="bi">🤝</div><div class="bl">المرشدون</div></a>
+  <a href="agents.html" class="bitem"><div class="bi">🧭</div><div class="bl">المرشدون</div></a>
 </nav>
 
 <div class="toast" id="toast"></div>
 
 <script>
 const{createClient}=supabase;
-const sb=createClient(
-  'https://ybjdagurvkweabujkeyz.supabase.co',
-  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InliamRhZ3Vydmt3ZWFidWprZXl6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkzNjQyMDAsImV4cCI6MjA5NDk0MDIwMH0.CIK7sew_-kBlC_t_szCjKjjnFNg695kwSryuRshQ9nI'
-);
-// ── NAV FUNCTIONS ──
-async function goToProfile(){
-  try{
-    const{data:{session}}=await sb.auth.getSession();
-    window.location.href=session?'profile.html':'auth.html';
-  }catch(e){window.location.href='auth.html';}
-}
-async function initNav(){
-  try{
-    const{data:{session}}=await sb.auth.getSession();
-    const btn=document.getElementById('navProfileBtn');
-    if(!btn) return;
-    if(session){
-      const{data:p}=await sb.from('profiles').select('full_name').eq('id',session.user.id).single();
-      btn.textContent=(p?.full_name?.split(' ')[0]||'ملفي')+' 👤';
-    }else{
-      btn.textContent='تسجيل دخول 👤';
-    }
-  }catch(e){
-    const btn=document.getElementById('navProfileBtn');
-    if(btn) btn.textContent='تسجيل دخول 👤';
-  }
-}
-initNav();
+const sb=createClient('https://ybjdagurvkweabujkeyz.supabase.co','eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InliamRhZ3Vydmt3ZWFidWprZXl6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkzNjQyMDAsImV4cCI6MjA5NDk0MDIwMH0.CIK7sew_-kBlC_t_szCjKjjnFNg695kwSryuRshQ9nI');
 
+const EMOJIS=['✈️','🏔️','🌊','🏛️','🌴','🗼','🦁','⛰️','🏝️','🌸','🎭','🍜','🎪','🏕️','🌺','🗺️','🌅','🧭','🎿','🏄'];
+const GRADS={'✈️':'linear-gradient(135deg,#1A6BFF,#00C9B1)','🏔️':'linear-gradient(135deg,#5B7FBF,#92A8D1)','🌊':'linear-gradient(135deg,#26A69A,#80CBC4)','🏛️':'linear-gradient(135deg,#EF6C00,#FFA726)','🌴':'linear-gradient(135deg,#2E7D32,#66BB6A)','🗼':'linear-gradient(135deg,#1565C0,#42A5F5)','🦁':'linear-gradient(135deg,#558B2F,#8BC34A)','🏝️':'linear-gradient(135deg,#00838F,#4DD0E1)','🌸':'linear-gradient(135deg,#AD1457,#F48FB1)','🎭':'linear-gradient(135deg,#6A1B9A,#CE93D8)','🍜':'linear-gradient(135deg,#E65100,#FFCC02)'};
 
-let currentUser=null;
-let seats=5;
-let selectedTags=[];
-let selectedEmoji='✈️';
-let currentStep=1;
+let currentUser=null, currentStep=0;
+let selectedEmoji='✈️', selectedGender='الكل', selectedTripType='مختلط', selectedBudget='متوسط';
+let selectedAccommodation='غير محدد', selectedFlightType='غير محدد', selectedCostType='كل مسافر يدفع بنفسه';
+let selectedTags=new Set();
 
-const EMOJIS=['✈️','🏔️','🌊','🏛️','🌴','🗼','🦁','⛰️','🏝️','🌸','🎭','🍜'];
-const GRADIENTS={
-  '✈️':'linear-gradient(135deg,#1A6BFF,#00C9B1)',
-  '🏔️':'linear-gradient(135deg,#5B7FBF,#92A8D1)',
-  '🌊':'linear-gradient(135deg,#26A69A,#80CBC4)',
-  '🏛️':'linear-gradient(135deg,#EF6C00,#FFA726)',
-  '🌴':'linear-gradient(135deg,#2E7D32,#66BB6A)',
-  '🗼':'linear-gradient(135deg,#1565C0,#42A5F5)',
-  '🦁':'linear-gradient(135deg,#558B2F,#8BC34A)',
-  '⛰️':'linear-gradient(135deg,#4E342E,#8D6E63)',
-  '🏝️':'linear-gradient(135deg,#00838F,#4DD0E1)',
-  '🌸':'linear-gradient(135deg,#AD1457,#F48FB1)',
-  '🎭':'linear-gradient(135deg,#6A1B9A,#CE93D8)',
-  '🍜':'linear-gradient(135deg,#E65100,#FFCC02)',
-};
-
-// ── INIT ──
 async function init(){
   const{data:{session}}=await sb.auth.getSession();
-  if(!session){document.getElementById('notLogged').classList.add('show');return;}
+  if(!session){
+    document.getElementById('notLogged').classList.add('show');
+    return;
+  }
   currentUser=session.user;
   document.getElementById('mainContent').style.display='block';
-  renderEmojis();
-  // set min date to today
-  document.getElementById('tripDate').min=new Date().toISOString().split('T')[0];
+
+  // Set min date
+  const today=new Date().toISOString().split('T')[0];
+  document.getElementById('f_date').min=today;
+  document.getElementById('f_return').min=today;
+
+  // Build emoji grid
+  document.getElementById('emojiGrid').innerHTML=EMOJIS.map(e=>
+    `<div class="emoji-opt ${e===selectedEmoji?'selected':''}" onclick="selectEmoji('${e}',this)">${e}</div>`
+  ).join('');
 }
 
-// ── EMOJIS ──
-function renderEmojis(){
-  document.getElementById('emojiGrid').innerHTML=EMOJIS.map(e=>`
-    <div class="emoji-opt ${e===selectedEmoji?'selected':''}" onclick="selectEmoji('${e}',this)">${e}</div>
-  `).join('');
+// ══ NAVIGATION ══
+function goNext(step){
+  if(!validateStep(step)) return;
+  currentStep=step+1;
+  updateSteps();
+  if(currentStep===3) renderPreview();
 }
+function goPrev(step){currentStep=step-1;updateSteps();}
+function goBack(){
+  if(currentStep>0){goPrev(currentStep);}
+  else{window.history.back();}
+}
+function updateSteps(){
+  for(let i=0;i<4;i++){
+    document.getElementById(`step${i}`).style.display=i===currentStep?'block':'none';
+    const dot=document.getElementById(`dot${i}`);
+    dot.className='step-dot'+(i<currentStep?' done':i===currentStep?' active':'');
+  }
+  window.scrollTo(0,0);
+}
+
+// ══ VALIDATION ══
+function validateStep(step){
+  if(step===0){
+    if(!document.getElementById('f_title').value.trim()){showToast('⚠️ أدخل عنوان الرحلة');return false;}
+    if(!document.getElementById('f_dest').value.trim()){showToast('⚠️ أدخل الوجهة');return false;}
+    if(!document.getElementById('f_country').value.trim()){showToast('⚠️ أدخل الدولة');return false;}
+    if(!document.getElementById('f_date').value){showToast('⚠️ اختر تاريخ السفر');return false;}
+  }
+  if(step===1){
+    const seats=parseInt(document.getElementById('f_seats').value);
+    if(!seats||seats<1){showToast('⚠️ أدخل عدد الأماكن');return false;}
+  }
+  if(step===2){
+    if(!document.getElementById('f_desc').value.trim()){showToast('⚠️ اكتب وصفاً للرحلة');return false;}
+  }
+  return true;
+}
+
+// ══ SELECTORS ══
 function selectEmoji(e,el){
   selectedEmoji=e;
   document.querySelectorAll('.emoji-opt').forEach(x=>x.classList.remove('selected'));
   el.classList.add('selected');
 }
-
-// ── SEATS ──
-function changeSeat(d){
-  seats=Math.min(20,Math.max(1,seats+d));
-  document.getElementById('seatNum').textContent=toAr(seats);
+function selectChip(type,val,el){
+  if(type==='gender') selectedGender=val;
+  else if(type==='tripType') selectedTripType=val;
+  else if(type==='budget') selectedBudget=val;
+  else if(type==='accommodation') selectedAccommodation=val;
+  else if(type==='flightType') selectedFlightType=val;
+  else if(type==='costType') selectedCostType=val;
+  const group=type==='gender'?'genderChips':type==='tripType'?'tripTypeChips':type==='accommodation'?'accommodationChips':type==='flightType'?'flightChips':type==='costType'?'costChips':'budgetChips';
+  document.getElementById(group).querySelectorAll('.chip').forEach(c=>c.classList.remove('selected'));
+  el.classList.add('selected');
 }
-
-// ── TAGS ──
 function toggleTag(el,tag){
-  if(selectedTags.includes(tag)){
-    selectedTags=selectedTags.filter(t=>t!==tag);
-    el.classList.remove('selected');
-  }else if(selectedTags.length<4){
-    selectedTags.push(tag);
-    el.classList.add('selected');
-  }else{
-    showToast('يمكنك اختيار ٤ تصنيفات كحد أقصى');
-  }
+  if(selectedTags.has(tag)){selectedTags.delete(tag);el.classList.remove('selected');}
+  else{selectedTags.add(tag);el.classList.add('selected');}
 }
 
-// ── VALIDATE ──
-function validate(step){
-  const show=(msg)=>{
-    document.getElementById('alertMsg').textContent=msg;
-    document.getElementById('alert').classList.add('show');
-    setTimeout(()=>document.getElementById('alert').classList.remove('show'),3000);
-    return false;
-  };
-  document.getElementById('alert').classList.remove('show');
-  if(step===1){
-    if(!document.getElementById('tripTitle').value.trim()) return show('أدخل اسم الرحلة');
-    if(!document.getElementById('tripDest').value.trim()) return show('أدخل الوجهة');
-    if(!document.getElementById('tripCountry').value) return show('اختر الدولة');
-  }
-  if(step===2){
-    if(!document.getElementById('tripDate').value) return show('اختر تاريخ السفر');
-    if(!document.getElementById('tripDuration').value) return show('اختر مدة الرحلة');
-  }
-  if(step===3){
-    if(selectedTags.length===0) return show('اختر تصنيفاً واحداً على الأقل');
-    if(!document.getElementById('tripDesc').value.trim()) return show('اضف وصفاً للرحلة');
-  }
-  return true;
+// ══ PREVIEW ══
+function renderPreview(){
+  const title=document.getElementById('f_title').value;
+  const dest=document.getElementById('f_dest').value;
+  const country=document.getElementById('f_country').value;
+  const date=document.getElementById('f_date').value;
+  const duration=document.getElementById('f_duration').value;
+  const seats=document.getElementById('f_seats').value;
+  const minAge=document.getElementById('f_minAge').value;
+  const maxAge=document.getElementById('f_maxAge').value;
+  const desc=document.getElementById('f_desc').value;
+  const grad=GRADS[selectedEmoji]||'linear-gradient(135deg,#FF5C1A,#FFD000)';
+  const dt=date?new Date(date).toLocaleDateString('ar-KW',{day:'numeric',month:'long',year:'numeric'}):'';
+
+  document.getElementById('tripPreview').innerHTML=`
+    <div class="preview-hero" style="background:${grad}">${selectedEmoji}</div>
+    <div class="preview-body">
+      <div style="font-size:11px;color:var(--or);font-weight:700;margin-bottom:6px">📍 ${dest}، ${country}</div>
+      <div class="preview-title">${title}</div>
+      <div class="preview-meta">
+        <span>📅 ${dt}</span>
+        ${duration?`<span>⏱ ${duration}</span>`:''}
+        <span>👥 ${seats} أماكن</span>
+        <span>💰 ${selectedBudget}</span>
+      </div>
+      <div class="preview-info">
+        <div class="pi"><span class="pv">${selectedGender}</span><div class="pl">الجنس المقبول</div></div>
+        <div class="pi"><span class="pv">${selectedTripType}</span><div class="pl">نوع الرحلة</div></div>
+        <div class="pi"><span class="pv">${minAge}-${maxAge}</span><div class="pl">الفئة العمرية</div></div>
+        <div class="pi"><span class="pv">${selectedBudget}</span><div class="pl">الميزانية</div></div>
+        <div class="pi"><span class="pv">${selectedAccommodation}</span><div class="pl">الإقامة</div></div>
+        <div class="pi"><span class="pv">${selectedFlightType}</span><div class="pl">الطيران</div></div>
+        <div class="pi"><span class="pv">${selectedCostType}</span><div class="pl">التكاليف</div></div>
+      </div>
+      ${selectedTags.size>0?`<div class="preview-tags">${[...selectedTags].map(t=>`<span class="preview-tag">${t}</span>`).join('')}</div>`:''}
+      ${desc?`<div style="font-size:13px;color:rgba(255,255,255,0.65);line-height:1.7;margin-top:12px">${desc.substring(0,200)}${desc.length>200?'...':''}</div>`:''}
+    </div>`;
 }
 
-// ── STEPS ──
-function goStep(n){
-  if(n>currentStep && !validate(currentStep)) return;
-  document.getElementById(`step${currentStep}`).classList.remove('active');
-  currentStep=n;
-  document.getElementById(`step${n}`).classList.add('active');
-  // update dots
-  [1,2,3,4].forEach(i=>{
-    const d=document.getElementById(`sd${i}`);
-    d.className='step-dot'+(i<n?' done':i===n?' active':'');
-  });
-  if(n===4) buildPreview();
-  window.scrollTo({top:0,behavior:'smooth'});
-}
-
-// ── PREVIEW ──
-function buildPreview(){
-  const title=document.getElementById('tripTitle').value;
-  const dest=document.getElementById('tripDest').value;
-  const country=document.getElementById('tripCountry').value;
-  const date=document.getElementById('tripDate').value;
-  const dur=document.getElementById('tripDuration').value;
-  const desc=document.getElementById('tripDesc').value;
-
-  const grad=GRADIENTS[selectedEmoji]||'linear-gradient(135deg,#FF5C1A,#FFD000)';
-  document.getElementById('previewImg').style.background=grad;
-  document.getElementById('previewImg').textContent=selectedEmoji;
-  document.getElementById('previewTitle').textContent=`${title} — ${country}`;
-
-  const d=new Date(date);
-  const dateAr=d.toLocaleDateString('ar-KW',{day:'numeric',month:'long',year:'numeric'});
-  document.getElementById('previewDate').textContent=`📅 ${dateAr}`;
-  document.getElementById('previewDur').textContent=`⏱ ${dur}`;
-  document.getElementById('previewSeats').textContent=`👥 ${toAr(seats)} أماكن`;
-  document.getElementById('previewTags').innerHTML=selectedTags.map(t=>`<span class="ptag">${t}</span>`).join('');
-  document.getElementById('previewDesc').textContent=desc;
-}
-
-// ── PUBLISH ──
+// ══ PUBLISH ══
 async function publishTrip(){
   const btn=document.getElementById('publishBtn');
-  btn.classList.add('loading');btn.disabled=true;
+  btn.disabled=true;btn.textContent='جاري النشر...';
 
-  const{error}=await sb.from('trips').insert({
+  const{error,data}=await sb.from('trips').insert({
     user_id:currentUser.id,
-    title:document.getElementById('tripTitle').value.trim(),
-    destination:document.getElementById('tripDest').value.trim(),
-    country:document.getElementById('tripCountry').value,
+    title:document.getElementById('f_title').value.trim(),
+    destination:document.getElementById('f_dest').value.trim(),
+    country:document.getElementById('f_country').value.trim(),
     emoji:selectedEmoji,
-    date:document.getElementById('tripDate').value,
-    duration:document.getElementById('tripDuration').value,
-    seats:seats,
-    tags:selectedTags,
-    description:document.getElementById('tripDesc').value.trim(),
+    date:document.getElementById('f_date').value,
+    duration:document.getElementById('f_duration').value.trim(),
+    seats:parseInt(document.getElementById('f_seats').value)||4,
+    seats_taken:0,
+    gender:selectedGender,
+    trip_type:selectedTripType,
+    min_age:parseInt(document.getElementById('f_minAge').value)||18,
+    max_age:parseInt(document.getElementById('f_maxAge').value)||45,
+    budget:selectedBudget,
+    accommodation:selectedAccommodation,
+    flight_type:selectedFlightType,
+    cost_type:selectedCostType,
+    tags:[...selectedTags],
+    description:document.getElementById('f_desc').value.trim(),
     status:'active'
-  });
+  }).select('id');
 
-  btn.classList.remove('loading');btn.disabled=false;
+  btn.disabled=false;btn.textContent='🚀 انشر الرحلة الآن';
 
-  if(error){
-    showToast('❌ حدث خطأ — حاول مجدداً');
-    console.error(error);
-    return;
-  }
+  if(error){showToast('❌ '+error.message);return;}
 
-  // hide form, show success
-  document.getElementById(`step${currentStep}`).style.display='none';
-  document.querySelector('.steps-bar').style.display='none';
-  document.getElementById('successScreen').classList.add('show');
+  showToast('🎉 تم نشر رحلتك بنجاح!');
+  setTimeout(()=>window.location.href=`trip.html?id=${data[0].id}`,1500);
 }
 
-// ── HELPERS ──
 function toAr(n){return n.toString().replace(/\d/g,d=>'٠١٢٣٤٥٦٧٨٩'[d]);}
-function showToast(msg){
-  const t=document.getElementById('toast');
-  t.textContent=msg;t.classList.add('show');
-  setTimeout(()=>t.classList.remove('show'),3500);
-}
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3500);}
 
 init();
 </script>

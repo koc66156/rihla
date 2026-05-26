@@ -11,7 +11,7 @@
 <style>
 :root{--or:#FF5C1A;--yl:#FFD000;--tl:#00C9B1;--dk:#0E0E0E;--muted:rgba(255,255,255,0.45);--card:rgba(255,255,255,0.05);--border:rgba(255,255,255,0.08);--nav-h:64px;--bot-h:68px;}
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
-body{font-family:'Tajawal',sans-serif;background:var(--dk);color:white;min-height:100vh;padding-top:var(--nav-h);padding-bottom:calc(var(--bot-h)+48px);}
+body{font-family:'Tajawal',sans-serif;background:var(--dk);color:white;min-height:100vh;padding-top:var(--nav-h);padding-bottom:calc(var(--bot-h)+120px);}
 
 .bg{position:fixed;inset:0;z-index:0;overflow:hidden;pointer-events:none;}
 .blob{position:absolute;border-radius:50%;filter:blur(80px);opacity:0.3;animation:drift 10s ease-in-out infinite alternate;}
@@ -43,11 +43,10 @@ body{font-family:'Tajawal',sans-serif;background:var(--dk);color:white;min-heigh
 .trip-dest{font-size:14px;color:var(--muted);margin-bottom:20px;display:flex;align-items:center;gap:6px;}
 
 /* STATS ROW */
-.info-row{display:flex;gap:0;background:var(--card);border:1px solid var(--border);border-radius:18px;overflow:hidden;margin-bottom:24px;}
-.info-item{flex:1;padding:16px 8px;text-align:center;border-left:1px solid var(--border);}
-.info-item:last-child{border-left:none;}
-.info-item .iv{font-size:16px;font-weight:900;display:block;background:linear-gradient(135deg,var(--or),var(--yl));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
-.info-item .il{font-size:11px;color:var(--muted);margin-top:3px;}
+.info-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:20px;}
+.info-item{padding:14px 12px;text-align:center;background:var(--card);border:1px solid var(--border);border-radius:14px;}
+.info-item .iv{font-size:14px;font-weight:900;display:block;background:linear-gradient(135deg,var(--or),var(--yl));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:3px;}
+.info-item .il{font-size:10px;color:var(--muted);}
 
 /* TAGS */
 .tags-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:24px;}
@@ -136,8 +135,9 @@ body{font-family:'Tajawal',sans-serif;background:var(--dk);color:white;min-heigh
 </div>
 
 <nav class="topnav">
-  <button class="nav-logo" onclick="window.location.href='index.html'">Rihla</button>
   <button class="nav-profile-btn" id="navProfileBtn" onclick="goToProfile()">تسجيل دخول 👤</button>
+  <button class="nav-logo" onclick="window.location.href='index.html'">Rihla</button>
+  <button onclick="window.history.back()" style="width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.1);color:white;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;">←</button>
 </nav>
 
 <div id="mainContent" style="display:none">
@@ -312,8 +312,15 @@ function renderTrip(){
   // Info
   document.getElementById('infoRow').innerHTML=`
     <div class="info-item"><span class="iv">${dateStr}</span><span class="il">تاريخ السفر</span></div>
-    <div class="info-item"><span class="iv">${trip.duration||''}</span><span class="il">المدة</span></div>
-    <div class="info-item"><span class="iv">${seatsLeft}</span><span class="il">أماكن</span></div>
+    <div class="info-item"><span class="iv">${trip.duration||'—'}</span><span class="il">المدة</span></div>
+    <div class="info-item"><span class="iv">${seatsLeft}</span><span class="il">أماكن متاحة</span></div>
+    <div class="info-item"><span class="iv">${trip.budget||'متوسط'}</span><span class="il">الميزانية</span></div>
+    <div class="info-item"><span class="iv">${trip.gender||'الكل'}</span><span class="il">الجنس المقبول</span></div>
+    <div class="info-item"><span class="iv">${trip.trip_type||'مختلط'}</span><span class="il">نوع الرحلة</span></div>
+    <div class="info-item"><span class="iv">${(trip.min_age||18)+' - '+(trip.max_age||45)}</span><span class="il">الفئة العمرية</span></div>
+    <div class="info-item"><span class="iv">${trip.accommodation||'غير محدد'}</span><span class="il">🏨 الإقامة</span></div>
+    <div class="info-item"><span class="iv">${trip.flight_type||'غير محدد'}</span><span class="il">✈️ الطيران</span></div>
+    <div class="info-item"><span class="iv">${trip.cost_type||'كل مسافر يدفع'}</span><span class="il">💳 التكاليف</span></div>
   `;
 
   // Tags
@@ -322,12 +329,19 @@ function renderTrip(){
   // Desc
   document.getElementById('tripDesc').textContent=trip.description||'لا يوجد وصف';
 
-  // Organizer
-  const initials=trip.user_id?trip.user_id.substring(0,2).toUpperCase():'مس';
-  document.getElementById('orgAv').textContent='✈️';
-  document.getElementById('orgName').textContent='منظم الرحلة';
-  document.getElementById('orgName').style.cursor='pointer';
-  document.getElementById('orgName').onclick=()=>{if(trip&&trip.user_id){window.location.href='user.html?id='+trip.user_id;}else{showToast('لا يمكن فتح الملف الشخصي');}};
+  // Organizer - جلب البيانات الحقيقية
+  if(trip.user_id){
+    sb.from('profiles').select('full_name,avatar,account_type').eq('id',trip.user_id).single().then(({data:org})=>{
+      const name=org?.full_name||'منظم الرحلة';
+      const av=org?.avatar||name.substring(0,2);
+      const grad='linear-gradient(135deg,#FF5C1A,#FFD000)';
+      document.getElementById('orgAv').style.background=grad;
+      document.getElementById('orgAv').textContent=av;
+      document.getElementById('orgName').textContent=name;
+      document.getElementById('orgName').style.cursor='pointer';
+      document.getElementById('orgName').onclick=()=>window.location.href='user.html?id='+trip.user_id;
+    });
+  }
 
   // Action area
   renderActionArea(seatsLeft);
@@ -518,6 +532,9 @@ function openTripEdit(){
   document.getElementById('etSeats').value=trip.seats||5;
   document.getElementById('etDuration').value=trip.duration||'';
   document.getElementById('etDesc').value=trip.description||'';
+  document.getElementById('etAccommodation').value=trip.accommodation||'غير محدد';
+  document.getElementById('etFlightType').value=trip.flight_type||'غير محدد';
+  document.getElementById('etCostType').value=trip.cost_type||'كل مسافر يدفع بنفسه';
   const overlay=document.getElementById('editTripOverlay');
   const sheet=document.getElementById('editTripSheet');
   overlay.style.opacity='1';overlay.style.pointerEvents='all';
@@ -534,7 +551,10 @@ async function saveTripEdit(){
     date:document.getElementById('etDate').value,
     seats:parseInt(document.getElementById('etSeats').value)||5,
     duration:document.getElementById('etDuration').value.trim(),
-    description:document.getElementById('etDesc').value.trim()
+    description:document.getElementById('etDesc').value.trim(),
+    accommodation:document.getElementById('etAccommodation').value,
+    flight_type:document.getElementById('etFlightType').value,
+    cost_type:document.getElementById('etCostType').value
   };
   const{error}=await sb.from('trips').update(updates).eq('id',trip.id);
   if(error){showToast('❌ '+error.message);return;}
@@ -590,6 +610,21 @@ init();
 
       <div style="margin-bottom:13px;"><label style="display:block;font-size:11px;font-weight:800;color:rgba(255,255,255,0.5);margin-bottom:5px;">المدة</label>
       <input type="text" id="etDuration" placeholder="مثال: ٧ أيام" style="width:100%;padding:12px 14px;border-radius:12px;border:1.5px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.06);font-family:'Tajawal',sans-serif;font-size:14px;color:white;outline:none;"></div>
+
+      <div style="margin-bottom:13px;"><label style="display:block;font-size:11px;font-weight:800;color:rgba(255,255,255,0.5);margin-bottom:5px;">🏨 نوع الإقامة</label>
+      <select id="etAccommodation" style="width:100%;padding:12px 14px;border-radius:12px;border:1.5px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.06);font-family:'Tajawal',sans-serif;font-size:14px;color:white;outline:none;">
+        <option>غير محدد</option><option>فندق</option><option>شقة مفروشة</option><option>بيت ضيافة</option><option>منتجع</option>
+      </select></div>
+
+      <div style="margin-bottom:13px;"><label style="display:block;font-size:11px;font-weight:800;color:rgba(255,255,255,0.5);margin-bottom:5px;">✈️ نوع الطيران</label>
+      <select id="etFlightType" style="width:100%;padding:12px 14px;border-radius:12px;border:1.5px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.06);font-family:'Tajawal',sans-serif;font-size:14px;color:white;outline:none;">
+        <option>غير محدد</option><option>مباشر</option><option>ترانزيت</option><option>كل مسافر يحجز</option>
+      </select></div>
+
+      <div style="margin-bottom:13px;"><label style="display:block;font-size:11px;font-weight:800;color:rgba(255,255,255,0.5);margin-bottom:5px;">💳 طريقة التكاليف</label>
+      <select id="etCostType" style="width:100%;padding:12px 14px;border-radius:12px;border:1.5px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.06);font-family:'Tajawal',sans-serif;font-size:14px;color:white;outline:none;">
+        <option>كل مسافر يدفع بنفسه</option><option>التكاليف مقسّمة</option><option>شامل</option>
+      </select></div>
 
       <div style="margin-bottom:20px;"><label style="display:block;font-size:11px;font-weight:800;color:rgba(255,255,255,0.5);margin-bottom:5px;">وصف الرحلة</label>
       <textarea id="etDesc" style="width:100%;padding:12px 14px;border-radius:12px;border:1.5px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.06);font-family:'Tajawal',sans-serif;font-size:14px;color:white;outline:none;resize:vertical;min-height:100px;"></textarea></div>
