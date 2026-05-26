@@ -353,6 +353,10 @@ function renderActionArea(seatsLeft){
     area.innerHTML=`
       <div class="status-box sb-owner">
         🎯 أنت منظم هذه الرحلة — راجع الطلبات أدناه
+      </div>
+      <div style="display:flex;gap:8px;margin-top:10px;">
+        <button onclick="openTripEdit()" style="flex:1;padding:12px;border-radius:13px;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.15);color:white;font-family:'Tajawal',sans-serif;font-size:14px;font-weight:800;cursor:pointer;">✏️ تعديل الرحلة</button>
+        <button onclick="deleteTripConfirm()" style="padding:12px 16px;border-radius:13px;background:rgba(229,57,53,0.08);border:1px solid rgba(229,57,53,0.2);color:#ff6b6b;font-family:'Tajawal',sans-serif;font-size:14px;font-weight:800;cursor:pointer;">🗑️</button>
       </div>`;
     document.getElementById('requestsBox').style.display='block';
     return;
@@ -504,7 +508,96 @@ function showToast(msg){
   setTimeout(()=>t.classList.remove('show'),3500);
 }
 
+// ══ TRIP EDIT ══
+function openTripEdit(){
+  if(!trip) return;
+  document.getElementById('etTitle').value=trip.title||'';
+  document.getElementById('etDest').value=trip.destination||'';
+  document.getElementById('etCountry').value=trip.country||'';
+  document.getElementById('etDate').value=trip.date||'';
+  document.getElementById('etSeats').value=trip.seats||5;
+  document.getElementById('etDuration').value=trip.duration||'';
+  document.getElementById('etDesc').value=trip.description||'';
+  const overlay=document.getElementById('editTripOverlay');
+  const sheet=document.getElementById('editTripSheet');
+  overlay.style.opacity='1';overlay.style.pointerEvents='all';
+  sheet.style.transform='translateY(0)';
+}
+
+async function saveTripEdit(){
+  const title=document.getElementById('etTitle').value.trim();
+  if(!title){showToast('⚠️ أدخل عنوان الرحلة');return;}
+  const updates={
+    title,
+    destination:document.getElementById('etDest').value.trim(),
+    country:document.getElementById('etCountry').value.trim(),
+    date:document.getElementById('etDate').value,
+    seats:parseInt(document.getElementById('etSeats').value)||5,
+    duration:document.getElementById('etDuration').value.trim(),
+    description:document.getElementById('etDesc').value.trim()
+  };
+  const{error}=await sb.from('trips').update(updates).eq('id',trip.id);
+  if(error){showToast('❌ '+error.message);return;}
+  trip={...trip,...updates};
+  // أغلق الـ overlay
+  const overlay=document.getElementById('editTripOverlay');
+  const sheet=document.getElementById('editTripSheet');
+  overlay.style.opacity='0';overlay.style.pointerEvents='none';
+  sheet.style.transform='translateY(100%)';
+  // حدّث العرض
+  renderTrip();
+  showToast('✅ تم تحديث الرحلة بنجاح!');
+}
+
+async function deleteTripConfirm(){
+  if(!confirm('هل أنت متأكد من حذف الرحلة؟ لا يمكن التراجع عن هذا.')) return;
+  // حذف الطلبات والرسائل والمفضلة
+  await Promise.all([
+    sb.from('join_requests').delete().eq('trip_id',trip.id),
+    sb.from('messages').delete().eq('trip_id',trip.id),
+    sb.from('bookmarks').delete().eq('item_id',trip.id).eq('item_type','trip'),
+  ]);
+  const{error}=await sb.from('trips').delete().eq('id',trip.id);
+  if(error){showToast('❌ '+error.message);return;}
+  showToast('🗑️ تم حذف الرحلة');
+  setTimeout(()=>window.location.href='trips.html',1500);
+}
+
 init();
 </script>
+<!-- EDIT TRIP OVERLAY -->
+<div id="editTripOverlay" onclick="if(event.target===this)this.classList.remove('open')" style="position:fixed;inset:0;z-index:2000;background:rgba(0,0,0,0.8);backdrop-filter:blur(8px);display:flex;align-items:flex-end;justify-content:center;opacity:0;pointer-events:none;transition:opacity .3s;">
+  <div style="background:#161616;border-radius:22px 22px 0 0;width:100%;max-width:520px;max-height:92vh;overflow-y:auto;transform:translateY(100%);transition:transform .4s cubic-bezier(.34,1.2,.64,1);" id="editTripSheet">
+    <div style="width:36px;height:4px;border-radius:2px;background:rgba(255,255,255,0.1);margin:12px auto;"></div>
+    <div style="padding:0 18px 32px;">
+      <div style="font-size:19px;font-weight:900;margin-bottom:18px;">✏️ تعديل الرحلة</div>
+
+      <div style="margin-bottom:13px;"><label style="display:block;font-size:11px;font-weight:800;color:rgba(255,255,255,0.5);margin-bottom:5px;">عنوان الرحلة</label>
+      <input type="text" id="etTitle" style="width:100%;padding:12px 14px;border-radius:12px;border:1.5px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.06);font-family:'Tajawal',sans-serif;font-size:14px;color:white;outline:none;"></div>
+
+      <div style="margin-bottom:13px;"><label style="display:block;font-size:11px;font-weight:800;color:rgba(255,255,255,0.5);margin-bottom:5px;">الوجهة</label>
+      <input type="text" id="etDest" style="width:100%;padding:12px 14px;border-radius:12px;border:1.5px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.06);font-family:'Tajawal',sans-serif;font-size:14px;color:white;outline:none;"></div>
+
+      <div style="margin-bottom:13px;"><label style="display:block;font-size:11px;font-weight:800;color:rgba(255,255,255,0.5);margin-bottom:5px;">الدولة</label>
+      <input type="text" id="etCountry" style="width:100%;padding:12px 14px;border-radius:12px;border:1.5px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.06);font-family:'Tajawal',sans-serif;font-size:14px;color:white;outline:none;"></div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:13px;">
+        <div><label style="display:block;font-size:11px;font-weight:800;color:rgba(255,255,255,0.5);margin-bottom:5px;">تاريخ السفر</label>
+        <input type="date" id="etDate" style="width:100%;padding:12px 14px;border-radius:12px;border:1.5px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.06);font-family:'Tajawal',sans-serif;font-size:13px;color:white;outline:none;"></div>
+        <div><label style="display:block;font-size:11px;font-weight:800;color:rgba(255,255,255,0.5);margin-bottom:5px;">عدد الأماكن</label>
+        <input type="number" id="etSeats" min="1" max="20" style="width:100%;padding:12px 14px;border-radius:12px;border:1.5px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.06);font-family:'Tajawal',sans-serif;font-size:14px;color:white;outline:none;"></div>
+      </div>
+
+      <div style="margin-bottom:13px;"><label style="display:block;font-size:11px;font-weight:800;color:rgba(255,255,255,0.5);margin-bottom:5px;">المدة</label>
+      <input type="text" id="etDuration" placeholder="مثال: ٧ أيام" style="width:100%;padding:12px 14px;border-radius:12px;border:1.5px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.06);font-family:'Tajawal',sans-serif;font-size:14px;color:white;outline:none;"></div>
+
+      <div style="margin-bottom:20px;"><label style="display:block;font-size:11px;font-weight:800;color:rgba(255,255,255,0.5);margin-bottom:5px;">وصف الرحلة</label>
+      <textarea id="etDesc" style="width:100%;padding:12px 14px;border-radius:12px;border:1.5px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.06);font-family:'Tajawal',sans-serif;font-size:14px;color:white;outline:none;resize:vertical;min-height:100px;"></textarea></div>
+
+      <button onclick="saveTripEdit()" style="width:100%;padding:13px;border-radius:13px;border:none;font-family:'Tajawal',sans-serif;font-size:15px;font-weight:900;cursor:pointer;background:linear-gradient(135deg,#FF5C1A,#ff8c42);color:white;">حفظ التعديلات ✓</button>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>
