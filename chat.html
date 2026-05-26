@@ -214,6 +214,9 @@ async function init(){
   // تحميل الرسائل
   await loadMessages();
 
+  // إظهار خانة الكتابة
+  document.getElementById('inputArea').style.display='flex';
+
   // تحديث تلقائي كل 3 ثوان (fallback)
   setInterval(()=>loadNewMessages(), 3000);
 }
