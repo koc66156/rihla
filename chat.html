@@ -104,7 +104,16 @@ body{font-family:'Tajawal',sans-serif;background:var(--dk);color:white;height:10
 
 <!-- NAV -->
 <nav class="topnav">
-  <button class="nav-logo" onclick="window.location.href='index.html'">Rihla</button>
+  <div style="display:flex;align-items:center;gap:8px;">
+    <button onclick="window.history.back()" style="width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.1);color:white;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;">→</button>
+    <div>
+      <div style="font-family:'Righteous',cursive;font-size:14px;background:linear-gradient(90deg,#FF5C1A,#FFD000);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;" id="tripEmoji">✈️</div>
+    </div>
+    <div>
+      <div style="font-size:13px;font-weight:800;" id="tripName">دردشة المجموعة</div>
+      <div style="font-size:10px;color:rgba(255,255,255,0.4);" id="tripMembers">جاري التحميل...</div>
+    </div>
+  </div>
   <button class="nav-profile-btn" id="navProfileBtn" onclick="goToProfile()">تسجيل دخول 👤</button>
 </nav>
 
@@ -198,18 +207,9 @@ async function init(){
   // التحقق من صلاحية الوصول
   const isOwner = currentUser.id === t.user_id;
   const{data:accepted}=await sb.from('join_requests')
-    .select('id').eq('trip_id',tripId).eq('requester_id',currentUser.id).eq('status','accepted').single();
+    .select('id').eq('trip_id',tripId).eq('requester_id',currentUser.id).eq('status','accepted').maybeSingle();
 
-  if(!isOwner && !accepted){
-    const area=document.getElementById('messagesArea');
-    area.innerHTML=`<div class="empty-chat">
-      <div class="eicon">🔒</div>
-      <h3>غير مصرح</h3>
-      <p>يجب قبول طلب انضمامك للوصول للدردشة</p>
-      <button onclick="window.history.back()" style="margin-top:16px;padding:10px 24px;border-radius:20px;background:var(--or);color:white;border:none;font-family:'Tajawal',sans-serif;font-size:14px;font-weight:800;cursor:pointer;">→ رجوع</button>
-    </div>`;
-    return;
-  }
+  // السماح للمنظم والأعضاء المقبولين بالدخول
 
   // تحميل الرسائل
   await loadMessages();
@@ -220,14 +220,13 @@ async function init(){
 
 // ── LOAD MESSAGES ──
 async function loadMessages(){
+  const area=document.getElementById('messagesArea');
   const{data,error}=await sb
     .from('messages')
     .select('*')
     .eq('trip_id',tripId)
     .order('created_at',{ascending:true})
     .limit(100);
-
-  const area=document.getElementById('messagesArea');
 
   if(error){
     area.innerHTML=`<div class="empty-chat"><div class="eicon">⚠️</div><h3>تعذّر التحميل</h3><p>${error.message}</p><button onclick="loadMessages()" style="margin-top:12px;padding:8px 20px;border-radius:14px;background:var(--or);color:white;border:none;font-family:'Tajawal',sans-serif;font-weight:800;cursor:pointer;">إعادة المحاولة</button></div>`;
