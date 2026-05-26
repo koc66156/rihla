@@ -241,7 +241,7 @@ async function openNotif(id, link){
   // انتقل للرابط
   if(link&&link!=='undefined'&&link!=='null'){
     // تحويل المسار المطلق للنسبي
-    const path=link.replace('/rihla/','');
+    const path=link.replace('/rihla/','').replace('https://koc66156.github.io/rihla/','');
     window.location.href=path;
   }
 }

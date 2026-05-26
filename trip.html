@@ -11,7 +11,7 @@
 <style>
 :root{--or:#FF5C1A;--yl:#FFD000;--tl:#00C9B1;--dk:#0E0E0E;--muted:rgba(255,255,255,0.45);--card:rgba(255,255,255,0.05);--border:rgba(255,255,255,0.08);--nav-h:64px;--bot-h:68px;}
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
-body{font-family:'Tajawal',sans-serif;background:var(--dk);color:white;min-height:100vh;padding-top:var(--nav-h);padding-bottom:calc(var(--bot-h)+120px);}
+body{font-family:'Tajawal',sans-serif;background:var(--dk);color:white;min-height:100vh;padding-top:var(--nav-h);padding-bottom:calc(var(--bot-h)+160px);}
 
 .bg{position:fixed;inset:0;z-index:0;overflow:hidden;pointer-events:none;}
 .blob{position:absolute;border-radius:50%;filter:blur(80px);opacity:0.3;animation:drift 10s ease-in-out infinite alternate;}
@@ -137,7 +137,7 @@ body{font-family:'Tajawal',sans-serif;background:var(--dk);color:white;min-heigh
 <nav class="topnav">
   <button class="nav-profile-btn" id="navProfileBtn" onclick="goToProfile()">تسجيل دخول 👤</button>
   <button class="nav-logo" onclick="window.location.href='index.html'">Rihla</button>
-  <button onclick="window.history.back()" style="width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.1);color:white;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;">←</button>
+  <button onclick="window.history.back()" style="width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.1);color:white;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;">←</button>
 </nav>
 
 <div id="mainContent" style="display:none">
@@ -171,7 +171,7 @@ body{font-family:'Tajawal',sans-serif;background:var(--dk);color:white;min-heigh
     </div>
 
     <!-- يظهر للمنظم فقط -->
-    <div class="requests-box" id="requestsBox" style="display:none">
+    <div class="requests-box" id="requestsBox" style="display:none;padding-bottom:20px;">
       <h3>طلبات الانضمام</h3>
       <div id="requestsList"></div>
     </div>
@@ -189,7 +189,7 @@ body{font-family:'Tajawal',sans-serif;background:var(--dk);color:white;min-heigh
     </a>
 
     <!-- يظهر حسب الحالة -->
-    <div id="actionArea"></div>
+    <div id="actionArea" style="margin-bottom:24px;"></div>
     <div style="height:30px"></div>
   </div>
 </div>
@@ -509,11 +509,6 @@ async function updateRequest(reqId, status){
     showToast('تم رفض الطلب');
   }
   loadRequests();
-}
-
-async function goToProfile(){
-  const{data:{session}}=await sb.auth.getSession();
-  window.location.href=session?'/rihla/profile.html':'/rihla/auth.html';
 }
 
 function showToast(msg){
