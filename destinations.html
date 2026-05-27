@@ -300,6 +300,7 @@ async function openDetail(id){
       <div class="info-box"><div class="il">💰 التكلفة اليومية</div><div class="iv">${d.daily_cost||'—'}</div></div>
       <div class="info-box"><div class="il">💵 العملة</div><div class="iv">${d.currency||'—'}</div></div>
       <div class="info-box"><div class="il">🗣️ اللغة</div><div class="iv">${d.language||'—'}</div></div>
+      ${d.flight_time?`<div class="info-box" style="grid-column:1/-1"><div class="il">🛫 وقت الطيران من الكويت</div><div class="iv" style="font-size:16px">${d.flight_time}</div></div>`:''}
     </div>
 
     <!-- VISA -->
@@ -311,18 +312,38 @@ async function openDetail(id){
       </div>
     </div>
 
+    <!-- HALAL & MOSQUES -->
+    ${d.halal_food||d.mosques?`
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;">
+      ${d.halal_food?`<div style="background:rgba(0,201,177,0.08);border:1px solid rgba(0,201,177,0.2);border-radius:14px;padding:12px;">
+        <div style="font-size:11px;color:var(--tl);font-weight:800;margin-bottom:6px;">🥩 الطعام الحلال</div>
+        <div style="font-size:12px;color:rgba(255,255,255,0.75);line-height:1.6;">${d.halal_food}</div>
+      </div>`:''}
+      ${d.mosques?`<div style="background:rgba(255,208,0,0.08);border:1px solid rgba(255,208,0,0.2);border-radius:14px;padding:12px;">
+        <div style="font-size:11px;color:var(--yl);font-weight:800;margin-bottom:6px;">🕌 المساجد</div>
+        <div style="font-size:12px;color:rgba(255,255,255,0.75);line-height:1.6;">${d.mosques}</div>
+      </div>`:''}
+    </div>`:''}
+
     <!-- MUST VISIT -->
     ${d.must_visit?.length?`
     <div class="sec">
-      <div class="sec-title green">✅ أماكن يجب زيارتها</div>
-      ${d.must_visit.map(i=>`<div class="list-item green-item"><span class="li-icon">📍</span><span>${i}</span></div>`).join('')}
+      <div class="sec-title green">📍 أماكن يجب زيارتها</div>
+      ${d.must_visit.map(i=>`<div class="list-item green-item"><span class="li-icon">✅</span><span>${i}</span></div>`).join('')}
     </div>`:''}
 
-    <!-- AVOID -->
-    ${d.avoid?.length?`
+    <!-- MUST EAT -->
+    ${d.must_eat?.length?`
     <div class="sec">
-      <div class="sec-title red">❌ أماكن وأمور يُنصح بتجنبها</div>
-      ${d.avoid.map(i=>`<div class="list-item red-item"><span class="li-icon">⚠️</span><span>${i}</span></div>`).join('')}
+      <div class="sec-title" style="color:#ff8c42">🍽️ يجب تجربة هذه الأكلات</div>
+      ${d.must_eat.map(i=>`<div class="list-item" style="background:rgba(255,140,66,0.08);border:1px solid rgba(255,140,66,0.15);border-radius:10px;padding:10px 12px;margin-bottom:6px;display:flex;align-items:center;gap:8px;"><span class="li-icon">🍴</span><span style="font-size:13px;">${i}</span></div>`).join('')}
+    </div>`:''}
+
+    <!-- SHOPPING -->
+    ${d.shopping?`
+    <div class="sec">
+      <div class="sec-title" style="color:#CE93D8">🛍️ التسوق</div>
+      <div style="background:rgba(206,147,216,0.08);border:1px solid rgba(206,147,216,0.15);border-radius:12px;padding:12px;font-size:13px;color:rgba(255,255,255,0.75);line-height:1.7;">${d.shopping}</div>
     </div>`:''}
 
     <!-- TIPS -->
