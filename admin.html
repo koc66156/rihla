@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>رِحلة — لوحة التحكم</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;800;900&family=Righteous&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root{--or:#FF5C1A;--yl:#FFD000;--tl:#00C9B1;--dk:#0E0E0E;--card:rgba(255,255,255,0.05);--border:rgba(255,255,255,0.08);--muted:rgba(255,255,255,0.45);}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Tajawal',sans-serif;background:var(--dk);color:white;min-height:100vh;}
+
+/* ── LOGIN SCREEN ── */
+#loginScreen{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:20px;}
+.login-card{background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:24px;padding:40px 32px;width:100%;max-width:380px;text-align:center;}
+.login-logo{font-family:'Righteous',cursive;font-size:36px;background:linear-gradient(90deg,var(--or),var(--yl));-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:4px;}
+.login-sub{font-size:13px;color:var(--muted);margin-bottom:32px;}
+.login-input{width:100%;padding:14px 18px;border-radius:14px;border:1.5px solid var(--border);background:rgba(255,255,255,0.06);font-family:'Tajawal',sans-serif;font-size:15px;color:white;outline:none;text-align:center;letter-spacing:4px;margin-bottom:16px;}
+.login-input:focus{border-color:var(--or);}
+.login-btn{width:100%;padding:14px;border-radius:14px;background:linear-gradient(135deg,var(--or),#ff8c42);color:white;font-family:'Tajawal',sans-serif;font-size:16px;font-weight:800;border:none;cursor:pointer;}
+.login-err{font-size:13px;color:#ff6b6b;margin-top:10px;display:none;}
+
+/* ── ADMIN LAYOUT ── */
+#adminPanel{display:none;}
+.topbar{position:sticky;top:0;z-index:100;background:rgba(14,14,14,0.97);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);padding:0 20px;height:60px;display:flex;align-items:center;justify-content:space-between;}
+.topbar-logo{font-family:'Righteous',cursive;font-size:20px;background:linear-gradient(90deg,var(--or),var(--yl));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.topbar-right{display:flex;align-items:center;gap:12px;}
+.logout-btn{padding:7px 14px;border-radius:20px;background:rgba(229,57,53,0.1);border:1px solid rgba(229,57,53,0.2);color:#ff6b6b;font-family:'Tajawal',sans-serif;font-size:12px;font-weight:800;cursor:pointer;}
+
+/* ── TABS ── */
+.tabs-bar{display:flex;gap:4px;padding:16px 20px 0;overflow-x:auto;border-bottom:1px solid var(--border);}
+.tab-btn{padding:9px 16px;border-radius:20px 20px 0 0;background:none;border:none;color:var(--muted);font-family:'Tajawal',sans-serif;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap;}
+.tab-btn.active{background:var(--or);color:white;}
+
+/* ── STATS GRID ── */
+.stats-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;padding:20px;}
+.stat-card{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:20px;text-align:center;}
+.stat-num{font-size:32px;font-weight:900;background:linear-gradient(135deg,var(--or),var(--yl));-webkit-background-clip:text;-webkit-text-fill-color:transparent;display:block;}
+.stat-label{font-size:12px;color:var(--muted);margin-top:4px;}
+.stat-icon{font-size:24px;margin-bottom:6px;}
+
+/* ── SECTION ── */
+.section{padding:0 20px 20px;}
+.sec-title{font-size:14px;font-weight:800;color:var(--or);margin-bottom:12px;margin-top:20px;letter-spacing:.5px;}
+
+/* ── TABLE ── */
+.admin-table{width:100%;border-collapse:collapse;}
+.admin-table th{font-size:11px;font-weight:800;color:var(--muted);padding:8px 10px;text-align:right;border-bottom:1px solid var(--border);}
+.admin-table td{padding:10px;border-bottom:1px solid rgba(255,255,255,0.04);font-size:13px;vertical-align:middle;}
+.admin-table tr:hover td{background:rgba(255,255,255,0.02);}
+
+/* ── BADGES ── */
+.badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:10px;font-weight:800;}
+.badge-green{background:rgba(0,201,177,0.15);color:var(--tl);}
+.badge-or{background:rgba(255,92,26,0.15);color:var(--or);}
+.badge-yl{background:rgba(255,208,0,0.15);color:var(--yl);}
+.badge-red{background:rgba(229,57,53,0.15);color:#ff6b6b;}
+
+/* ── ACTION BUTTONS ── */
+.act-btn{padding:5px 12px;border-radius:8px;font-family:'Tajawal',sans-serif;font-size:11px;font-weight:800;cursor:pointer;border:none;}
+.act-verify{background:rgba(0,201,177,0.15);color:var(--tl);}
+.act-delete{background:rgba(229,57,53,0.1);color:#ff6b6b;}
+.act-ban{background:rgba(255,208,0,0.1);color:var(--yl);}
+.act-view{background:rgba(255,255,255,0.07);color:white;}
+.acts{display:flex;gap:5px;flex-wrap:wrap;}
+
+/* ── REPORT CARD ── */
+.report-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px;margin-bottom:10px;}
+.report-type{font-size:10px;font-weight:800;color:var(--or);margin-bottom:6px;}
+.report-reason{font-size:13px;margin-bottom:8px;}
+.report-meta{font-size:11px;color:var(--muted);}
+
+/* ── EMPTY ── */
+.empty-state{text-align:center;padding:40px;color:var(--muted);font-size:14px;}
+
+/* ── TOAST ── */
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(80px);background:#1a1a1a;color:white;padding:11px 20px;border-radius:20px;font-size:13px;font-weight:700;box-shadow:0 8px 24px rgba(0,0,0,0.4);transition:transform .4s;z-index:9999;border:1px solid var(--border);opacity:0;}
+.toast.show{transform:translateX(-50%) translateY(0);opacity:1;}
+
+/* ── SEARCH ── */
+.search-bar{width:100%;padding:11px 16px;border-radius:12px;border:1.5px solid var(--border);background:rgba(255,255,255,0.05);font-family:'Tajawal',sans-serif;font-size:14px;color:white;outline:none;margin-bottom:14px;}
+.search-bar:focus{border-color:var(--or);}
+
+/* ── TAB PANELS ── */
+.tab-panel{display:none;padding-bottom:40px;}
+.tab-panel.active{display:block;}
+</style>
+</head>
+<body>
+
+<!-- ══ LOGIN ══ -->
+<div id="loginScreen">
+  <div class="login-card">
+    <div class="login-logo">Rihla</div>
+    <div class="login-sub">🔐 لوحة تحكم المشرف</div>
+    <input type="password" id="pwInput" class="login-input" placeholder="••••••••" onkeydown="if(event.key==='Enter')checkLogin()">
+    <button class="login-btn" onclick="checkLogin()">دخول</button>
+    <div class="login-err" id="loginErr">❌ كلمة المرور خاطئة</div>
+  </div>
+</div>
+
+<!-- ══ ADMIN PANEL ══ -->
+<div id="adminPanel">
+
+  <div class="topbar">
+    <div class="topbar-logo">Rihla Admin</div>
+    <div class="topbar-right">
+      <span id="lastUpdate" style="font-size:11px;color:var(--muted);"></span>
+      <button class="logout-btn" onclick="logout()">خروج 🚪</button>
+    </div>
+  </div>
+
+  <div class="tabs-bar">
+    <button class="tab-btn active" onclick="switchTab('overview',this)">📊 نظرة عامة</button>
+    <button class="tab-btn" onclick="switchTab('users',this)">👥 المستخدمون</button>
+    <button class="tab-btn" onclick="switchTab('trips',this)">✈️ الرحلات</button>
+    <button class="tab-btn" onclick="switchTab('agents',this)">🧭 المرشدون</button>
+    <button class="tab-btn" onclick="switchTab('reports',this)">🚨 البلاغات</button>
+  </div>
+
+  <!-- OVERVIEW -->
+  <div class="tab-panel active" id="panel-overview">
+    <div class="stats-grid" id="statsGrid">
+      <div class="stat-card"><div class="stat-icon">👥</div><span class="stat-num" id="s-users">...</span><div class="stat-label">مستخدم</div></div>
+      <div class="stat-card"><div class="stat-icon">✈️</div><span class="stat-num" id="s-trips">...</span><div class="stat-label">رحلة منشورة</div></div>
+      <div class="stat-card"><div class="stat-icon">📸</div><span class="stat-num" id="s-posts">...</span><div class="stat-label">منشور</div></div>
+      <div class="stat-card"><div class="stat-icon">🧭</div><span class="stat-num" id="s-agents">...</span><div class="stat-label">مرشد سفر</div></div>
+      <div class="stat-card"><div class="stat-icon">📋</div><span class="stat-num" id="s-requests">...</span><div class="stat-label">طلب انضمام</div></div>
+      <div class="stat-card"><div class="stat-icon">🚨</div><span class="stat-num" id="s-reports">...</span><div class="stat-label">بلاغ معلق</div></div>
+    </div>
+
+    <div class="section">
+      <div class="sec-title">🆕 آخر المسجلين</div>
+      <table class="admin-table">
+        <thead><tr><th>الاسم</th><th>النوع</th><th>تاريخ التسجيل</th></tr></thead>
+        <tbody id="recentUsers"></tbody>
+      </table>
+    </div>
+
+    <div class="section">
+      <div class="sec-title">✈️ آخر الرحلات</div>
+      <table class="admin-table">
+        <thead><tr><th>الرحلة</th><th>الوجهة</th><th>التاريخ</th></tr></thead>
+        <tbody id="recentTrips"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- USERS -->
+  <div class="tab-panel" id="panel-users">
+    <div class="section">
+      <div class="sec-title">👥 إدارة المستخدمين</div>
+      <input type="text" class="search-bar" id="userSearch" placeholder="🔍 ابحث باسم أو بلد..." oninput="filterUsers()">
+      <table class="admin-table">
+        <thead><tr><th>المستخدم</th><th>النوع</th><th>البلد</th><th>إجراء</th></tr></thead>
+        <tbody id="usersTable"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- TRIPS -->
+  <div class="tab-panel" id="panel-trips">
+    <div class="section">
+      <div class="sec-title">✈️ إدارة الرحلات</div>
+      <input type="text" class="search-bar" id="tripSearch" placeholder="🔍 ابحث بعنوان أو وجهة..." oninput="filterTrips()">
+      <table class="admin-table">
+        <thead><tr><th>الرحلة</th><th>الوجهة</th><th>الأماكن</th><th>إجراء</th></tr></thead>
+        <tbody id="tripsTable"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- AGENTS -->
+  <div class="tab-panel" id="panel-agents">
+    <div class="section">
+      <div class="sec-title">🧭 إدارة المرشدين</div>
+      <table class="admin-table">
+        <thead><tr><th>المرشد</th><th>الحالة</th><th>الخدمات</th><th>إجراء</th></tr></thead>
+        <tbody id="agentsTable"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- REPORTS -->
+  <div class="tab-panel" id="panel-reports">
+    <div class="section">
+      <div class="sec-title">🚨 البلاغات المعلقة</div>
+      <div id="reportsList"></div>
+    </div>
+  </div>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const{createClient}=supabase;
+const sb=createClient(
+  'https://ybjdagurvkweabujkeyz.supabase.co',
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InliamRhZ3Vydmt3ZWFidWprZXl6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkzNjQyMDAsImV4cCI6MjA5NDk0MDIwMH0.CIK7sew_-kBlC_t_szCjKjjnFNg695kwSryuRshQ9nI'
+);
+
+// ══ كلمة المرور - غيّرها لكلمة سرية خاصة بك ══
+const ADMIN_PASSWORD = 'Rihla@Admin2026';
+
+let allUsers=[], allTrips=[];
+
+// ══ LOGIN ══
+function checkLogin(){
+  const pw=document.getElementById('pwInput').value;
+  if(pw===ADMIN_PASSWORD){
+    sessionStorage.setItem('rihla_admin','1');
+    document.getElementById('loginScreen').style.display='none';
+    document.getElementById('adminPanel').style.display='block';
+    loadAll();
+  }else{
+    const err=document.getElementById('loginErr');
+    err.style.display='block';
+    document.getElementById('pwInput').value='';
+    setTimeout(()=>err.style.display='none',3000);
+  }
+}
+
+function logout(){
+  sessionStorage.removeItem('rihla_admin');
+  location.reload();
+}
+
+// تحقق من الجلسة
+if(sessionStorage.getItem('rihla_admin')==='1'){
+  document.getElementById('loginScreen').style.display='none';
+  document.getElementById('adminPanel').style.display='block';
+}
+
+// ══ TABS ══
+function switchTab(tab,el){
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('panel-'+tab).classList.add('active');
+}
+
+// ══ LOAD ALL ══
+async function loadAll(){
+  document.getElementById('lastUpdate').textContent='جاري التحميل...';
+  await Promise.all([
+    loadStats(),
+    loadRecentUsers(),
+    loadRecentTrips(),
+    loadAllUsers(),
+    loadAllTrips(),
+    loadAgents(),
+    loadReports()
+  ]);
+  document.getElementById('lastUpdate').textContent='آخر تحديث: '+new Date().toLocaleTimeString('ar-KW');
+}
+
+// ══ STATS ══
+async function loadStats(){
+  const[users,trips,posts,agents,requests,reports]=await Promise.all([
+    sb.from('profiles').select('*',{count:'exact',head:true}),
+    sb.from('trips').select('*',{count:'exact',head:true}),
+    sb.from('posts').select('*',{count:'exact',head:true}),
+    sb.from('agents').select('*',{count:'exact',head:true}),
+    sb.from('join_requests').select('*',{count:'exact',head:true}),
+    sb.from('reports').select('*',{count:'exact',head:true}).eq('status','pending')
+  ]);
+  document.getElementById('s-users').textContent=users.count||0;
+  document.getElementById('s-trips').textContent=trips.count||0;
+  document.getElementById('s-posts').textContent=posts.count||0;
+  document.getElementById('s-agents').textContent=agents.count||0;
+  document.getElementById('s-requests').textContent=requests.count||0;
+  document.getElementById('s-reports').textContent=reports.count||0;
+}
+
+// ══ RECENT USERS ══
+async function loadRecentUsers(){
+  const{data}=await sb.from('profiles').select('*').order('created_at',{ascending:false}).limit(5);
+  const tb=document.getElementById('recentUsers');
+  if(!data?.length){tb.innerHTML='<tr><td colspan="3" class="empty-state">لا يوجد مستخدمون</td></tr>';return;}
+  tb.innerHTML=data.map(u=>`
+    <tr>
+      <td><strong>${u.full_name||'—'}</strong></td>
+      <td><span class="badge ${u.account_type==='agent'?'badge-yl':'badge-green'}">${u.account_type==='agent'?'🧭 مرشد':'✈️ مسافر'}</span></td>
+      <td style="color:var(--muted);font-size:11px">${new Date(u.created_at).toLocaleDateString('ar-KW')}</td>
+    </tr>`).join('');
+}
+
+// ══ RECENT TRIPS ══
+async function loadRecentTrips(){
+  const{data}=await sb.from('trips').select('*').order('created_at',{ascending:false}).limit(5);
+  const tb=document.getElementById('recentTrips');
+  if(!data?.length){tb.innerHTML='<tr><td colspan="3" class="empty-state">لا توجد رحلات</td></tr>';return;}
+  tb.innerHTML=data.map(t=>`
+    <tr>
+      <td><strong>${t.emoji||'✈️'} ${t.title||'—'}</strong></td>
+      <td style="color:var(--muted)">${t.destination||'—'}</td>
+      <td style="color:var(--muted);font-size:11px">${t.date||'—'}</td>
+    </tr>`).join('');
+}
+
+// ══ ALL USERS ══
+async function loadAllUsers(){
+  const{data}=await sb.from('profiles').select('*').order('created_at',{ascending:false});
+  allUsers=data||[];
+  renderUsersTable(allUsers);
+}
+
+function renderUsersTable(users){
+  const tb=document.getElementById('usersTable');
+  if(!users.length){tb.innerHTML='<tr><td colspan="4" class="empty-state">لا يوجد نتائج</td></tr>';return;}
+  tb.innerHTML=users.map(u=>`
+    <tr>
+      <td>
+        <div style="font-weight:800">${u.full_name||'—'}</div>
+        <div style="font-size:11px;color:var(--muted)">${u.id.substring(0,8)}...</div>
+      </td>
+      <td><span class="badge ${u.account_type==='agent'?'badge-yl':'badge-green'}">${u.account_type==='agent'?'🧭 مرشد':'✈️ مسافر'}</span></td>
+      <td style="color:var(--muted);font-size:12px">${u.country||'—'}</td>
+      <td>
+        <div class="acts">
+          <button class="act-btn act-view" onclick="window.open('user.html?id=${u.id}','_blank')">عرض</button>
+          <button class="act-btn act-delete" onclick="deleteUser('${u.id}','${(u.full_name||'هذا المستخدم').replace(/'/g,'')}')">حذف</button>
+        </div>
+      </td>
+    </tr>`).join('');
+}
+
+function filterUsers(){
+  const q=document.getElementById('userSearch').value.toLowerCase();
+  const filtered=allUsers.filter(u=>
+    (u.full_name||'').toLowerCase().includes(q)||
+    (u.country||'').toLowerCase().includes(q)
+  );
+  renderUsersTable(filtered);
+}
+
+// ══ ALL TRIPS ══
+async function loadAllTrips(){
+  const{data}=await sb.from('trips').select('*').order('created_at',{ascending:false});
+  allTrips=data||[];
+  renderTripsTable(allTrips);
+}
+
+function renderTripsTable(trips){
+  const tb=document.getElementById('tripsTable');
+  if(!trips.length){tb.innerHTML='<tr><td colspan="4" class="empty-state">لا توجد رحلات</td></tr>';return;}
+  tb.innerHTML=trips.map(t=>`
+    <tr>
+      <td>
+        <div style="font-weight:800">${t.emoji||'✈️'} ${t.title||'—'}</div>
+        <div style="font-size:11px;color:var(--muted)">${new Date(t.created_at).toLocaleDateString('ar-KW')}</div>
+      </td>
+      <td style="color:var(--muted);font-size:12px">${t.destination||'—'}<br>${t.country||''}</td>
+      <td style="text-align:center"><span class="badge badge-green">${t.seats_taken||0}/${t.seats||0}</span></td>
+      <td>
+        <div class="acts">
+          <button class="act-btn act-view" onclick="window.open('trip.html?id=${t.id}','_blank')">عرض</button>
+          <button class="act-btn act-delete" onclick="deleteTrip('${t.id}','${(t.title||'هذه الرحلة').replace(/'/g,'')}')">حذف</button>
+        </div>
+      </td>
+    </tr>`).join('');
+}
+
+function filterTrips(){
+  const q=document.getElementById('tripSearch').value.toLowerCase();
+  const filtered=allTrips.filter(t=>
+    (t.title||'').toLowerCase().includes(q)||
+    (t.destination||'').toLowerCase().includes(q)||
+    (t.country||'').toLowerCase().includes(q)
+  );
+  renderTripsTable(filtered);
+}
+
+// ══ AGENTS ══
+async function loadAgents(){
+  const{data}=await sb.from('agents').select('*').order('created_at',{ascending:false});
+  const tb=document.getElementById('agentsTable');
+  if(!data?.length){tb.innerHTML='<tr><td colspan="4" class="empty-state">لا يوجد مرشدون</td></tr>';return;}
+  tb.innerHTML=data.map(a=>`
+    <tr>
+      <td>
+        <div style="font-weight:800">${a.full_name||'—'}</div>
+        <div style="font-size:11px;color:var(--muted)">${a.whatsapp||'لا يوجد واتساب'}</div>
+      </td>
+      <td>${a.is_verified?
+        '<span class="badge badge-green">✅ موثق</span>':
+        '<span class="badge badge-yl">⏳ غير موثق</span>'}</td>
+      <td style="font-size:11px;color:var(--muted)">${(a.services||[]).slice(0,2).join('، ')||'—'}</td>
+      <td>
+        <div class="acts">
+          ${!a.is_verified?`<button class="act-btn act-verify" onclick="verifyAgent('${a.id}')">✅ توثيق</button>`:''}
+          ${a.is_verified?`<button class="act-btn act-ban" onclick="unverifyAgent('${a.id}')">↩️ إلغاء</button>`:''}
+          <button class="act-btn act-delete" onclick="deleteAgent('${a.id}')">حذف</button>
+        </div>
+      </td>
+    </tr>`).join('');
+}
+
+// ══ REPORTS ══
+async function loadReports(){
+  const{data}=await sb.from('reports').select('*').eq('status','pending').order('created_at',{ascending:false});
+  const list=document.getElementById('reportsList');
+  if(!data?.length){list.innerHTML='<div class="empty-state">🎉 لا توجد بلاغات معلقة</div>';return;}
+  list.innerHTML=data.map(r=>`
+    <div class="report-card">
+      <div class="report-type">بلاغ على: ${r.item_type}</div>
+      <div class="report-reason">السبب: ${r.reason||'—'}</div>
+      <div class="report-meta">${new Date(r.created_at).toLocaleDateString('ar-KW')}</div>
+      <div class="acts" style="margin-top:10px">
+        ${r.item_type==='trip'?`<button class="act-btn act-view" onclick="window.open('trip.html?id=${r.item_id}','_blank')">عرض</button>`:''}
+        ${r.item_type==='post'?`<button class="act-btn act-view" onclick="window.open('post.html?id=${r.item_id}','_blank')">عرض</button>`:''}
+        ${r.item_type==='user'?`<button class="act-btn act-view" onclick="window.open('user.html?id=${r.item_id}','_blank')">عرض</button>`:''}
+        <button class="act-btn act-verify" onclick="dismissReport('${r.id}')">✓ تجاهل</button>
+        <button class="act-btn act-delete" onclick="deleteReportedItem('${r.id}','${r.item_type}','${r.item_id}')">حذف المحتوى</button>
+      </div>
+    </div>`).join('');
+}
+
+// ══ ACTIONS ══
+async function deleteUser(id,name){
+  if(!confirm(`هل أنت متأكد من حذف مستخدم "${name}"؟ هذا الإجراء لا يمكن التراجع عنه.`)) return;
+  await sb.from('profiles').delete().eq('id',id);
+  showToast('✅ تم حذف المستخدم');
+  loadAll();
+}
+
+async function deleteTrip(id,title){
+  if(!confirm(`هل أنت متأكد من حذف رحلة "${title}"؟`)) return;
+  await sb.from('trips').delete().eq('id',id);
+  showToast('✅ تم حذف الرحلة');
+  loadAll();
+}
+
+async function verifyAgent(id){
+  await sb.from('agents').update({is_verified:true,verified_at:new Date().toISOString()}).eq('id',id);
+  showToast('✅ تم توثيق المرشد');
+  loadAgents();
+}
+
+async function unverifyAgent(id){
+  await sb.from('agents').update({is_verified:false,verified_at:null}).eq('id',id);
+  showToast('↩️ تم إلغاء التوثيق');
+  loadAgents();
+}
+
+async function deleteAgent(id){
+  if(!confirm('هل أنت متأكد من حذف هذا المرشد؟')) return;
+  await sb.from('agents').delete().eq('id',id);
+  showToast('✅ تم حذف المرشد');
+  loadAgents();
+}
+
+async function dismissReport(id){
+  await sb.from('reports').update({status:'dismissed'}).eq('id',id);
+  showToast('✓ تم تجاهل البلاغ');
+  loadReports();
+}
+
+async function deleteReportedItem(reportId,type,itemId){
+  if(!confirm('سيتم حذف هذا المحتوى نهائياً. متأكد؟')) return;
+  const tableMap={post:'posts',trip:'trips',user:'profiles',comment:'comments'};
+  const table=tableMap[type];
+  if(table) await sb.from(table).delete().eq('id',itemId);
+  await sb.from('reports').update({status:'resolved'}).eq('id',reportId);
+  showToast('✅ تم حذف المحتوى وإغلاق البلاغ');
+  loadAll();
+}
+
+// ══ TOAST ══
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),3500);
+}
+
+// ══ AUTO REFRESH ══
+if(sessionStorage.getItem('rihla_admin')==='1'){
+  setInterval(loadAll, 60000); // تحديث كل دقيقة
+}
+</script>
+</body>
+</html>
