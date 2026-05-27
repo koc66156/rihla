@@ -116,6 +116,7 @@ body{font-family:'Tajawal',sans-serif;background:var(--dk);color:white;min-heigh
     <button class="tab-btn" onclick="switchTab('users',this)">👥 المستخدمون</button>
     <button class="tab-btn" onclick="switchTab('trips',this)">✈️ الرحلات</button>
     <button class="tab-btn" onclick="switchTab('agents',this)">🧭 المرشدون</button>
+    <button class="tab-btn" onclick="switchTab('posts',this)">📸 المنشورات</button>
     <button class="tab-btn" onclick="switchTab('reports',this)">🚨 البلاغات</button>
   </div>
 
@@ -182,6 +183,18 @@ body{font-family:'Tajawal',sans-serif;background:var(--dk);color:white;min-heigh
     </div>
   </div>
 
+  <!-- POSTS -->
+  <div class="tab-panel" id="panel-posts">
+    <div class="section">
+      <div class="sec-title">📸 إدارة المنشورات</div>
+      <input type="text" class="search-bar" id="postSearch" placeholder="🔍 ابحث بعنوان أو وجهة..." oninput="filterPosts()">
+      <table class="admin-table">
+        <thead><tr><th>المنشور</th><th>الوجهة</th><th>الإعجابات</th><th>إجراء</th></tr></thead>
+        <tbody id="postsTable"></tbody>
+      </table>
+    </div>
+  </div>
+
   <!-- REPORTS -->
   <div class="tab-panel" id="panel-reports">
     <div class="section">
@@ -210,7 +223,7 @@ let allUsers=[], allTrips=[];
 function checkLogin(){
   const pw=document.getElementById('pwInput').value;
   if(pw===ADMIN_PASSWORD){
-    sessionStorage.setItem('rihla_admin','1');
+    localStorage.setItem('rihla_admin','1');
     document.getElementById('loginScreen').style.display='none';
     document.getElementById('adminPanel').style.display='block';
     loadAll();
@@ -223,12 +236,12 @@ function checkLogin(){
 }
 
 function logout(){
-  sessionStorage.removeItem('rihla_admin');
+  localStorage.removeItem('rihla_admin');
   location.reload();
 }
 
 // تحقق من الجلسة
-if(sessionStorage.getItem('rihla_admin')==='1'){
+if(localStorage.getItem('rihla_admin')==='1'){
   document.getElementById('loginScreen').style.display='none';
   document.getElementById('adminPanel').style.display='block';
 }
@@ -250,6 +263,7 @@ async function loadAll(){
     loadRecentTrips(),
     loadAllUsers(),
     loadAllTrips(),
+    loadAllPosts(),
     loadAgents(),
     loadReports()
   ]);
@@ -302,7 +316,7 @@ async function loadRecentTrips(){
 
 // ══ ALL USERS ══
 async function loadAllUsers(){
-  const{data}=await sb.from('profiles').select('*').order('created_at',{ascending:false}).limit(200);
+  const{data}=await sb.from('profiles').select('*').order('created_at',{ascending:false}).limit(500);
   allUsers=data||[];
   renderUsersTable(allUsers);
 }
@@ -373,6 +387,48 @@ function filterTrips(){
     (t.country||'').toLowerCase().includes(q)
   );
   renderTripsTable(filtered);
+}
+
+// ══ ALL POSTS ══
+let allPosts=[];
+async function loadAllPosts(){
+  const{data}=await sb.from('posts').select('*').order('created_at',{ascending:false}).limit(300);
+  allPosts=data||[];
+  renderPostsTable(allPosts);
+}
+function renderPostsTable(posts){
+  const tb=document.getElementById('postsTable');
+  if(!posts?.length){tb.innerHTML='<tr><td colspan="4" class="empty-state">لا توجد منشورات</td></tr>';return;}
+  tb.innerHTML=posts.map(p=>`
+    <tr>
+      <td>
+        <div style="font-weight:800">${p.title||'—'}</div>
+        <div style="font-size:11px;color:var(--muted)">${new Date(p.created_at).toLocaleDateString('ar-KW')}</div>
+      </td>
+      <td style="color:var(--muted);font-size:12px">${p.destination||'—'}</td>
+      <td style="text-align:center"><span class="badge badge-green">❤️ ${p.likes||0}</span></td>
+      <td>
+        <div class="acts">
+          <button class="act-btn act-view" onclick="window.open('post.html?id=${p.id}','_blank')">عرض</button>
+          <button class="act-btn act-delete" onclick="deletePost('${p.id}','${(p.title||'هذا المنشور').replace(/'/g,'')}')">حذف</button>
+        </div>
+      </td>
+    </tr>`).join('');
+}
+function filterPosts(){
+  const q=document.getElementById('postSearch').value.toLowerCase();
+  const filtered=allPosts.filter(p=>
+    (p.title||'').toLowerCase().includes(q)||
+    (p.destination||'').toLowerCase().includes(q)
+  );
+  renderPostsTable(filtered);
+}
+async function deletePost(id,title){
+  if(!confirm('هل أنت متأكد من حذف منشور "'+title+'"؟')) return;
+  await sb.from('posts').delete().eq('id',id);
+  showToast('✅ تم حذف المنشور');
+  loadAllPosts();
+  loadStats();
 }
 
 // ══ AGENTS ══
@@ -479,7 +535,7 @@ function showToast(msg){
 }
 
 // ══ AUTO REFRESH ══
-if(sessionStorage.getItem('rihla_admin')==='1'){
+if(localStorage.getItem('rihla_admin')==='1'){
   setInterval(loadAll, 60000); // تحديث كل دقيقة
 }
 </script>
