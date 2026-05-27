@@ -398,9 +398,13 @@ function renderActionArea(seatsLeft){
   // طلب موجود
   if(myRequest){
     if(myRequest.status==='pending'){
-      area.innerHTML=`<div class="status-box sb-pending">⏳ طلبك قيد المراجعة — سيتواصل معك المنظم قريباً</div>`;
+      area.innerHTML=`<div class="status-box sb-pending" style="margin-bottom:60px;">⏳ طلبك قيد المراجعة — سيتواصل معك المنظم قريباً</div>`;
     } else if(myRequest.status==='accepted'){
-      area.innerHTML=`<div class="status-box sb-accepted">🎉 تم قبول طلبك! تواصل مع المنظم للتنسيق</div>`;
+      area.innerHTML=`
+        <div class="status-box sb-accepted">🎉 تم قبول طلبك! تواصل مع المنظم للتنسيق</div>
+        <div style="padding-bottom:60px;">
+          <button onclick="leaveTrip('${myRequest.id}')" style="width:100%;margin-top:10px;padding:12px;border-radius:13px;background:rgba(229,57,53,0.08);border:1px solid rgba(229,57,53,0.2);color:#ff6b6b;font-family:'Tajawal',sans-serif;font-size:14px;font-weight:800;cursor:pointer;">🚪 مغادرة الرحلة</button>
+        </div>`;
     } else {
       area.innerHTML=`
         <div class="status-box" style="background:rgba(229,57,53,0.1);border-color:rgba(229,57,53,0.2);color:#ff6b6b">
@@ -520,6 +524,14 @@ async function loadRequests(){
 }
 
 // ── KICK MEMBER ──
+async function leaveTrip(reqId){
+  if(!confirm('هل أنت متأكد من مغادرة الرحلة؟')) return;
+  await sb.from('join_requests').delete().eq('id',reqId);
+  await sb.from('trips').update({seats_taken:Math.max(0,(trip.seats_taken||1)-1)}).eq('id',trip.id);
+  showToast('✓ غادرت الرحلة');
+  setTimeout(()=>window.location.href='trips.html',1500);
+}
+
 async function kickMember(reqId, uid){
   if(!confirm('هل أنت متأكد من طرد هذا العضو من الرحلة؟')) return;
   await sb.from('join_requests').update({status:'rejected'}).eq('id',reqId);
