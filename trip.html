@@ -193,6 +193,11 @@ body{font-family:'Tajawal',sans-serif;background:var(--dk);color:white;min-heigh
       </div>
     </a>
 
+    <!-- زر مغادرة الرحلة للأعضاء المقبولين - أسفل الصفحة -->
+    <div id="leaveBox" style="display:none;margin-top:16px;padding-bottom:60px;">
+      <button id="leaveBtn" onclick="leaveTrip(this.getAttribute('data-req-id'))" style="width:100%;padding:13px;border-radius:13px;background:rgba(229,57,53,0.08);border:1px solid rgba(229,57,53,0.2);color:#ff6b6b;font-family:'Tajawal',sans-serif;font-size:14px;font-weight:800;cursor:pointer;">🚪 مغادرة الرحلة</button>
+    </div>
+
     <!-- أزرار التعديل/الحذف للمنظم - أسفل الصفحة -->
     <div id="ownerActionsBox" style="display:none;gap:8px;margin-top:16px;padding-bottom:60px;">
       <button onclick="openTripEdit()" style="flex:1;padding:13px;border-radius:13px;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.15);color:white;font-family:'Tajawal',sans-serif;font-size:14px;font-weight:800;cursor:pointer;">✏️ تعديل الرحلة</button>
@@ -400,11 +405,9 @@ function renderActionArea(seatsLeft){
     if(myRequest.status==='pending'){
       area.innerHTML=`<div class="status-box sb-pending" style="margin-bottom:60px;">⏳ طلبك قيد المراجعة — سيتواصل معك المنظم قريباً</div>`;
     } else if(myRequest.status==='accepted'){
-      area.innerHTML=`
-        <div class="status-box sb-accepted">🎉 تم قبول طلبك! تواصل مع المنظم للتنسيق</div>
-        <div style="padding-bottom:60px;">
-          <button onclick="leaveTrip('${myRequest.id}')" style="width:100%;margin-top:10px;padding:12px;border-radius:13px;background:rgba(229,57,53,0.08);border:1px solid rgba(229,57,53,0.2);color:#ff6b6b;font-family:'Tajawal',sans-serif;font-size:14px;font-weight:800;cursor:pointer;">🚪 مغادرة الرحلة</button>
-        </div>`;
+      area.innerHTML=`<div class="status-box sb-accepted">🎉 تم قبول طلبك! تواصل مع المنظم للتنسيق</div>`;
+      document.getElementById('leaveBox').style.display='block';
+      document.getElementById('leaveBtn').setAttribute('data-req-id',myRequest.id);
     } else {
       area.innerHTML=`
         <div class="status-box" style="background:rgba(229,57,53,0.1);border-color:rgba(229,57,53,0.2);color:#ff6b6b">
