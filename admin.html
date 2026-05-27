@@ -202,7 +202,7 @@ const sb=createClient(
 );
 
 // ══ كلمة المرور - غيّرها لكلمة سرية خاصة بك ══
-const ADMIN_PASSWORD = 'Zz112233';
+const ADMIN_PASSWORD = 'Rihla@Admin2026';
 
 let allUsers=[], allTrips=[];
 
@@ -302,7 +302,7 @@ async function loadRecentTrips(){
 
 // ══ ALL USERS ══
 async function loadAllUsers(){
-  const{data}=await sb.from('profiles').select('*').order('created_at',{ascending:false});
+  const{data}=await sb.from('profiles').select('*').order('created_at',{ascending:false}).limit(200);
   allUsers=data||[];
   renderUsersTable(allUsers);
 }
@@ -313,15 +313,16 @@ function renderUsersTable(users){
   tb.innerHTML=users.map(u=>`
     <tr>
       <td>
-        <div style="font-weight:800">${u.full_name||'—'}</div>
-        <div style="font-size:11px;color:var(--muted)">${u.id.substring(0,8)}...</div>
+        <div style="font-weight:800">${u.full_name||'لم يكمل ملفه'}</div>
+        <div style="font-size:11px;color:var(--tl)">${u.email||'—'}</div>
+        <div style="font-size:10px;color:var(--muted)">${new Date(u.created_at).toLocaleDateString('ar-KW')}</div>
       </td>
       <td><span class="badge ${u.account_type==='agent'?'badge-yl':'badge-green'}">${u.account_type==='agent'?'🧭 مرشد':'✈️ مسافر'}</span></td>
       <td style="color:var(--muted);font-size:12px">${u.country||'—'}</td>
       <td>
         <div class="acts">
           <button class="act-btn act-view" onclick="window.open('user.html?id=${u.id}','_blank')">عرض</button>
-          <button class="act-btn act-delete" onclick="deleteUser('${u.id}','${(u.full_name||'هذا المستخدم').replace(/'/g,'')}')">حذف</button>
+          <button class="act-btn act-delete" onclick="deleteUser('${u.id}','${(u.full_name||u.email||'هذا المستخدم').replace(/'/g,'')}')">حذف</button>
         </div>
       </td>
     </tr>`).join('');
@@ -331,7 +332,8 @@ function filterUsers(){
   const q=document.getElementById('userSearch').value.toLowerCase();
   const filtered=allUsers.filter(u=>
     (u.full_name||'').toLowerCase().includes(q)||
-    (u.country||'').toLowerCase().includes(q)
+    (u.country||'').toLowerCase().includes(q)||
+    (u.email||'').toLowerCase().includes(q)
   );
   renderUsersTable(filtered);
 }
