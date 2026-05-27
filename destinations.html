@@ -145,7 +145,7 @@ body{font-family:'Tajawal',sans-serif;background:var(--dk);color:white;min-heigh
 <!-- HERO -->
 <div class="hero">
   <h1>اكتشف <span>وجهات العالم</span> 🌍</h1>
-  <p>دليل شامل للمسافر العربي — أين تذهب وأين تتجنب في كل دولة</p>
+  <p>دليل شامل للمسافر العربي — أين تذهب وماذا تتجنب في كل دولة</p>
 
   <div class="search-box">
     <span>🔍</span>
@@ -421,7 +421,18 @@ function applyFilter(){
   const q=document.getElementById('searchInput').value.toLowerCase();
   filtered=all.filter(d=>{
     const mq=!q||d.name.toLowerCase().includes(q)||d.country.toLowerCase().includes(q);
-    const mf=activeFilter==='الكل'||(d.tags||[]).includes(activeFilter);
+    // فلتر ذكي بناءً على محتوى الوجهة
+    let mf = activeFilter === 'الكل';
+    if(!mf){
+      const txt = (d.description||'') + (d.must_visit||[]).join(' ') + (d.name||'');
+      if(activeFilter === 'شاطئ'){
+        mf = /شاطئ|بحر|ساحل|شواطئ|مياه|جزيرة|بحري/.test(txt);
+      } else if(activeFilter === 'ثقافة'){
+        mf = /متحف|تاريخ|قصر|قلعة|كاتدرائية|معبد|تراث|أثري|فن|بلدة قديمة/.test(txt);
+      } else if(activeFilter === 'مغامرة'){
+        mf = /جبل|سفاري|غطس|تسلق|مغامرة|طبيعة|شلال|بركان|غابة/.test(txt);
+      }
+    }
     return mq&&mf;
   });
   render();
