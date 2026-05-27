@@ -424,13 +424,19 @@ function applyFilter(){
     // فلتر ذكي بناءً على محتوى الوجهة
     let mf = activeFilter === 'الكل';
     if(!mf){
-      const txt = (d.description||'') + (d.must_visit||[]).join(' ') + (d.name||'');
+      const txt = (d.description||'') + (d.must_visit||[]).join(' ') + (d.must_eat||[]).join(' ') + (d.shopping||'') + (d.name||'');
       if(activeFilter === 'شاطئ'){
         mf = /شاطئ|بحر|ساحل|شواطئ|مياه|جزيرة|بحري/.test(txt);
       } else if(activeFilter === 'ثقافة'){
         mf = /متحف|تاريخ|قصر|قلعة|كاتدرائية|معبد|تراث|أثري|فن|بلدة قديمة/.test(txt);
       } else if(activeFilter === 'مغامرة'){
         mf = /جبل|سفاري|غطس|تسلق|مغامرة|طبيعة|شلال|بركان|غابة/.test(txt);
+      } else if(activeFilter === 'طعام'){
+        mf = /مطعم|طعام|أكل|كباب|سوشي|مأكولات|شهير بالطعام|تجربة الطعام|أكلات|كاري|رامن|بيتزا|شاورما/.test(txt) || (d.must_eat||[]).length >= 4;
+      } else if(activeFilter === 'تسوق'){
+        mf = /تسوق|مول|سوق|بازار|ماركات|خصومات|Outlet|Mall|Shopping/.test(txt) || (d.shopping||'').length > 30;
+      } else if(activeFilter === 'عائلي'){
+        mf = /عائلي|عائلة|أطفال|مدينة ملاهي|حديقة حيوان|مناسب للعائلة|ديزني|يونيفرسال|منتجع|All Inclusive/.test(txt);
       }
     }
     return mq&&mf;
