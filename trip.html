@@ -45,8 +45,8 @@ body{font-family:'Tajawal',sans-serif;background:var(--dk);color:white;min-heigh
 /* STATS ROW */
 .info-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:20px;}
 .info-item{padding:14px 12px;text-align:center;background:var(--card);border:1px solid var(--border);border-radius:14px;}
-.info-item .iv{font-size:14px;font-weight:900;display:block;background:linear-gradient(135deg,var(--or),var(--yl));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:3px;}
-.info-item .il{font-size:10px;color:var(--muted);}
+.info-item .il{font-size:10px;color:var(--muted);display:block;margin-bottom:5px;}
+.info-item .iv{font-size:14px;font-weight:900;display:block;background:linear-gradient(135deg,var(--or),var(--yl));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
 
 /* TAGS */
 .tags-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:24px;}
@@ -320,16 +320,16 @@ function renderTrip(){
 
   // Info
   document.getElementById('infoRow').innerHTML=`
-    <div class="info-item"><span class="iv">${dateStr}</span><span class="il">تاريخ السفر</span></div>
-    <div class="info-item"><span class="iv">${trip.duration||'—'}</span><span class="il">المدة</span></div>
-    <div class="info-item"><span class="iv">${seatsLeft}</span><span class="il">أماكن متاحة</span></div>
-    <div class="info-item"><span class="iv">${trip.budget||'متوسط'}</span><span class="il">الميزانية</span></div>
-    <div class="info-item"><span class="iv">${trip.gender||'الكل'}</span><span class="il">الجنس المقبول</span></div>
-    <div class="info-item"><span class="iv">${trip.trip_type||'مختلط'}</span><span class="il">نوع الرحلة</span></div>
-    <div class="info-item"><span class="iv">${(trip.min_age||18)+' - '+(trip.max_age||45)}</span><span class="il">الفئة العمرية</span></div>
-    <div class="info-item"><span class="iv">${trip.accommodation||'غير محدد'}</span><span class="il">🏨 الإقامة</span></div>
-    <div class="info-item"><span class="iv">${trip.flight_type||'غير محدد'}</span><span class="il">✈️ الطيران</span></div>
-    <div class="info-item"><span class="iv">${trip.cost_type||'كل مسافر يدفع'}</span><span class="il">💳 التكاليف</span></div>
+    <div class="info-item"><span class="il">تاريخ السفر</span><span class="iv">${dateStr}</span></div>
+    <div class="info-item"><span class="il">المدة</span><span class="iv">${trip.duration||'—'}</span></div>
+    <div class="info-item"><span class="il">أماكن متاحة</span><span class="iv">${seatsLeft}</span></div>
+    <div class="info-item"><span class="il">الميزانية</span><span class="iv">${trip.budget||'متوسط'}</span></div>
+    <div class="info-item"><span class="il">الجنس المقبول</span><span class="iv">${trip.gender||'الكل'}</span></div>
+    <div class="info-item"><span class="il">نوع الرحلة</span><span class="iv">${trip.trip_type||'مختلط'}</span></div>
+    <div class="info-item"><span class="il">الفئة العمرية</span><span class="iv">${(trip.min_age||18)+' - '+(trip.max_age||45)}</span></div>
+    <div class="info-item"><span class="il">🏨 الإقامة</span><span class="iv">${trip.accommodation||'غير محدد'}</span></div>
+    <div class="info-item"><span class="il">✈️ الطيران</span><span class="iv">${trip.flight_type||'غير محدد'}</span></div>
+    <div class="info-item"><span class="il">💳 التكاليف</span><span class="iv">${trip.cost_type||'كل مسافر يدفع'}</span></div>
   `;
 
   // Tags
