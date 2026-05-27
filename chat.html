@@ -263,13 +263,18 @@ function appendMessage(msg){
   const div=document.createElement('div');
   div.className=`msg-wrap ${isMine?'mine':''}`;
   div.innerHTML=`
-    <div class="msg-av" style="background:${color.bg};color:${color.tx}">${avatar}</div>
+    <div class="msg-av" style="background:${color.bg};color:${color.tx};cursor:${isMine?'default':'pointer'}" ${!isMine?`onclick="openUserProfile('${msg.user_id}')"`:''}>${avatar}</div>
     <div class="msg-content">
-      ${!isMine?`<div class="msg-sender">${name}</div>`:''}
+      ${!isMine?`<div class="msg-sender" style="cursor:pointer" onclick="openUserProfile('${msg.user_id}')">${name}</div>`:''}
       <div class="bubble ${isMine?'bubble-mine':'bubble-other'}">${escHtml(msg.content)}</div>
       <div class="msg-time">${time}</div>
     </div>`;
   area.appendChild(div);
+}
+
+function openUserProfile(userId){
+  if(!userId||userId===currentUser?.id) return;
+  window.location.href='user.html?id='+userId;
 }
 
 // ══ SEND MESSAGE ══
