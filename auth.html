@@ -170,7 +170,7 @@ body{font-family:'Tajawal',sans-serif;background:var(--dk);color:white;min-heigh
         </div>
         <div class="type-card" id="type-agent" onclick="selectType('agent')">
           <div class="ticon">🤝</div>
-          <span class="tname">مساعد سفريات</span>
+          <span class="tname">مرشد سفر</span>
           <span class="tdesc">أقدم خدمات حجز وأعرض خدماتي</span>
         </div>
       </div>
@@ -445,6 +445,13 @@ async function doForgot() {
 // ── CHECK SESSION (إذا مسجل مسبقاً وجهه للرئيسية) ──
 sb.auth.getSession().then(({ data }) => {
   if (data.session) window.location.href = 'index.html';
+});
+
+// استقبال رابط التوثيق من الإيميل
+sb.auth.onAuthStateChange((event, session) => {
+  if (event === 'SIGNED_IN' && session) {
+    window.location.href = 'index.html';
+  }
 });
 
 // Enter key support
