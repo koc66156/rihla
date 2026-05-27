@@ -132,7 +132,26 @@ body{font-family:'Tajawal',sans-serif;background:var(--dk);color:white;min-heigh
 .bitem .bi{font-size:20px;line-height:1;}
 .bitem .bl{font-size:10px;font-weight:700;color:rgba(255,255,255,0.4);}
 .bitem.active .bl{color:#FF5C1A;}
-</style>
+
+.ai-fab-wrap{position:fixed;bottom:calc(var(--bot-h,64px)+16px);left:16px;z-index:999;}
+.ai-fab{width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,#4285f4,#34a853);border:none;color:white;font-size:24px;cursor:pointer;box-shadow:0 4px 20px rgba(66,133,244,0.4);}
+.ai-panel{position:fixed;bottom:calc(var(--bot-h,64px)+80px);left:12px;width:calc(100% - 24px);max-width:380px;background:#1a1a1a;border:1px solid rgba(255,255,255,0.1);border-radius:20px;overflow:hidden;box-shadow:0 8px 32px rgba(0,0,0,0.5);z-index:1000;display:none;flex-direction:column;}
+.ai-head{background:linear-gradient(135deg,#4285f4,#34a853);padding:14px 16px;display:flex;align-items:center;justify-content:space-between;}
+.ai-head-t{font-weight:800;font-size:14px;color:white;}
+.ai-x{background:none;border:none;color:white;font-size:20px;cursor:pointer;}
+.ai-msgs{height:200px;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:8px;}
+.ai-msg-u{align-self:flex-end;background:linear-gradient(135deg,#4285f4,#34a853);color:white;padding:9px 14px;border-radius:16px 16px 4px 16px;font-size:13px;line-height:1.6;max-width:85%;}
+.ai-msg-b{align-self:flex-start;background:rgba(255,255,255,0.07);color:rgba(255,255,255,0.9);padding:9px 14px;border-radius:4px 16px 16px 16px;font-size:13px;line-height:1.6;max-width:85%;}
+.ai-suggs{display:flex;gap:6px;padding:8px 12px;overflow-x:auto;border-bottom:1px solid rgba(255,255,255,0.06);}
+.ai-sugg{white-space:nowrap;padding:6px 12px;border-radius:14px;background:rgba(66,133,244,0.1);border:1px solid rgba(66,133,244,0.2);color:#4285f4;font-family:'Tajawal',sans-serif;font-size:12px;font-weight:700;cursor:pointer;}
+.ai-row{display:flex;gap:8px;padding:10px 12px;border-top:1px solid rgba(255,255,255,0.06);}
+.ai-inp{flex:1;background:rgba(255,255,255,0.06);border:1.5px solid rgba(255,255,255,0.1);border-radius:20px;padding:9px 14px;font-family:'Tajawal',sans-serif;font-size:13px;color:white;outline:none;}
+.ai-inp:focus{border-color:#4285f4;}
+.ai-send{width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,#4285f4,#34a853);border:none;color:white;font-size:16px;cursor:pointer;flex-shrink:0;}
+.ai-send:disabled{opacity:0.5;}
+.ai-inline{background:linear-gradient(135deg,rgba(66,133,244,0.08),rgba(52,168,83,0.05));border:1px solid rgba(66,133,244,0.15);border-radius:18px;padding:14px 16px;margin:0 16px 20px;}
+.ai-inline-h{display:flex;align-items:center;gap:8px;margin-bottom:10px;font-size:14px;font-weight:800;color:#4285f4;}
+.ai-inline-msgs{max-height:160px;overflow-y:auto;margin-bottom:10px;display:flex;flex-direction:column;gap:6px;}</style>
 </head>
 <body>
 
@@ -172,6 +191,16 @@ body{font-family:'Tajawal',sans-serif;background:var(--dk);color:white;min-heigh
 </div>
 
 <!-- BOTTOM NAV -->
+
+<div class="ai-inline">
+  <div class="ai-inline-h">🤖 اسأل مساعد رِحلة الذكي</div>
+  <div class="ai-suggs" id="aiISuggsEl" style="padding:0;margin-bottom:10px;"></div>
+  <div class="ai-inline-msgs" id="aiIMsgsEl" style="display:none;"></div>
+  <div class="ai-row" style="padding:0;gap:8px;">
+    <input class="ai-inp" id="aiIInpEl" placeholder="اسألني..." onkeydown="if(event.key==='Enter')sendAII()">
+    <button class="ai-send" id="aiISendEl" onclick="sendAII()">↑</button>
+  </div>
+</div>
 <nav class="botnav">
   <a href="index.html" class="bitem"><div class="bi">🏠</div><div class="bl">الرئيسية</div></a>
   <a href="trips.html" class="bitem"><div class="bi">✈️</div><div class="bl">الرحلات</div></a>
@@ -451,6 +480,33 @@ function showToast(msg){
 }
 
 init();
+
+const GEMINI_KEY='AIzaSyCNApyQEoGoleF3eapRmwKNxxCMHAx9jRc';
+async function askGemini(prompt,ctx=''){
+  try{
+    const r=await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key='+GEMINI_KEY,{
+      method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({contents:[{parts:[{text:ctx+'\n'+prompt}]}],generationConfig:{temperature:0.7,maxOutputTokens:500}})});
+    const d=await r.json();
+    return d.candidates?.[0]?.content?.parts?.[0]?.text||'عذراً، حاول مرة أخرى.';
+  }catch(e){return 'حدث خطأ. تحقق من الإنترنت.';}
+}
+let aiInCtx='';
+function setAIInlineSuggs(arr){document.getElementById('aiISuggsEl').innerHTML=arr.map(s=>`<button class="ai-sugg" onclick="quickAskI('${s}')">${s}</button>`).join('');}
+function quickAskI(t){document.getElementById('aiIInpEl').value=t;sendAII();}
+async function sendAII(){
+  const inp=document.getElementById('aiIInpEl'),btn=document.getElementById('aiISendEl'),msgs=document.getElementById('aiIMsgsEl');
+  const msg=inp.value.trim();if(!msg)return;
+  msgs.style.display='flex';msgs.style.flexDirection='column';
+  msgs.innerHTML+=`<div class="ai-msg-u">${msg}</div><div class="ai-msg-b" id="aiITyping">⏳ جاري التفكير...</div>`;
+  msgs.scrollTop=msgs.scrollHeight;inp.value='';btn.disabled=true;
+  const ans=await askGemini(msg,aiInCtx);
+  document.getElementById('aiITyping')?.remove();
+  msgs.innerHTML+=`<div class="ai-msg-b">${ans.replace(/\n/g,'<br>')}</div>`;
+  msgs.scrollTop=msgs.scrollHeight;btn.disabled=false;
+}
+aiInCtx='أنت مساعد سفر متخصص بالوجهات السياحية للمسافرين الكويتيين والخليجيين. أجب بالعربية عن: أفضل الأوقات، التكاليف، التأشيرات، المطاعم الحلال، الفنادق، والنصائح العملية.';
+setAIInlineSuggs(['أفضل وقت للزيارة؟','ما تكلفة الرحلة تقريباً؟','هل الطعام الحلال متوفر؟','اقترح مسار ٧ أيام']);
 </script>
 </body>
 </html>
