@@ -34,6 +34,7 @@ body{font-family:'Tajawal',sans-serif;background:var(--dk);color:white;min-heigh
 .profile-meta{display:flex;gap:14px;flex-wrap:wrap;}
 .meta-item{display:flex;align-items:center;gap:5px;font-size:12px;color:var(--muted);}
 .stats{display:flex;margin:0 16px 16px;background:var(--card);border:1px solid var(--border);border-radius:16px;overflow:hidden;}
+.contact-link{display:inline-flex;align-items:center;gap:6px;padding:9px 16px;border-radius:20px;background:rgba(0,201,177,0.12);border:1px solid rgba(0,201,177,0.25);color:var(--tl);font-size:13px;font-weight:800;text-decoration:none;}
 .stat{flex:1;padding:13px 6px;text-align:center;border-left:1px solid var(--border);}
 .stat:last-child{border-left:none;}
 .stat .sv{font-size:19px;font-weight:900;background:linear-gradient(135deg,var(--or),var(--yl));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;display:block;}
@@ -90,6 +91,8 @@ body{font-family:'Tajawal',sans-serif;background:var(--dk);color:white;min-heigh
     <div class="profile-name" id="profileName"></div>
     <div class="profile-type" id="profileType"></div>
     <div class="profile-bio" id="profileBio" style="display:none"></div>
+    <!-- معلومات التواصل للمرشدين -->
+    <div id="contactBox" style="display:none;background:rgba(0,201,177,0.06);border:1px solid rgba(0,201,177,0.15);border-radius:16px;padding:14px 16px;margin:12px 16px 0;"></div>
     <div class="profile-meta">
       <div class="meta-item">📍 <span id="profileCountry"></span></div>
       <div class="meta-item">📅 <span id="profileJoined"></span></div>
@@ -133,16 +136,32 @@ async function init(){
   const{data:{session}}=await sb.auth.getSession();
   currentUser=session?.user||null;
   if(currentUser?.id===uid){window.location.href='profile.html';return;}
-  const[{data:p},{data:posts},{data:trips}]=await Promise.all([
+  const[{data:p},{data:posts},{data:trips},{data:agentRow}]=await Promise.all([
     sb.from('profiles').select('*').eq('id',uid).single(),
     sb.from('posts').select('*').eq('user_id',uid).order('created_at',{ascending:false}),
-    sb.from('trips').select('*').eq('user_id',uid).eq('status','active').order('created_at',{ascending:false})
+    sb.from('trips').select('*').eq('user_id',uid).eq('status','active').order('created_at',{ascending:false}),
+    sb.from('agents').select('*').eq('user_id',uid).maybeSingle()
   ]);
   if(currentUser){
     const{data:likes}=await sb.from('post_likes').select('post_id').eq('user_id',currentUser.id);
     if(likes) likes.forEach(l=>myLikes.add(l.post_id));
   }
   renderProfile(p,uid);
+
+  // عرض معلومات التواصل إذا كان مرشداً
+  if(p?.account_type==='agent' && agentRow){
+    let contacts='';
+    if(agentRow.whatsapp) contacts+=`<a class="contact-link" href="https://wa.me/${agentRow.whatsapp.replace(/\D/g,'')}" target="_blank"><span>📱</span> واتساب</a>`;
+    if(agentRow.telegram) contacts+=`<a class="contact-link" href="https://t.me/${agentRow.telegram.replace('@','')}" target="_blank"><span>✈️</span> تيليغرام</a>`;
+    if(agentRow.instagram) contacts+=`<a class="contact-link" href="https://instagram.com/${agentRow.instagram.replace('@','')}" target="_blank"><span>📸</span> إنستغرام</a>`;
+    if(agentRow.email_contact) contacts+=`<a class="contact-link" href="mailto:${agentRow.email_contact}" target="_blank"><span>✉️</span> إيميل</a>`;
+    if(contacts){
+      document.getElementById('contactBox').innerHTML=`
+        <div style="font-size:11px;font-weight:800;color:rgba(255,255,255,0.4);margin-bottom:10px;letter-spacing:1px;">📞 معلومات التواصل</div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">${contacts}</div>`;
+      document.getElementById('contactBox').style.display='block';
+    }
+  }
   const[followers,following]=await Promise.all([
     sb.from('follows').select('*',{count:'exact',head:true}).eq('following_id',uid),
     sb.from('follows').select('*',{count:'exact',head:true}).eq('follower_id',uid)

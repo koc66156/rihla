@@ -760,20 +760,36 @@ async function loadAgentReviews(){
 function renderServices(){
   const wrap=document.getElementById('servicesWrap');
   if(!agentData){
-    wrap.innerHTML=`<div class="svc-card"><div class="svc-title">لم تُنشئ ملف مساعد بعد</div>
-      <button onclick="openAccountSwitch()" class="save-btn sb-tl" style="margin-top:8px">🤝 أنشئ ملفك كمساعد</button></div>`;
+    wrap.innerHTML=`
+      <div style="background:linear-gradient(135deg,rgba(0,201,177,0.1),rgba(0,201,177,0.05));border:1px solid rgba(0,201,177,0.2);border-radius:20px;padding:24px;text-align:center;">
+        <div style="font-size:48px;margin-bottom:12px;">🧭</div>
+        <div style="font-size:17px;font-weight:900;margin-bottom:8px;">أنت مسجل كـ مسافر حالياً</div>
+        <div style="font-size:13px;color:var(--muted);line-height:1.7;margin-bottom:20px;">هل أنت مرشد سفر أو وكالة سياحية؟<br>أنشئ ملفك المهني وأضف خدماتك ومعلومات التواصل</div>
+        <button onclick="openAccountSwitch()" style="width:100%;padding:14px;border-radius:16px;background:linear-gradient(135deg,var(--tl),#00a896);color:white;border:none;font-family:'Tajawal',sans-serif;font-size:15px;font-weight:800;cursor:pointer;">
+          🤝 تحويل لحساب مرشد سفر
+        </button>
+      </div>`;
     return;
   }
+
   let contacts='';
   if(agentData.whatsapp) contacts+=`<a class="clink" href="https://wa.me/${agentData.whatsapp.replace(/\D/g,'')}" target="_blank"><span class="ci">📱</span><div class="ct"><strong>واتساب</strong><span>${agentData.whatsapp}</span></div><span class="ca">فتح ←</span></a>`;
   if(agentData.telegram) contacts+=`<a class="clink" href="https://t.me/${agentData.telegram.replace('@','')}" target="_blank"><span class="ci">✈️</span><div class="ct"><strong>تيليغرام</strong><span>${agentData.telegram}</span></div><span class="ca">فتح ←</span></a>`;
   if(agentData.instagram) contacts+=`<a class="clink" href="https://instagram.com/${agentData.instagram.replace('@','')}" target="_blank"><span class="ci">📸</span><div class="ct"><strong>إنستغرام</strong><span>${agentData.instagram}</span></div><span class="ca">فتح ←</span></a>`;
   if(agentData.email_contact) contacts+=`<a class="clink" href="mailto:${agentData.email_contact}" target="_blank"><span class="ci">✉️</span><div class="ct"><strong>إيميل</strong><span>${agentData.email_contact}</span></div><span class="ca">فتح ←</span></a>`;
+
+  // تحذير إن لم يضف معلومات تواصل
+  const contactWarning = !agentData.whatsapp && !agentData.telegram && !agentData.instagram && !agentData.email_contact ?
+    `<div style="background:rgba(255,92,26,0.08);border:1px solid rgba(255,92,26,0.2);border-radius:12px;padding:12px;margin-bottom:12px;font-size:12px;color:var(--or);">
+      ⚠️ لم تضف معلومات تواصل بعد — الزوار لن يستطيعوا التواصل معك!
+    </div>` : '';
+
   wrap.innerHTML=`<div class="svc-card">
     <div class="svc-title">الخدمات المقدمة</div>
-    <div class="svcs-grid">${(agentData.services||[]).map(s=>`<span class="svc-pill">${s}</span>`).join('')||'<span style="font-size:13px;color:var(--muted)">لم تحدد خدمات بعد</span>'}</div>
+    <div class="svcs-grid">${(agentData.services||[]).map(s=>`<span class="svc-pill">${s}</span>`).join('')||'<span style="font-size:13px;color:var(--muted)">لم تحدد خدمات بعد — اضغط تعديل لإضافتها</span>'}</div>
     ${contacts?`<div class="svc-title" style="margin-top:14px">معلومات التواصل</div><div class="contact-links">${contacts}</div>`:''}
-    <button onclick="openAccountSwitch()" class="save-btn sb-tl" style="margin-top:14px">✏️ تعديل الخدمات</button>
+    ${contactWarning}
+    <button onclick="openAccountSwitch()" style="width:100%;padding:13px;border-radius:14px;background:rgba(0,201,177,0.1);border:1px solid rgba(0,201,177,0.25);color:var(--tl);font-family:'Tajawal',sans-serif;font-size:14px;font-weight:800;cursor:pointer;margin-top:8px;">✏️ تعديل الخدمات ومعلومات التواصل</button>
   </div>`;
 }
 
