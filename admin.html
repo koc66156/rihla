@@ -113,17 +113,17 @@ body{font-family:'Tajawal',sans-serif;background:var(--dk);color:white;min-heigh
 
   <div class="tabs-bar">
     <button class="tab-btn active" onclick="switchTab('overview',this)">📊 نظرة عامة</button>
-    <button class="tab-btn" onclick="switchTab('users',this)">👥 المستخدمون</button>
-    <button class="tab-btn" onclick="switchTab('trips',this)">✈️ الرحلات</button>
+    <button class="tab-btn" onclick="switchTab('users',this)">👥 الأعضاء</button>
     <button class="tab-btn" onclick="switchTab('agents',this)">🧭 المرشدون</button>
     <button class="tab-btn" onclick="switchTab('posts',this)">📸 المنشورات</button>
+    <button class="tab-btn" onclick="switchTab('trips',this)">✈️ الرحلات</button>
     <button class="tab-btn" onclick="switchTab('reports',this)">🚨 البلاغات</button>
   </div>
 
   <!-- OVERVIEW -->
   <div class="tab-panel active" id="panel-overview">
     <div class="stats-grid" id="statsGrid">
-      <div class="stat-card"><div class="stat-icon">👥</div><span class="stat-num" id="s-users">...</span><div class="stat-label">مستخدم</div></div>
+      <div class="stat-card"><div class="stat-icon">👥</div><span class="stat-num" id="s-users">...</span><div class="stat-label">عضو مسجل</div></div>
       <div class="stat-card"><div class="stat-icon">✈️</div><span class="stat-num" id="s-trips">...</span><div class="stat-label">رحلة منشورة</div></div>
       <div class="stat-card"><div class="stat-icon">📸</div><span class="stat-num" id="s-posts">...</span><div class="stat-label">منشور</div></div>
       <div class="stat-card"><div class="stat-icon">🧭</div><span class="stat-num" id="s-agents">...</span><div class="stat-label">مرشد سفر</div></div>
@@ -132,7 +132,7 @@ body{font-family:'Tajawal',sans-serif;background:var(--dk);color:white;min-heigh
     </div>
 
     <div class="section">
-      <div class="sec-title">🆕 آخر المسجلين</div>
+      <div class="sec-title">🆕 آخر الأعضاء المسجلين</div>
       <table class="admin-table">
         <thead><tr><th>الاسم</th><th>النوع</th><th>تاريخ التسجيل</th></tr></thead>
         <tbody id="recentUsers"></tbody>
@@ -151,8 +151,8 @@ body{font-family:'Tajawal',sans-serif;background:var(--dk);color:white;min-heigh
   <!-- USERS -->
   <div class="tab-panel" id="panel-users">
     <div class="section">
-      <div class="sec-title">👥 إدارة المستخدمين</div>
-      <input type="text" class="search-bar" id="userSearch" placeholder="🔍 ابحث باسم أو بلد..." oninput="filterUsers()">
+      <div class="sec-title">👥 إدارة الأعضاء (مسافرون فقط)</div>
+      <input type="text" class="search-bar" id="userSearch" placeholder="🔍 ابحث باسم أو إيميل أو بلد..." oninput="filterUsers()">
       <table class="admin-table">
         <thead><tr><th>المستخدم</th><th>البلد</th><th>تاريخ التسجيل</th><th>إجراء</th></tr></thead>
         <tbody id="usersTable"></tbody>
@@ -166,7 +166,7 @@ body{font-family:'Tajawal',sans-serif;background:var(--dk);color:white;min-heigh
       <div class="sec-title">✈️ إدارة الرحلات</div>
       <input type="text" class="search-bar" id="tripSearch" placeholder="🔍 ابحث بعنوان أو وجهة..." oninput="filterTrips()">
       <table class="admin-table">
-        <thead><tr><th>الرحلة</th><th>الوجهة</th><th>الأماكن</th><th>إجراء</th></tr></thead>
+        <thead><tr><th>الرحلة</th><th>الوجهة</th><th>المنشئ</th><th>الأماكن</th><th>إجراء</th></tr></thead>
         <tbody id="tripsTable"></tbody>
       </table>
     </div>
@@ -189,7 +189,7 @@ body{font-family:'Tajawal',sans-serif;background:var(--dk);color:white;min-heigh
       <div class="sec-title">📸 إدارة المنشورات</div>
       <input type="text" class="search-bar" id="postSearch" placeholder="🔍 ابحث بعنوان أو وجهة..." oninput="filterPosts()">
       <table class="admin-table">
-        <thead><tr><th>المنشور</th><th>الوجهة</th><th>الإعجابات</th><th>إجراء</th></tr></thead>
+        <thead><tr><th>المنشور</th><th>الوجهة</th><th>المنشئ</th><th>الإعجابات</th><th>إجراء</th></tr></thead>
         <tbody id="postsTable"></tbody>
       </table>
     </div>
@@ -321,11 +321,14 @@ async function loadRecentTrips(){
 // ══ ALL USERS ══
 async function loadAllUsers(){
   const{data}=await sb.from('profiles').select('*').order('created_at',{ascending:false}).limit(500);
+  // نعرض فقط المسافرين (غير المرشدين)
   allUsers=data||[];
   renderUsersTable(allUsers);
 }
 
 function renderUsersTable(users){
+  const travelers=users.filter(u=>u.account_type!=='agent');
+  users=travelers;
   const tb=document.getElementById('usersTable');
   if(!users.length){tb.innerHTML='<tr><td colspan="4" class="empty-state">لا يوجد نتائج</td></tr>';return;}
   tb.innerHTML=users.map(u=>`
@@ -374,6 +377,7 @@ function renderTripsTable(trips){
         <div style="font-size:11px;color:var(--muted)">${new Date(t.created_at).toLocaleDateString('ar-KW')}</div>
       </td>
       <td style="color:var(--muted);font-size:12px">${t.destination||'—'}<br>${t.country||''}</td>
+      <td style="font-size:11px;color:var(--tl)">${t.profiles?.full_name||t.profiles?.email||'—'}</td>
       <td style="text-align:center"><span class="badge badge-green">${t.seats_taken||0}/${t.seats||0}</span></td>
       <td>
         <div class="acts">
@@ -397,7 +401,7 @@ function filterTrips(){
 // ══ ALL POSTS ══
 let allPosts=[];
 async function loadAllPosts(){
-  const{data}=await sb.from('posts').select('*').order('created_at',{ascending:false}).limit(300);
+  const{data}=await sb.from('posts').select('*, profiles(full_name,email)').order('created_at',{ascending:false}).limit(300);
   allPosts=data||[];
   renderPostsTable(allPosts);
 }
@@ -411,6 +415,7 @@ function renderPostsTable(posts){
         <div style="font-size:11px;color:var(--muted)">${new Date(p.created_at).toLocaleDateString('ar-KW')}</div>
       </td>
       <td style="color:var(--muted);font-size:12px">${p.destination||'—'}</td>
+      <td style="font-size:11px;color:var(--tl)">${p.profiles?.full_name||p.profiles?.email||'—'}</td>
       <td style="text-align:center"><span class="badge badge-green">❤️ ${p.likes||0}</span></td>
       <td>
         <div class="acts">
