@@ -152,7 +152,7 @@ async function initNav(){
     const btn=document.getElementById('navProfileBtn');
     if(!btn) return;
     if(session){
-      const{data:p}=await sb.from('profiles').select('full_name').eq('id',session.user.id).single();
+      const{data:p}=await sb.from('profiles').select('full_name').eq('id',session.user.id).maybeSingle();
       btn.textContent=(p?.full_name?.split(' ')[0]||'ملفي')+' 👤';
     }else{
       btn.textContent='تسجيل دخول 👤';
