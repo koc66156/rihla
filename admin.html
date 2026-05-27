@@ -154,7 +154,7 @@ body{font-family:'Tajawal',sans-serif;background:var(--dk);color:white;min-heigh
       <div class="sec-title">👥 إدارة المستخدمين</div>
       <input type="text" class="search-bar" id="userSearch" placeholder="🔍 ابحث باسم أو بلد..." oninput="filterUsers()">
       <table class="admin-table">
-        <thead><tr><th>المستخدم</th><th>النوع</th><th>البلد</th><th>إجراء</th></tr></thead>
+        <thead><tr><th>المستخدم</th><th>البلد</th><th>تاريخ التسجيل</th><th>إجراء</th></tr></thead>
         <tbody id="usersTable"></tbody>
       </table>
     </div>
@@ -240,10 +240,14 @@ function logout(){
   location.reload();
 }
 
-// تحقق من الجلسة
+// تحقق من الجلسة عند التحميل
 if(localStorage.getItem('rihla_admin')==='1'){
   document.getElementById('loginScreen').style.display='none';
   document.getElementById('adminPanel').style.display='block';
+  // استدعاء loadAll بعد تحميل الصفحة
+  window.addEventListener ? 
+    window.addEventListener('load', loadAll) : 
+    window.attachEvent('onload', loadAll);
 }
 
 // ══ TABS ══
@@ -327,12 +331,11 @@ function renderUsersTable(users){
   tb.innerHTML=users.map(u=>`
     <tr>
       <td>
-        <div style="font-weight:800">${u.full_name||'لم يكمل ملفه'}</div>
+        <div style="font-weight:800">${u.full_name||'لم يكمل ملفه بعد'}</div>
         <div style="font-size:11px;color:var(--tl)">${u.email||'—'}</div>
-        <div style="font-size:10px;color:var(--muted)">${new Date(u.created_at).toLocaleDateString('ar-KW')}</div>
       </td>
-      <td><span class="badge ${u.account_type==='agent'?'badge-yl':'badge-green'}">${u.account_type==='agent'?'🧭 مرشد':'✈️ مسافر'}</span></td>
       <td style="color:var(--muted);font-size:12px">${u.country||'—'}</td>
+      <td style="color:var(--muted);font-size:11px">${new Date(u.created_at).toLocaleDateString('ar-KW')}</td>
       <td>
         <div class="acts">
           <button class="act-btn act-view" onclick="window.open('user.html?id=${u.id}','_blank')">عرض</button>
@@ -351,6 +354,8 @@ function filterUsers(){
   );
   renderUsersTable(filtered);
 }
+
+
 
 // ══ ALL TRIPS ══
 async function loadAllTrips(){
