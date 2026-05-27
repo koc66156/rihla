@@ -666,17 +666,55 @@ async function loadPosts(){
 }
 
 async function loadTrips(){
-  const{data}=await sb.from('trips').select('*').eq('user_id',currentUser.id).order('created_at',{ascending:false});
+  // الرحلات التي أنشأتها
+  const{data:myTrips}=await sb.from('trips').select('*').eq('user_id',currentUser.id).order('created_at',{ascending:false});
+
+  // طلبات الانضمام (قيد المراجعة + مقبولة)
+  const{data:requests}=await sb.from('join_requests').select('*,trip:trips(*)').eq('requester_id',currentUser.id).order('created_at',{ascending:false});
+
   const wrap=document.getElementById('tripsWrap');
-  if(!data||data.length===0){wrap.innerHTML=`<div class="empty"><div class="ei">✈️</div><h3>لا توجد رحلات</h3><p>انشر رحلتك الأولى!</p></div>`;return;}
-  wrap.innerHTML=data.map(t=>{
-    const dt=new Date(t.date).toLocaleDateString('ar-KW',{day:'numeric',month:'long'});
+
+  const created=(myTrips||[]).map(t=>({...t,_type:'created'}));
+  const joined=(requests||[]).filter(r=>r.trip).map(r=>({...r.trip,_type:r.status,_reqId:r.id}));
+
+  // ترتيب: المنشورة أولاً ثم المقبولة ثم قيد المراجعة
+  const all=[
+    ...created,
+    ...joined.filter(t=>t._type==='accepted'),
+    ...joined.filter(t=>t._type==='pending'),
+    ...joined.filter(t=>t._type==='rejected')
+  ];
+
+  if(all.length===0){
+    wrap.innerHTML=`<div class="empty"><div class="ei">✈️</div><h3>لا توجد رحلات</h3><p>انشر رحلتك الأولى أو انضم لرحلة موجودة!</p></div>`;
+    return;
+  }
+
+  wrap.innerHTML=all.map(t=>{
+    const dt=t.date?new Date(t.date).toLocaleDateString('ar-KW',{day:'numeric',month:'long'}):'';
     const left=(t.seats||5)-(t.seats_taken||0);
-    const sc=left<=2?'background:rgba(229,57,53,0.15);color:#ff6b6b':'background:rgba(0,201,177,0.12);color:var(--tl)';
+
+    // Badge حسب نوع العلاقة بالرحلة
+    let badge='';
+    if(t._type==='created'){
+      badge=`<span style="font-size:9px;padding:3px 8px;border-radius:8px;background:rgba(255,92,26,0.15);color:var(--or);font-weight:800;">🎯 منظمها</span>`;
+    }else if(t._type==='accepted'){
+      badge=`<span style="font-size:9px;padding:3px 8px;border-radius:8px;background:rgba(0,201,177,0.15);color:var(--tl);font-weight:800;">✅ منضم</span>`;
+    }else if(t._type==='pending'){
+      badge=`<span style="font-size:9px;padding:3px 8px;border-radius:8px;background:rgba(255,208,0,0.15);color:var(--yl);font-weight:800;">⏳ قيد المراجعة</span>`;
+    }else if(t._type==='rejected'){
+      badge=`<span style="font-size:9px;padding:3px 8px;border-radius:8px;background:rgba(229,57,53,0.1);color:#ff6b6b;font-weight:800;">❌ مرفوض</span>`;
+    }
+
     return`<div class="trip-card" onclick="window.location.href='trip.html?id=${t.id}'">
       <div class="trip-em">${t.emoji||'✈️'}</div>
-      <div class="trip-info"><div class="trip-name">${t.title}</div><div class="trip-meta">📅 ${dt} · ${t.country}</div></div>
-      <span class="trip-seats" style="${sc}">${toAr(left)} أماكن</span>
+      <div class="trip-info">
+        <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:3px">
+          <div class="trip-name" style="margin-bottom:0">${t.title||'رحلة'}</div>
+          ${badge}
+        </div>
+        <div class="trip-meta">📅 ${dt} · ${t.country||''}</div>
+      </div>
     </div>`;
   }).join('');
 }
