@@ -428,7 +428,9 @@ async function openDetail(id){
 
   let contacts='';
   if(a.whatsapp) contacts+=`<a class="clink" href="https://wa.me/${a.whatsapp.replace(/\D/g,'')}" target="_blank"><span class="ci">📱</span><div class="ct"><strong>واتساب</strong><span>${a.whatsapp}</span></div><span class="ca">فتح ←</span></a>`;
+  if(a.telegram) contacts+=`<a class="clink" href="https://t.me/${a.telegram.replace('@','')}" target="_blank"><span class="ci">✈️</span><div class="ct"><strong>تيليغرام</strong><span>${a.telegram}</span></div><span class="ca">فتح ←</span></a>`;
   if(a.instagram) contacts+=`<a class="clink" href="https://instagram.com/${a.instagram.replace('@','')}" target="_blank"><span class="ci">📸</span><div class="ct"><strong>إنستغرام</strong><span>${a.instagram}</span></div><span class="ca">فتح ←</span></a>`;
+  if(a.email_contact) contacts+=`<a class="clink" href="mailto:${a.email_contact}" target="_blank"><span class="ci">✉️</span><div class="ct"><strong>إيميل</strong><span>${a.email_contact}</span></div><span class="ca">فتح ←</span></a>`;
   if(!contacts) contacts=`<div style="font-size:13px;color:var(--muted);padding:10px">لم يضف معلومات تواصل بعد</div>`;
 
   const{data:revs}=await sb.from('reviews').select('*').eq('target_id',id).eq('target_type','agent').order('created_at',{ascending:false}).limit(5);

@@ -431,8 +431,14 @@ body{font-family:'Tajawal',sans-serif;background:var(--dk);color:white;min-heigh
             <button class="sc" onclick="toggleSvc(this,'رحلات عائلية')">👨‍👩‍👧 رحلات عائلية</button>
           </div>
         </div>
-        <div class="field"><label>واتساب (اختياري)</label><input type="tel" id="agWa" placeholder="+96512345678"></div>
-        <div class="field"><label>إنستغرام (اختياري)</label><input type="text" id="agIg" placeholder="@username"></div>
+        <div class="field"><label>📱 واتساب *</label><input type="tel" id="agWa" placeholder="+96512345678" style="direction:ltr;text-align:right;"></div>
+        <div class="field"><label>📸 إنستغرام (اختياري)</label><input type="text" id="agIg" placeholder="@username" style="direction:ltr;text-align:right;"></div>
+        <div class="field"><label>✈️ تيليغرام (اختياري)</label><input type="text" id="agTg" placeholder="@username" style="direction:ltr;text-align:right;"></div>
+        <div class="field"><label>✉️ إيميل التواصل (اختياري)</label><input type="email" id="agEmail" placeholder="example@email.com" style="direction:ltr;text-align:right;"></div>
+        <div style="background:rgba(255,208,0,0.08);border:1px solid rgba(255,208,0,0.2);border-radius:12px;padding:12px;margin-top:4px;">
+          <div style="font-size:12px;color:var(--yl);font-weight:800;margin-bottom:4px;">⚠️ تنبيه مهم</div>
+          <div style="font-size:11px;color:rgba(255,255,255,0.6);line-height:1.7;">بإضافة معلومات التواصل أنت تتحمل المسؤولية الكاملة عن صحتها وأي تواصل يتم عبرها.</div>
+        </div>
       </div>
 
       <button class="save-btn sb-tl" id="saveSwitchBtn" onclick="saveAccountType()">حفظ نوع الحساب ✓</button>
@@ -760,7 +766,9 @@ function renderServices(){
   }
   let contacts='';
   if(agentData.whatsapp) contacts+=`<a class="clink" href="https://wa.me/${agentData.whatsapp.replace(/\D/g,'')}" target="_blank"><span class="ci">📱</span><div class="ct"><strong>واتساب</strong><span>${agentData.whatsapp}</span></div><span class="ca">فتح ←</span></a>`;
+  if(agentData.telegram) contacts+=`<a class="clink" href="https://t.me/${agentData.telegram.replace('@','')}" target="_blank"><span class="ci">✈️</span><div class="ct"><strong>تيليغرام</strong><span>${agentData.telegram}</span></div><span class="ca">فتح ←</span></a>`;
   if(agentData.instagram) contacts+=`<a class="clink" href="https://instagram.com/${agentData.instagram.replace('@','')}" target="_blank"><span class="ci">📸</span><div class="ct"><strong>إنستغرام</strong><span>${agentData.instagram}</span></div><span class="ca">فتح ←</span></a>`;
+  if(agentData.email_contact) contacts+=`<a class="clink" href="mailto:${agentData.email_contact}" target="_blank"><span class="ci">✉️</span><div class="ct"><strong>إيميل</strong><span>${agentData.email_contact}</span></div><span class="ca">فتح ←</span></a>`;
   wrap.innerHTML=`<div class="svc-card">
     <div class="svc-title">الخدمات المقدمة</div>
     <div class="svcs-grid">${(agentData.services||[]).map(s=>`<span class="svc-pill">${s}</span>`).join('')||'<span style="font-size:13px;color:var(--muted)">لم تحدد خدمات بعد</span>'}</div>
@@ -852,6 +860,8 @@ function openAccountSwitch(){
   updateTypeSwitchUI(pendingType);
   document.getElementById('agWa').value=agentData?.whatsapp||'';
   document.getElementById('agIg').value=agentData?.instagram||'';
+  document.getElementById('agTg').value=agentData?.telegram||'';
+  document.getElementById('agEmail').value=agentData?.email_contact||'';
   // restore svc buttons
   document.querySelectorAll('.sc').forEach(el=>{
     const txt=el.textContent.trim();
@@ -886,12 +896,16 @@ async function saveAccountType(){
     // حفظ بيانات المرشد
     const wa=document.getElementById('agWa').value.trim();
     const ig=document.getElementById('agIg').value.trim();
+    const tg=document.getElementById('agTg').value.trim();
+    const em=document.getElementById('agEmail').value.trim();
     const{data:ag,error}=await sb.from('agents').upsert({
       user_id:currentUser.id,
       full_name:profile?.full_name||'',
       services:pendingSvcs,
       whatsapp:wa,
-      instagram:ig
+      instagram:ig,
+      telegram:tg,
+      email_contact:em
     },{onConflict:'user_id'});
     if(error){showToast('❌ '+error.message);btn.disabled=false;btn.textContent='حفظ نوع الحساب ✓';return;}
     // جلب البيانات المحدثة
