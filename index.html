@@ -598,5 +598,61 @@ init();
     <button class="ai-send" id="aiSendEl" onclick="sendAI()">↑</button>
   </div>
 </div>
+<script>
+const GEMINI_KEY='AIzaSyCNApyQEoGoleF3eapRmwKNxxCMHAx9jRc';
+async function askGemini(prompt,ctx=''){
+  try{
+    const r=await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key='+GEMINI_KEY,{
+      method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({contents:[{parts:[{text:(ctx?ctx+'\n':'')+prompt}]}],generationConfig:{temperature:0.7,maxOutputTokens:500}})});
+    const d=await r.json();
+    return d.candidates?.[0]?.content?.parts?.[0]?.text||'عذراً، حاول مرة أخرى.';
+  }catch(e){return 'حدث خطأ. تحقق من الإنترنت.';}
+}
+let aiOpen=false,aiCtx='';
+function toggleAI(){
+  aiOpen=!aiOpen;
+  const p=document.getElementById('aiPanel');
+  p.style.display=aiOpen?'flex':'none';
+  if(aiOpen) document.getElementById('aiInpEl')?.focus();
+}
+function setAISuggs(arr){
+  const el=document.getElementById('aiSuggsEl');
+  if(el) el.innerHTML=arr.map(s=>`<button class="ai-sugg" onclick="quickAsk('${s}')">${s}</button>`).join('');
+}
+function quickAsk(t){document.getElementById('aiInpEl').value=t;sendAI();}
+async function sendAI(){
+  const inp=document.getElementById('aiInpEl'),btn=document.getElementById('aiSendEl'),msgs=document.getElementById('aiMsgsEl');
+  const msg=inp.value.trim();if(!msg)return;
+  msgs.innerHTML+=`<div class="ai-msg-u">${msg}</div><div class="ai-msg-b" id="aiTyping">⏳ جاري التفكير...</div>`;
+  msgs.scrollTop=msgs.scrollHeight;inp.value='';btn.disabled=true;
+  const ans=await askGemini(msg,aiCtx);
+  document.getElementById('aiTyping')?.remove();
+  msgs.innerHTML+=`<div class="ai-msg-b">${ans.replace(/\n/g,'<br>')}</div>`;
+  msgs.scrollTop=msgs.scrollHeight;btn.disabled=false;
+}
+// Inline AI
+let aiInCtx='';
+function setAIInlineSuggs(arr){
+  const el=document.getElementById('aiISuggsEl');
+  if(el) el.innerHTML=arr.map(s=>`<button class="ai-sugg" onclick="quickAskI('${s}')">${s}</button>`).join('');
+}
+function quickAskI(t){document.getElementById('aiIInpEl').value=t;sendAII();}
+async function sendAII(){
+  const inp=document.getElementById('aiIInpEl'),btn=document.getElementById('aiISendEl'),msgs=document.getElementById('aiIMsgsEl');
+  const msg=inp.value.trim();if(!msg)return;
+  msgs.style.display='flex';msgs.style.flexDirection='column';
+  msgs.innerHTML+=`<div class="ai-msg-u">${msg}</div><div class="ai-msg-b" id="aiITyping">⏳ جاري التفكير...</div>`;
+  msgs.scrollTop=msgs.scrollHeight;inp.value='';btn.disabled=true;
+  const ans=await askGemini(msg,aiInCtx);
+  document.getElementById('aiITyping')?.remove();
+  msgs.innerHTML+=`<div class="ai-msg-b">${ans.replace(/\n/g,'<br>')}</div>`;
+  msgs.scrollTop=msgs.scrollHeight;btn.disabled=false;
+}
+</script>
+<script>
+setAISuggs(['أين أسافر في الصيف؟', 'رحلة عائلية رخيصة', 'أفضل وجهات بلا تأشيرة', 'نصائح للمسافر الأول']);
+aiCtx='أنت مساعد سفر عربي للمسافرين الكويتيين. أجب بالعربية بشكل مختصر وعملي.';
+</script>
 </body>
 </html>
