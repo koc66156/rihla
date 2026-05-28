@@ -133,9 +133,9 @@ body{font-family:'Tajawal',sans-serif;background:var(--dk);color:white;min-heigh
 .bitem .bl{font-size:10px;font-weight:700;color:rgba(255,255,255,0.4);}
 .bitem.active .bl{color:#FF5C1A;}
 
-.ai-fab-wrap{position:fixed;bottom:calc(var(--bot-h,64px)+16px);left:16px;z-index:1001;}
+.ai-fab-wrap{position:fixed;bottom:calc(var(--bot-h,64px)+16px);right:16px;z-index:1001;}
 .ai-fab{width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,#4285f4,#34a853);border:none;color:white;font-size:24px;cursor:pointer;box-shadow:0 4px 20px rgba(66,133,244,0.4);}
-.ai-panel{position:fixed;bottom:calc(var(--bot-h,64px)+80px);left:12px;width:calc(100% - 24px);max-width:380px;background:#1a1a1a;border:1px solid rgba(255,255,255,0.1);border-radius:20px;overflow:hidden;box-shadow:0 8px 32px rgba(0,0,0,0.5);z-index:1002;display:none;flex-direction:column;}
+.ai-panel{position:fixed;bottom:calc(var(--bot-h,64px)+80px);right:12px;width:calc(100% - 24px);max-width:380px;background:#1a1a1a;border:1px solid rgba(255,255,255,0.1);border-radius:20px;overflow:hidden;box-shadow:0 8px 32px rgba(0,0,0,0.5);z-index:1002;display:none;flex-direction:column;}
 .ai-head{background:linear-gradient(135deg,#4285f4,#34a853);padding:14px 16px;display:flex;align-items:center;justify-content:space-between;}
 .ai-head-t{font-weight:800;font-size:14px;color:white;}
 .ai-x{background:none;border:none;color:white;font-size:20px;cursor:pointer;}
@@ -192,15 +192,6 @@ body{font-family:'Tajawal',sans-serif;background:var(--dk);color:white;min-heigh
 
 <!-- BOTTOM NAV -->
 
-<div class="ai-inline">
-  <div class="ai-inline-h">🤖 اسأل مساعد رِحلة الذكي</div>
-  <div class="ai-suggs" id="aiISuggsEl" style="padding:0;margin-bottom:10px;"></div>
-  <div class="ai-inline-msgs" id="aiIMsgsEl" style="display:none;"></div>
-  <div class="ai-row" style="padding:0;gap:8px;">
-    <input class="ai-inp" id="aiIInpEl" placeholder="اسألني..." onkeydown="if(event.key==='Enter')sendAII()">
-    <button class="ai-send" id="aiISendEl" onclick="sendAII()">↑</button>
-  </div>
-</div>
 <nav class="botnav">
   <a href="index.html" class="bitem"><div class="bi">🏠</div><div class="bl">الرئيسية</div></a>
   <a href="trips.html" class="bitem"><div class="bi">✈️</div><div class="bl">الرحلات</div></a>
@@ -564,5 +555,23 @@ async function sendAII(){
 setAIInlineSuggs(['أفضل وقت للزيارة؟', 'ما تكلفة الرحلة تقريباً؟', 'هل الطعام الحلال متوفر؟', 'اقترح مسار ٧ أيام']);
 aiInCtx='أنت مساعد وجهات سياحية للمسافرين الخليجيين. أجب عن أفضل الأوقات والتكاليف والطعام الحلال.';
 </script>
+
+<div class="ai-fab-wrap">
+  <button class="ai-fab" onclick="toggleAI()">🤖</button>
+</div>
+<div class="ai-panel" id="aiPanel">
+  <div class="ai-head">
+    <div class="ai-head-t">🤖 مساعد رِحلة الذكي</div>
+    <button class="ai-x" onclick="toggleAI()">✕</button>
+  </div>
+  <div class="ai-suggs" id="aiSuggsEl"></div>
+  <div class="ai-msgs" id="aiMsgsEl">
+    <div class="ai-msg-b">مرحباً! أنا مساعدك للسفر 🌍 كيف أساعدك؟</div>
+  </div>
+  <div class="ai-row">
+    <input class="ai-inp" id="aiInpEl" placeholder="اسألني عن السفر..." onkeydown="if(event.key==='Enter')sendAI()">
+    <button class="ai-send" id="aiSendEl" onclick="sendAI()">↑</button>
+  </div>
+</div>
 </body>
 </html>
