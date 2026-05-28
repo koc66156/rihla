@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>رِحلة — ابحث عن رفيق سفرك</title>
+<title>رِحلة — ابحث عن رفقة سفر</title>
 <meta name="theme-color" content="#FF5C1A">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -12,6 +12,13 @@
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icon-512.png">
 <link rel="icon" type="image/png" href="icon-512.png">
+<script>
+if('serviceWorker' in navigator){
+  window.addEventListener('load',()=>{
+    navigator.serviceWorker.register('/sw.js');
+  });
+}
+</script>
 <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&family=Righteous&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
@@ -188,8 +195,9 @@ body{font-family:'Tajawal',sans-serif;background:var(--dk);color:white;overflow-
     </h1>
     <p class="hero-sub">لا تسافر وحدك — ابحث عن رفيق سفر، انضم لمجموعة، أو نظّم رحلتك مع أناس يشاركونك الشغف من الكويت والخليج.</p>
     <div class="hero-btns">
-      <button class="hbtn hbtn-p" onclick="window.location.href='trips.html'">ابحث عن رفيق ✈️</button>
+      <button class="hbtn hbtn-p" onclick="window.location.href='trips.html'">ابحث عن رفقة ✈️</button>
       <button class="hbtn hbtn-s" onclick="window.location.href='post-trip.html'">+ انشر رحلتك</button>
+      <button class="hbtn hbtn-s" onclick="window.location.href='search-users.html'" style="border-color:rgba(0,201,177,0.3);color:var(--tl);">🔍 ابحث عن عضو</button>
     </div>
     <div class="hero-stats">
       <div class="hstat"><span class="hv" id="statTrips">٠</span><div class="hl">رحلة نشطة</div></div>
