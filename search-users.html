@@ -66,9 +66,11 @@ body{font-family:'Tajawal',sans-serif;background:var(--dk);color:white;padding-t
 <body>
 
 <nav class="topnav">
+  <div style="display:flex;align-items:center;gap:10px;">
+    <button onclick="window.location.href='index.html'" style="width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.1);color:white;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;">→</button>
+    <button class="nav-logo" onclick="window.location.href='index.html'">Rihla</button>
+  </div>
   <button class="nav-profile-btn" id="navProfileBtn" onclick="goToProfile()">ملفي 👤</button>
-  <button class="nav-logo" onclick="window.location.href='index.html'">Rihla</button>
-  <div style="width:70px"></div>
 </nav>
 
 <!-- SEARCH -->
@@ -156,14 +158,13 @@ async function doSearch(q){
 
   let query = sb.from('profiles').select('*').order('created_at', {ascending: false});
 
-  // Filter by type
+  // For agent filter only use Supabase
   if(activeFilter==='agent') query = query.eq('account_type','agent');
-  else if(activeFilter==='traveler') query = query.or('account_type.is.null,account_type.eq.traveler');
 
   // Filter by name if query exists
   if(q) query = query.ilike('full_name','%'+q+'%');
 
-  const{data, error} = await query.limit(50);
+  const{data, error} = await query.limit(100);
 
   if(error || !data?.length){
     document.getElementById('results').innerHTML=`
@@ -175,15 +176,31 @@ async function doSearch(q){
     return;
   }
 
+  // Filter travelers in JS (account_type is null OR traveler)
+  let filtered = data;
+  if(activeFilter==='traveler'){
+    filtered = data.filter(u => u.account_type !== 'agent');
+  }
+
+  if(!filtered.length){
+    document.getElementById('results').innerHTML=`
+      <div class="empty">
+        <div class="empty-icon">😕</div>
+        <div class="empty-text">لا توجد نتائج</div>
+        <div class="empty-sub">جرب اسماً مختلفاً</div>
+      </div>`;
+    return;
+  }
+
   // Get verified agents
-  const agentIds = data.filter(u=>u.account_type==='agent').map(u=>u.id);
+  const agentIds = filtered.filter(u=>u.account_type==='agent').map(u=>u.id);
   let verifiedSet = new Set();
   if(agentIds.length){
     const{data:agents} = await sb.from('agents').select('user_id,is_verified').in('user_id',agentIds);
     agents?.filter(a=>a.is_verified).forEach(a=>verifiedSet.add(a.user_id));
   }
 
-  const html = data.map(u=>{
+  const html = filtered.map(u=>{
     const isAgent = u.account_type==='agent';
     const isVerified = verifiedSet.has(u.id);
     const name = u.full_name || u.email?.split('@')[0] || 'عضو جديد';
