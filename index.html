@@ -177,7 +177,10 @@ body{font-family:'Tajawal',sans-serif;background:var(--dk);color:white;overflow-
 
 <!-- NAV -->
 <nav class="topnav">
-  <div class="nav-logo">Rihla</div>
+  <div style="display:flex;align-items:center;gap:10px;">
+    <div class="nav-logo">Rihla</div>
+    <button onclick="window.location.href='search-users.html'" style="width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.1);color:white;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;">🔍</button>
+  </div>
   <button class="nav-profile-btn" id="navProfileBtn" onclick="goToProfile()">تسجيل دخول 👤</button>
 </nav>
 
@@ -196,8 +199,7 @@ body{font-family:'Tajawal',sans-serif;background:var(--dk);color:white;overflow-
     <p class="hero-sub">لا تسافر وحدك — ابحث عن رفيق سفر، انضم لمجموعة، أو نظّم رحلتك مع أناس يشاركونك الشغف من الكويت والخليج.</p>
     <div class="hero-btns">
       <button class="hbtn hbtn-p" onclick="window.location.href='trips.html'">ابحث عن رفقة ✈️</button>
-      <button class="hbtn hbtn-s" onclick="window.location.href='post-trip.html'">+ انشر رحلتك</button>
-      <button class="hbtn hbtn-s" onclick="window.location.href='search-users.html'" style="border-color:rgba(0,201,177,0.3);color:var(--tl);">🔍 ابحث عن عضو</button>
+      <button class="hbtn hbtn-s" onclick="window.location.href='post-trip.html'">🤝 نظّم رحلة واجمع الرفاق</button>
     </div>
     <div class="hero-stats">
       <div class="hstat"><span class="hv" id="statTrips">٠</span><div class="hl">رحلة نشطة</div></div>

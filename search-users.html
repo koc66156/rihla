@@ -138,9 +138,8 @@ function setFilter(f, el){
 
 function onSearch(){
   clearTimeout(searchTimer);
-  const q=document.getElementById('searchInput').value.trim();
-  if(!q && activeFilter==='all'){showEmpty();return;}
-  searchTimer=setTimeout(()=>doSearch(q),300);
+  const q = document.getElementById('searchInput').value.trim();
+  searchTimer = setTimeout(()=>doSearch(q), 300);
 }
 
 function showEmpty(){
@@ -155,19 +154,18 @@ function showEmpty(){
 async function doSearch(q){
   document.getElementById('results').innerHTML='<div class="loading">⏳ جاري البحث...</div>';
 
-  let query=sb.from('profiles').select('*').order('full_name');
+  let query = sb.from('profiles').select('*').order('created_at', {ascending: false});
 
   // Filter by type
-  if(activeFilter==='agent') query=query.eq('account_type','agent');
-  else if(activeFilter==='traveler') query=query.neq('account_type','agent');
+  if(activeFilter==='agent') query = query.eq('account_type','agent');
+  else if(activeFilter==='traveler') query = query.neq('account_type','agent');
 
-  // Filter by name
-  if(q) query=query.ilike('full_name','%'+q+'%');
-  else query=query.limit(30);
+  // Filter by name if query exists
+  if(q) query = query.ilike('full_name','%'+q+'%');
 
-  const{data,error}=await query.limit(50);
+  const{data, error} = await query.limit(50);
 
-  if(error||!data?.length){
+  if(error || !data?.length){
     document.getElementById('results').innerHTML=`
       <div class="empty">
         <div class="empty-icon">😕</div>
@@ -178,27 +176,29 @@ async function doSearch(q){
   }
 
   // Get verified agents
-  const agentIds=data.filter(u=>u.account_type==='agent').map(u=>u.id);
-  let verifiedSet=new Set();
+  const agentIds = data.filter(u=>u.account_type==='agent').map(u=>u.id);
+  let verifiedSet = new Set();
   if(agentIds.length){
-    const{data:agents}=await sb.from('agents').select('user_id,is_verified').in('user_id',agentIds);
+    const{data:agents} = await sb.from('agents').select('user_id,is_verified').in('user_id',agentIds);
     agents?.filter(a=>a.is_verified).forEach(a=>verifiedSet.add(a.user_id));
   }
 
-  const html=data.map(u=>{
-    const isAgent=u.account_type==='agent';
-    const isVerified=verifiedSet.has(u.id);
-    const initial=(u.full_name||'؟')[0].toUpperCase();
-    const country=u.country?`📍 ${u.country}`:'';
+  const html = data.map(u=>{
+    const isAgent = u.account_type==='agent';
+    const isVerified = verifiedSet.has(u.id);
+    const name = u.full_name || u.email?.split('@')[0] || 'عضو جديد';
+    const initial = name[0].toUpperCase();
+    const country = u.country ? `📍 ${u.country}` : '';
+    const date = new Date(u.created_at).toLocaleDateString('ar-KW');
     return `
       <div class="user-card" onclick="window.location.href='user.html?id=${u.id}'">
         <div class="user-avatar">${initial}</div>
         <div class="user-info">
           <div class="user-name">
-            ${u.full_name||'مستخدم'}
+            ${name}
             ${isVerified?'<span class="badge-verified">✅</span>':''}
           </div>
-          <div class="user-meta">${country}</div>
+          <div class="user-meta">${country} ${country?'·':''} انضم ${date}</div>
         </div>
         <span class="user-type ${isAgent?'type-agent':'type-traveler'}">
           ${isAgent?'🧭 مرشد':'✈️ مسافر'}
@@ -206,10 +206,12 @@ async function doSearch(q){
       </div>`;
   }).join('');
 
-  document.getElementById('results').innerHTML=html;
+  document.getElementById('results').innerHTML = html;
 }
 
-// Show all agents by default if filter is agent
+initNav();
+// عرض الكل عند الفتح
+doSearch('');
 </script>
 </body>
 </html>
