@@ -554,6 +554,7 @@ setAIInlineSuggs(['أفضل وقت للزيارة؟','ما تكلفة الرحل
 (function(){
   const CTX='أنت مساعد وجهات للمسافرين الخليجيين. أجب عن أفضل الأوقات والتكاليف والطعام الحلال.';
   let open=false;
+  let chatHistory=[];
 
   window.rToggle=function(){
     open=!open;
@@ -582,12 +583,15 @@ setAIInlineSuggs(['أفضل وقت للزيارة؟','ما تكلفة الرحل
       const r=await fetch('https://ybjdagurvkweabujkeyz.supabase.co/functions/v1/ai-chat',{
         method:'POST',
         headers:{'Content-Type':'application/json','apikey':'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InliamRhZ3Vydmt3ZWFidWprZXl6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkzNjQyMDAsImV4cCI6MjA5NDk0MDIwMH0.CIK7sew_-kBlC_t_szCjKjjnFNg695kwSryuRshQ9nI','Authorization':'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InliamRhZ3Vydmt3ZWFidWprZXl6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkzNjQyMDAsImV4cCI6MjA5NDk0MDIwMH0.CIK7sew_-kBlC_t_szCjKjjnFNg695kwSryuRshQ9nI'},
-        body:JSON.stringify({message:msg,context:CTX})
+        body:JSON.stringify({message:msg,context:CTX,history:chatHistory})
       });
       const d=await r.json();
       const ans=d.answer||'عذراً، حاول مرة أخرى.';
       document.getElementById('rTyping')?.remove();
       msgs.innerHTML+=`<div class="rAiB">${ans.replace(/\n/g,'<br>')}</div>`;
+      chatHistory.push({role:'user',text:msg});
+      chatHistory.push({role:'model',text:ans});
+      if(chatHistory.length>20) chatHistory=chatHistory.slice(-20);
     }catch(e){
       document.getElementById('rTyping')?.remove();
       msgs.innerHTML+=`<div class="rAiB">حدث خطأ. تحقق من الإنترنت.</div>`;
