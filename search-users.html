@@ -158,7 +158,7 @@ async function doSearch(q){
 
   // Filter by type
   if(activeFilter==='agent') query = query.eq('account_type','agent');
-  else if(activeFilter==='traveler') query = query.neq('account_type','agent');
+  else if(activeFilter==='traveler') query = query.or('account_type.is.null,account_type.eq.traveler');
 
   // Filter by name if query exists
   if(q) query = query.ilike('full_name','%'+q+'%');
