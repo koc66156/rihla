@@ -2,8 +2,8 @@
   "name": "رِحلة — منصة المسافرين",
   "short_name": "رِحلة",
   "description": "منصة المسافرين العرب — ابحث عن رفيق سفرك وانطلق",
-  "start_url": "/index.html",
-  "scope": "/",
+  "start_url": "https://rihlakw.com/index.html",
+  "scope": "https://rihlakw.com/",
   "display": "standalone",
   "orientation": "portrait",
   "background_color": "#FF5C1A",
@@ -13,19 +13,19 @@
   "categories": ["travel", "social"],
   "icons": [
     {
-      "src": "icon-512.png",
+      "src": "https://rihlakw.com/icon-512.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "icon-512.png",
+      "src": "https://rihlakw.com/icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "icon-512.png",
+      "src": "https://rihlakw.com/icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"
