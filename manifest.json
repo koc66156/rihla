@@ -2,7 +2,7 @@
   "name": "رِحلة — منصة المسافرين",
   "short_name": "رِحلة",
   "description": "منصة المسافرين العرب — ابحث عن رفيق سفرك وانطلق",
-  "start_url": "/",
+  "start_url": "/index.html",
   "scope": "/",
   "display": "standalone",
   "orientation": "portrait",
