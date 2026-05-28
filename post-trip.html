@@ -88,25 +88,25 @@ body{font-family:'Tajawal',sans-serif;background:var(--dk);color:white;min-heigh
 .toast{position:fixed;bottom:calc(var(--bot-h)+14px);left:50%;transform:translateX(-50%) translateY(80px);background:#1a1a1a;color:white;padding:11px 20px;border-radius:20px;font-size:13px;font-weight:700;box-shadow:0 8px 24px rgba(0,0,0,0.4);transition:transform .4s cubic-bezier(.34,1.56,.64,1);z-index:9999;border:1px solid rgba(255,255,255,0.08);pointer-events:none;opacity:0;}
 .toast.show{transform:translateX(-50%) translateY(0);opacity:1;}
 
-.ai-fab-wrap{position:fixed;bottom:calc(var(--bot-h,64px)+16px);right:16px;z-index:1001;}
-.ai-fab{width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,#4285f4,#34a853);border:none;color:white;font-size:24px;cursor:pointer;box-shadow:0 4px 20px rgba(66,133,244,0.4);}
-.ai-panel{position:fixed;bottom:calc(var(--bot-h,64px)+80px);right:12px;width:calc(100% - 24px);max-width:380px;background:#1a1a1a;border:1px solid rgba(255,255,255,0.1);border-radius:20px;overflow:hidden;box-shadow:0 8px 32px rgba(0,0,0,0.5);z-index:1002;display:none;flex-direction:column;}
-.ai-head{background:linear-gradient(135deg,#4285f4,#34a853);padding:14px 16px;display:flex;align-items:center;justify-content:space-between;}
-.ai-head-t{font-weight:800;font-size:14px;color:white;}
-.ai-x{background:none;border:none;color:white;font-size:20px;cursor:pointer;}
-.ai-msgs{height:200px;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:8px;}
-.ai-msg-u{align-self:flex-end;background:linear-gradient(135deg,#4285f4,#34a853);color:white;padding:9px 14px;border-radius:16px 16px 4px 16px;font-size:13px;line-height:1.6;max-width:85%;}
-.ai-msg-b{align-self:flex-start;background:rgba(255,255,255,0.07);color:rgba(255,255,255,0.9);padding:9px 14px;border-radius:4px 16px 16px 16px;font-size:13px;line-height:1.6;max-width:85%;}
-.ai-suggs{display:flex;gap:6px;padding:8px 12px;overflow-x:auto;border-bottom:1px solid rgba(255,255,255,0.06);}
-.ai-sugg{white-space:nowrap;padding:6px 12px;border-radius:14px;background:rgba(66,133,244,0.1);border:1px solid rgba(66,133,244,0.2);color:#4285f4;font-family:'Tajawal',sans-serif;font-size:12px;font-weight:700;cursor:pointer;}
-.ai-row{display:flex;gap:8px;padding:10px 12px;border-top:1px solid rgba(255,255,255,0.06);}
-.ai-inp{flex:1;background:rgba(255,255,255,0.06);border:1.5px solid rgba(255,255,255,0.1);border-radius:20px;padding:9px 14px;font-family:'Tajawal',sans-serif;font-size:13px;color:white;outline:none;}
-.ai-inp:focus{border-color:#4285f4;}
-.ai-send{width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,#4285f4,#34a853);border:none;color:white;font-size:16px;cursor:pointer;flex-shrink:0;}
-.ai-send:disabled{opacity:0.5;}
-.ai-inline{background:linear-gradient(135deg,rgba(66,133,244,0.08),rgba(52,168,83,0.05));border:1px solid rgba(66,133,244,0.15);border-radius:18px;padding:14px 16px;margin:0 16px 20px;}
-.ai-inline-h{display:flex;align-items:center;gap:8px;margin-bottom:10px;font-size:14px;font-weight:800;color:#4285f4;}
-.ai-inline-msgs{max-height:160px;overflow-y:auto;margin-bottom:10px;display:flex;flex-direction:column;gap:6px;}</style>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</style>
 </head>
 <body>
 
@@ -511,12 +511,7 @@ setAISuggs(['اقترح عنواناً لرحلتي','ما الميزانية ا
 init();
 </script>
 
-<div class="ai-fab-wrap">
-  <button class="ai-fab" onclick="toggleAI()">🤖</button>
-</div>
-<div class="ai-panel" id="aiPanel">
-  <div class="ai-head">
-    <div class="ai-head-t">🤖 مساعد رِحلة الذكي</div>
+
     <button class="ai-x" onclick="toggleAI()">✕</button>
   </div>
   <div class="ai-suggs" id="aiSuggsEl"></div>
@@ -528,61 +523,91 @@ init();
     <button class="ai-send" id="aiSendEl" onclick="sendAI()">↑</button>
   </div>
 </div>
+
+
+
+<!-- ═══ RIHLA AI ASSISTANT ═══ -->
+<style>
+#rihlaAiBtn{position:fixed;bottom:80px;right:16px;width:54px;height:54px;border-radius:50%;background:linear-gradient(135deg,#4285f4,#34a853);border:none;color:white;font-size:26px;cursor:pointer;z-index:9999;box-shadow:0 4px 20px rgba(66,133,244,0.5);display:flex;align-items:center;justify-content:center;}
+#rihlaAiWin{position:fixed;bottom:145px;right:12px;width:calc(100% - 24px);max-width:360px;background:#1a1a1a;border:1px solid rgba(255,255,255,0.12);border-radius:20px;z-index:9999;display:none;flex-direction:column;overflow:hidden;box-shadow:0 8px 32px rgba(0,0,0,0.6);}
+.rAiH{background:linear-gradient(135deg,#4285f4,#34a853);padding:13px 16px;display:flex;align-items:center;justify-content:space-between;}
+.rAiHT{color:white;font-weight:800;font-size:14px;font-family:"Tajawal",sans-serif;}
+.rAiX{background:none;border:none;color:white;font-size:20px;cursor:pointer;line-height:1;}
+.rAiSuggs{display:flex;gap:6px;padding:8px 10px;overflow-x:auto;border-bottom:1px solid rgba(255,255,255,0.07);}
+.rAiSugg{white-space:nowrap;padding:6px 11px;border-radius:14px;background:rgba(66,133,244,0.12);border:1px solid rgba(66,133,244,0.25);color:#4285f4;font-family:"Tajawal",sans-serif;font-size:12px;font-weight:700;cursor:pointer;flex-shrink:0;}
+.rAiMsgs{height:200px;overflow-y:auto;padding:10px 12px;display:flex;flex-direction:column;gap:7px;}
+.rAiU{align-self:flex-end;background:linear-gradient(135deg,#4285f4,#34a853);color:white;padding:9px 13px;border-radius:16px 16px 4px 16px;font-size:13px;line-height:1.6;max-width:85%;font-family:"Tajawal",sans-serif;}
+.rAiB{align-self:flex-start;background:rgba(255,255,255,0.08);color:rgba(255,255,255,0.9);padding:9px 13px;border-radius:4px 16px 16px 16px;font-size:13px;line-height:1.6;max-width:85%;font-family:"Tajawal",sans-serif;}
+.rAiRow{display:flex;gap:8px;padding:10px 12px;border-top:1px solid rgba(255,255,255,0.07);}
+.rAiInp{flex:1;background:rgba(255,255,255,0.07);border:1.5px solid rgba(255,255,255,0.12);border-radius:20px;padding:9px 14px;font-family:"Tajawal",sans-serif;font-size:13px;color:white;outline:none;direction:rtl;}
+.rAiInp:focus{border-color:#4285f4;}
+.rAiSend{width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,#4285f4,#34a853);border:none;color:white;font-size:17px;cursor:pointer;flex-shrink:0;}
+.rAiSend:disabled{opacity:0.5;}
+</style>
+
+<button id="rihlaAiBtn" onclick="rToggle()">🤖</button>
+<div id="rihlaAiWin">
+  <div class="rAiH">
+    <span class="rAiHT">🤖 مساعد رِحلة الذكي</span>
+    <button class="rAiX" onclick="rToggle()">✕</button>
+  </div>
+  <div class="rAiSuggs" id="rAiSuggs"></div>
+  <div class="rAiMsgs" id="rAiMsgs">
+    <div class="rAiB">مرحباً! 🌍 كيف أساعدك في السفر؟</div>
+  </div>
+  <div class="rAiRow">
+    <input class="rAiInp" id="rAiInp" placeholder="اسألني..." onkeydown="if(event.key==='Enter')rSend()">
+    <button class="rAiSend" id="rAiSend" onclick="rSend()">↑</button>
+  </div>
+</div>
+
 <script>
-const GEMINI_KEY='AIzaSyCNApyQEoGoleF3eapRmwKNxxCMHAx9jRc';
-async function askGemini(prompt,ctx=''){
-  try{
-    const r=await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key='+GEMINI_KEY,{
-      method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({contents:[{parts:[{text:(ctx?ctx+'\n':'')+prompt}]}],generationConfig:{temperature:0.7,maxOutputTokens:500}})});
-    const d=await r.json();
-    return d.candidates?.[0]?.content?.parts?.[0]?.text||'عذراً، حاول مرة أخرى.';
-  }catch(e){return 'حدث خطأ. تحقق من الإنترنت.';}
-}
-let aiOpen=false,aiCtx='';
-function toggleAI(){
-  aiOpen=!aiOpen;
-  const p=document.getElementById('aiPanel');
-  p.style.display=aiOpen?'flex':'none';
-  if(aiOpen) document.getElementById('aiInpEl')?.focus();
-}
-function setAISuggs(arr){
-  const el=document.getElementById('aiSuggsEl');
-  if(el) el.innerHTML=arr.map(s=>`<button class="ai-sugg" onclick="quickAsk('${s}')">${s}</button>`).join('');
-}
-function quickAsk(t){document.getElementById('aiInpEl').value=t;sendAI();}
-async function sendAI(){
-  const inp=document.getElementById('aiInpEl'),btn=document.getElementById('aiSendEl'),msgs=document.getElementById('aiMsgsEl');
-  const msg=inp.value.trim();if(!msg)return;
-  msgs.innerHTML+=`<div class="ai-msg-u">${msg}</div><div class="ai-msg-b" id="aiTyping">⏳ جاري التفكير...</div>`;
-  msgs.scrollTop=msgs.scrollHeight;inp.value='';btn.disabled=true;
-  const ans=await askGemini(msg,aiCtx);
-  document.getElementById('aiTyping')?.remove();
-  msgs.innerHTML+=`<div class="ai-msg-b">${ans.replace(/\n/g,'<br>')}</div>`;
-  msgs.scrollTop=msgs.scrollHeight;btn.disabled=false;
-}
-// Inline AI
-let aiInCtx='';
-function setAIInlineSuggs(arr){
-  const el=document.getElementById('aiISuggsEl');
-  if(el) el.innerHTML=arr.map(s=>`<button class="ai-sugg" onclick="quickAskI('${s}')">${s}</button>`).join('');
-}
-function quickAskI(t){document.getElementById('aiIInpEl').value=t;sendAII();}
-async function sendAII(){
-  const inp=document.getElementById('aiIInpEl'),btn=document.getElementById('aiISendEl'),msgs=document.getElementById('aiIMsgsEl');
-  const msg=inp.value.trim();if(!msg)return;
-  msgs.style.display='flex';msgs.style.flexDirection='column';
-  msgs.innerHTML+=`<div class="ai-msg-u">${msg}</div><div class="ai-msg-b" id="aiITyping">⏳ جاري التفكير...</div>`;
-  msgs.scrollTop=msgs.scrollHeight;inp.value='';btn.disabled=true;
-  const ans=await askGemini(msg,aiInCtx);
-  document.getElementById('aiITyping')?.remove();
-  msgs.innerHTML+=`<div class="ai-msg-b">${ans.replace(/\n/g,'<br>')}</div>`;
-  msgs.scrollTop=msgs.scrollHeight;btn.disabled=false;
-}
+(function(){
+  const KEY='AIzaSyCNApyQEoGoleF3eapRmwKNxxCMHAx9jRc';
+  const CTX='أنت مساعد لمنظمي الرحلات. أجب بالعربية عن كتابة عناوين جذابة وتحديد الميزانية.';
+  let open=false;
+
+  window.rToggle=function(){
+    open=!open;
+    document.getElementById('rihlaAiWin').style.display=open?'flex':'none';
+    if(open)document.getElementById('rAiInp').focus();
+  };
+
+  // Suggestions
+  const suggs=["اقترح عنواناً لرحلتي", "ما الميزانية المناسبة؟", "كيف أكتب وصفاً جذاباً؟", "أفضل نوع إقامة؟"];
+  document.getElementById('rAiSuggs').innerHTML=suggs.map(s=>
+    `<button class="rAiSugg" onclick="rQuick('${s}')">${s}</button>`
+  ).join('');
+
+  window.rQuick=function(t){document.getElementById('rAiInp').value=t;rSend();};
+
+  window.rSend=async function(){
+    const inp=document.getElementById('rAiInp');
+    const btn=document.getElementById('rAiSend');
+    const msgs=document.getElementById('rAiMsgs');
+    const msg=inp.value.trim();
+    if(!msg)return;
+    msgs.innerHTML+=`<div class="rAiU">${msg}</div><div class="rAiB" id="rTyping">⏳ جاري التفكير...</div>`;
+    msgs.scrollTop=msgs.scrollHeight;
+    inp.value='';btn.disabled=true;
+    try{
+      const r=await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key='+KEY,{
+        method:'POST',headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({contents:[{parts:[{text:CTX+'\n'+msg}]}],generationConfig:{temperature:0.7,maxOutputTokens:500}})
+      });
+      const d=await r.json();
+      const ans=d.candidates?.[0]?.content?.parts?.[0]?.text||'عذراً، حاول مرة أخرى.';
+      document.getElementById('rTyping')?.remove();
+      msgs.innerHTML+=`<div class="rAiB">${ans.replace(/\n/g,'<br>')}</div>`;
+    }catch(e){
+      document.getElementById('rTyping')?.remove();
+      msgs.innerHTML+=`<div class="rAiB">حدث خطأ. تحقق من الإنترنت.</div>`;
+    }
+    msgs.scrollTop=msgs.scrollHeight;btn.disabled=false;
+  };
+})();
 </script>
-<script>
-setAISuggs(['اقترح عنواناً لرحلتي', 'ما الميزانية المناسبة؟', 'كيف أكتب وصفاً جذاباً؟', 'أفضل نوع إقامة؟']);
-aiCtx='أنت مساعد لمنظمي الرحلات الكويتيين. ساعدهم في كتابة عناوين جذابة وتحديد الميزانية.';
-</script>
+<!-- ═══ END RIHLA AI ═══ -->
+
 </body>
 </html>
