@@ -482,7 +482,7 @@ function showToast(msg){const t=document.getElementById('toast');t.textContent=m
 
 initNav();
 
-const GEMINI_KEY='AIzaSyCNApyQEoGoleF3eapRmwKNxxCMHAx9jRc';
+const GEMINI_KEY='AIzaSyC1cbQpPYJpoY-COGG6RHF_2FVbl2IBdEc';
 async function askGemini(prompt,ctx=''){
   try{
     const r=await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key='+GEMINI_KEY,{
@@ -548,7 +548,7 @@ init();
 
 <script>
 (function(){
-  const KEY='AIzaSyCNApyQEoGoleF3eapRmwKNxxCMHAx9jRc';
+  const KEY='AIzaSyC1cbQpPYJpoY-COGG6RHF_2FVbl2IBdEc';
   const CTX='أنت مساعد لمنظمي الرحلات. أجب بالعربية عن كتابة عناوين جذابة وتحديد الميزانية.';
   let open=false;
 
