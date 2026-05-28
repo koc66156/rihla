@@ -250,6 +250,8 @@ body{font-family:'Tajawal',sans-serif;background:var(--dk);color:white;min-heigh
 
 
 </style>
+  <link rel="apple-touch-icon" href="icon-512.png">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
 </head>
 <body>
 
@@ -634,19 +636,25 @@ function renderActionBtns(){
 // ══ STATS ══
 async function renderStats(postsCount,tripsCount){
   const row=document.getElementById('statsRow');
+  
+  // جلب المتابعين والمتابَعين
+  const[{count:followingCount},{count:followersCount}]=await Promise.all([
+    sb.from('follows').select('*',{count:'exact',head:true}).eq('follower_id',currentUser.id),
+    sb.from('follows').select('*',{count:'exact',head:true}).eq('following_id',currentUser.id)
+  ]);
+
   if(isAgent){
     row.innerHTML=`
-      <div class="stat"><span class="sv">${toAr(postsCount)}</span><div class="sl">منشور</div></div>
-      <div class="stat"><span class="sv">${toAr(tripsCount)}</span><div class="sl">رحلة</div></div>
-      <div class="stat"><span class="sv">${toAr(selCountries.length)}</span><div class="sl">دولة</div></div>
+      <div class="stat" onclick="window.location.href='followers.html'" style="cursor:pointer"><span class="sv">${toAr(postsCount)}</span><div class="sl">منشور</div></div>
+      <div class="stat" onclick="window.location.href='followers.html'" style="cursor:pointer"><span class="sv">${toAr(followingCount||0)}</span><div class="sl">أتابعهم</div></div>
+      <div class="stat" onclick="window.location.href='followers.html'" style="cursor:pointer"><span class="sv">${toAr(followersCount||0)}</span><div class="sl">يتابعونني</div></div>
       <div class="stat"><span class="sv">${agentData?.rating_avg>0?agentData.rating_avg.toFixed(1):'—'}</span><div class="sl">تقييمي</div></div>`;
   }else{
-    const{count}=await sb.from('post_likes').select('*',{count:'exact',head:true}).eq('user_id',currentUser.id);
     row.innerHTML=`
-      <div class="stat"><span class="sv">${toAr(postsCount)}</span><div class="sl">منشور</div></div>
-      <div class="stat"><span class="sv">${toAr(tripsCount)}</span><div class="sl">رحلة</div></div>
-      <div class="stat"><span class="sv">${toAr(selCountries.length)}</span><div class="sl">دولة</div></div>
-      <div class="stat"><span class="sv">${toAr(count||0)}</span><div class="sl">إعجاب أعطيته</div></div>`;
+      <div class="stat" onclick="window.location.href='followers.html'" style="cursor:pointer"><span class="sv">${toAr(postsCount)}</span><div class="sl">منشور</div></div>
+      <div class="stat" onclick="window.location.href='followers.html'" style="cursor:pointer"><span class="sv">${toAr(tripsCount)}</span><div class="sl">رحلة</div></div>
+      <div class="stat" onclick="window.location.href='followers.html'" style="cursor:pointer"><span class="sv">${toAr(followingCount||0)}</span><div class="sl">أتابعهم</div></div>
+      <div class="stat" onclick="window.location.href='followers.html'" style="cursor:pointer"><span class="sv">${toAr(followersCount||0)}</span><div class="sl">يتابعونني</div></div>`;
   }
 }
 
