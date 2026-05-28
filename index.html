@@ -618,7 +618,6 @@ init();
 
 <script>
 (function(){
-  const KEY='AIzaSyBM32nz_C5xNPLSCI3RcLnmZZgXEJBxxcw';
   const CTX='أنت مساعد سفر عربي للمسافرين الكويتيين. أجب بالعربية بشكل مختصر وعملي ومفيد.';
   let open=false;
 
@@ -646,12 +645,13 @@ init();
     msgs.scrollTop=msgs.scrollHeight;
     inp.value='';btn.disabled=true;
     try{
-      const r=await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key='+KEY,{
-        method:'POST',headers:{'Content-Type':'application/json'},
-        body:JSON.stringify({contents:[{parts:[{text:CTX+'\n'+msg}]}],generationConfig:{temperature:0.7,maxOutputTokens:500}})
+      const r=await fetch('https://ybjdagurvkweabujkeyz.supabase.co/functions/v1/ai-chat',{
+        method:'POST',
+        headers:{'Content-Type':'application/json','apikey':'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InliamRhZ3Vydmt3ZWFidWprZXl6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkzNjQyMDAsImV4cCI6MjA5NDk0MDIwMH0.CIK7sew_-kBlC_t_szCjKjjnFNg695kwSryuRshQ9nI'},
+        body:JSON.stringify({message:msg,context:CTX})
       });
       const d=await r.json();
-      const ans=d.candidates?.[0]?.content?.parts?.[0]?.text||'عذراً، حاول مرة أخرى.';
+      const ans=d.answer||'عذراً، حاول مرة أخرى.';
       document.getElementById('rTyping')?.remove();
       msgs.innerHTML+=`<div class="rAiB">${ans.replace(/\n/g,'<br>')}</div>`;
     }catch(e){
