@@ -683,5 +683,42 @@ init();
 </script>
 <!-- ═══ END RIHLA AI ═══ -->
 
+
+<!-- ═══ iOS PWA Banner ═══ -->
+<div id="iosBanner" style="display:none;position:fixed;bottom:calc(var(--bot-h) + 12px);left:12px;right:12px;background:linear-gradient(135deg,#1a1a1a,#222);border:1px solid rgba(255,92,26,0.3);border-radius:20px;padding:16px;z-index:9998;box-shadow:0 8px 32px rgba(0,0,0,0.5);">
+  <button onclick="document.getElementById('iosBanner').style.display='none';localStorage.setItem('iosBannerClosed','1')" style="position:absolute;top:10px;left:14px;background:none;border:none;color:rgba(255,255,255,0.5);font-size:20px;cursor:pointer;line-height:1;">✕</button>
+  <div style="font-size:15px;font-weight:800;color:white;margin-bottom:10px;text-align:right;">📲 أضف رِحلة لشاشتك الرئيسية</div>
+  <div style="display:flex;flex-direction:column;gap:8px;">
+    <div style="display:flex;align-items:center;gap:10px;background:rgba(255,255,255,0.05);border-radius:12px;padding:10px;">
+      <span style="font-size:22px;flex-shrink:0;">①</span>
+      <span style="font-size:13px;color:rgba(255,255,255,0.8);">اضغط زر المشاركة <span style="font-size:16px;">📤</span> في أسفل Safari</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:10px;background:rgba(255,255,255,0.05);border-radius:12px;padding:10px;">
+      <span style="font-size:22px;flex-shrink:0;">②</span>
+      <span style="font-size:13px;color:rgba(255,255,255,0.8);">اضغط <strong style="color:var(--or);">"إضافة إلى الشاشة الرئيسية"</strong></span>
+    </div>
+    <div style="display:flex;align-items:center;gap:10px;background:rgba(255,255,255,0.05);border-radius:12px;padding:10px;">
+      <span style="font-size:22px;flex-shrink:0;">③</span>
+      <span style="font-size:13px;color:rgba(255,255,255,0.8);">اضغط <strong style="color:var(--tl);">"إضافة"</strong> ✅</span>
+    </div>
+  </div>
+</div>
+
+<script>
+// إظهار البانر لمستخدمي iPhone Safari فقط
+(function(){
+  const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
+  const isInStandaloneMode = window.navigator.standalone === true;
+  const isClosed = localStorage.getItem('iosBannerClosed');
+  
+  if(isIOS && !isInStandaloneMode && !isClosed){
+    setTimeout(()=>{
+      document.getElementById('iosBanner').style.display='block';
+    }, 3000); // يظهر بعد 3 ثواني
+  }
+})();
+</script>
+<!-- ═══ End iOS Banner ═══ -->
+
 </body>
 </html>
