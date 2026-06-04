@@ -358,86 +358,16 @@ let currentDest = null, currentUser = null;
 let selectedStar = 0, sheetImgIdx = 0;
 
 // توليد روابط صور Unsplash لكل وجهة
-// خريطة صور حقيقية لكل وجهة
-const CITY_IMAGES = {
-  'إسطنبول': ['hagia-sophia-istanbul','istanbul-bosphorus','grand-bazaar-istanbul','blue-mosque-istanbul'],
-  'كوالالمبور': ['petronas-towers','kuala-lumpur-city','batu-caves','klcc-park'],
-  'تبليسي': ['tbilisi-old-town','narikala-fortress','tbilisi-bridge','georgia-mountains'],
-  'باكو': ['baku-flame-towers','baku-old-city','baku-boulevard','azerbaijan-architecture'],
-  'بانكوك': ['grand-palace-bangkok','wat-arun-bangkok','bangkok-skyline','chatuchak-market'],
-  'لندن': ['tower-bridge-london','big-ben-london','london-eye','buckingham-palace'],
-  'باريس': ['eiffel-tower-paris','louvre-museum','paris-streets','notre-dame-paris'],
-  'دبي': ['burj-khalifa-dubai','dubai-mall','palm-jumeirah','dubai-skyline'],
-  'سراييفو': ['sarajevo-old-town','bascarsija-sarajevo','sarajevo-mountains','bosnia-bridge'],
-  'زيورخ': ['zurich-lake','zurich-old-town','swiss-alps','zurich-city'],
-  'أنطاليا': ['antalya-beach','antalya-old-city','turkish-riviera','antalya-harbor'],
-  'براغ': ['prague-castle','charles-bridge-prague','old-town-square-prague','prague-skyline'],
-  'سنغافورة': ['marina-bay-sands','gardens-by-the-bay','singapore-skyline','sentosa-singapore'],
-  'ميونيخ': ['neuschwanstein-castle','marienplatz-munich','bavarian-alps','munich-city'],
-  'كيب تاون': ['table-mountain-cape-town','cape-town-waterfront','cape-of-good-hope','cape-town-city'],
-  'المالديف': ['maldives-overwater-bungalow','maldives-beach','maldives-crystal-water','maldives-resort'],
-  'مراكش': ['marrakech-medina','jemaa-el-fna','moroccan-architecture','marrakech-souks'],
-  'بالي': ['bali-temple','ubud-rice-terraces','bali-beach','tanah-lot-bali'],
-  'طوكيو': ['tokyo-shibuya','mount-fuji-japan','tokyo-tower','senso-ji-temple'],
-  'كاندي': ['sri-lanka-temple','ella-sri-lanka','sigiriya-rock','sri-lanka-tea'],
-  'روما': ['colosseum-rome','trevi-fountain','vatican-rome','roman-forum'],
-  'برشلونة': ['sagrada-familia','barcelona-city','park-guell','barcelona-beach'],
-  'القاهرة': ['pyramids-giza','sphinx-egypt','cairo-city','nile-river'],
-  'أمستردام': ['amsterdam-canals','tulip-fields-netherlands','amsterdam-city','anne-frank-house'],
-  'نيويورك': ['new-york-skyline','statue-of-liberty','central-park-nyc','times-square'],
-  'فيينا': ['schonbrunn-palace','vienna-opera','vienna-city','st-stephens-cathedral'],
-  'بودابست': ['budapest-parliament','chain-bridge-budapest','budapest-city','buda-castle'],
-  'مانيلا': ['boracay-beach','palawan-philippines','el-nido-philippines','philippines-islands'],
-};
-
-function getUnsplashUrls(dest) {
-  // كلمات بحث مخصصة لكل مدينة - تجلب صور المعالم الحقيقية
-  const cityQueries = {
-    'إسطنبول': ['hagia+sophia+istanbul','blue+mosque+istanbul','bosphorus+istanbul','grand+bazaar+istanbul'],
-    'كوالالمبور': ['petronas+towers+kuala+lumpur','batu+caves+malaysia','klcc+malaysia','kuala+lumpur+skyline'],
-    'تبليسي': ['tbilisi+georgia+old+town','narikala+fortress+georgia','tbilisi+bridge','georgia+caucasus'],
-    'باكو': ['flame+towers+baku','baku+azerbaijan+old+city','baku+boulevard','azerbaijan+architecture'],
-    'بانكوك': ['grand+palace+bangkok','wat+arun+bangkok','bangkok+temple','thailand+skyline'],
-    'لندن': ['tower+bridge+london','big+ben+london','london+eye+thames','buckingham+palace+london'],
-    'باريس': ['eiffel+tower+paris','louvre+museum+paris','paris+seine+river','montmartre+paris'],
-    'دبي': ['burj+khalifa+dubai','palm+jumeirah+dubai','dubai+skyline+night','dubai+marina'],
-    'سراييفو': ['sarajevo+old+town','bascarsija+sarajevo','stari+most+bosnia','sarajevo+mountains'],
-    'زيورخ': ['zurich+lake+switzerland','zurich+old+town','swiss+alps+snow','zurich+city+skyline'],
-    'أنطاليا': ['antalya+beach+turkey','antalya+old+city+kaleici','turkish+riviera','antalya+harbor'],
-    'براغ': ['prague+castle+charles+bridge','old+town+square+prague','prague+skyline','prague+architecture'],
-    'سنغافورة': ['marina+bay+sands+singapore','gardens+by+the+bay','singapore+skyline','singapore+city'],
-    'ميونيخ': ['neuschwanstein+castle+germany','marienplatz+munich','bavarian+alps+germany','munich+city'],
-    'كيب تاون': ['table+mountain+cape+town','cape+town+waterfront','cape+good+hope','cape+town+city'],
-    'المالديف': ['maldives+overwater+bungalow','maldives+crystal+water','maldives+beach+resort','maldives+tropical'],
-    'مراكش': ['marrakech+medina+morocco','jemaa+el+fna+marrakech','moroccan+architecture','marrakech+souks'],
-    'بالي': ['bali+temple+indonesia','ubud+rice+terraces+bali','bali+beach+sunset','tanah+lot+bali'],
-    'طوكيو': ['tokyo+shibuya+crossing','mount+fuji+japan','tokyo+skyline+night','senso+ji+temple+tokyo'],
-    'كاندي': ['sigiriya+rock+sri+lanka','ella+sri+lanka','temple+tooth+kandy','sri+lanka+landscape'],
-    'روما': ['colosseum+rome+italy','trevi+fountain+rome','vatican+rome+italy','roman+forum+italy'],
-    'برشلونة': ['sagrada+familia+barcelona','barcelona+city+spain','park+guell+barcelona','gothic+quarter+barcelona'],
-    'القاهرة': ['pyramids+giza+egypt','sphinx+egypt','cairo+egypt+nile','cairo+city+egypt'],
-    'أمستردام': ['amsterdam+canals+netherlands','amsterdam+tulips','amsterdam+city+bikes','anne+frank+house'],
-    'نيويورك': ['new+york+skyline+manhattan','statue+of+liberty+nyc','times+square+new+york','central+park+nyc'],
-    'فيينا': ['schonbrunn+palace+vienna','vienna+opera+house','vienna+city+austria','st+stephens+cathedral+vienna'],
-    'بودابست': ['budapest+parliament+danube','chain+bridge+budapest','budapest+city+night','buda+castle+hungary'],
-    'مانيلا': ['boracay+beach+philippines','palawan+el+nido+philippines','philippines+islands','manila+philippines'],
-  };
-
-  const cityKey = Object.keys(cityQueries).find(k =>
-    dest.name && (dest.name.includes(k) || k.includes(dest.name))
-  );
-
-  const queries = cityKey ? cityQueries[cityKey] : [
-    `${dest.name}+city+landmark`,
-    `${dest.name}+tourism+travel`,
-    `${dest.country}+architecture`,
-    `${dest.name}+nature+landscape`,
+function getDestImages(dest) {
+  // إذا كانت الصور محفوظة في قاعدة البيانات استخدمها
+  if(dest.images && dest.images.length > 0) return dest.images;
+  // fallback: صورة عامة للمدينة
+  const seed = (dest.name||'').charCodeAt(0) * 7 + (dest.country||'').charCodeAt(0) * 3;
+  return [
+    `https://picsum.photos/seed/${seed}/800/500`,
+    `https://picsum.photos/seed/${seed+1}/800/500`,
+    `https://picsum.photos/seed/${seed+2}/800/500`,
   ];
-
-  // Unsplash Source API - مجاني بدون key
-  return queries.map(q =>
-    `https://source.unsplash.com/800x500/?${q}`
-  );
 }
 
 // ═══ INIT NAV ═══
@@ -506,7 +436,7 @@ function renderGrid(dests) {
     return;
   }
   grid.innerHTML = dests.map((d,i) => {
-    const imgs = getUnsplashUrls(d);
+    const imgs = getDestImages(d);
     const stars = d.rating_avg ? '⭐'.repeat(Math.round(d.rating_avg)) : '';
     const noVisa = /بدون تأشيرة|بلا تأشيرة/.test(d.visa_info||'');
     const isSummer = /صيف|يونيو|يوليو|أغسطس|مايو|أبريل/.test(d.best_time||'');
@@ -538,7 +468,7 @@ function renderGrid(dests) {
   }).join('');
 
   // Auto-slide images
-  dests.forEach((d, i) => autoSlide(i, getUnsplashUrls(d).length));
+  dests.forEach((d, i) => autoSlide(i, getDestImages(d).length));
 }
 
 // ═══ AUTO SLIDE ═══
@@ -565,7 +495,7 @@ async function openDest(idx) {
   sheetImgIdx = 0;
 
   // Images
-  const imgs = getUnsplashUrls(d);
+  const imgs = getDestImages(d);
   const sheetImgs = document.getElementById('sheetImgs');
   sheetImgs.innerHTML = `
     ${imgs.map((url,j) => `<img src="${url}" alt="${d.name}" class="${j===0?'active':''}"
@@ -617,7 +547,7 @@ async function openDest(idx) {
 
 function slideSheet(dir) {
   const d = currentDest;
-  const imgs = getUnsplashUrls(d);
+  const imgs = getDestImages(d);
   const total = imgs.length;
   const container = document.getElementById('sheetImgs');
   const imgEls = container.querySelectorAll('img');
