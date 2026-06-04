@@ -19,7 +19,7 @@
 }
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
 body{font-family:'Tajawal',sans-serif;background:var(--dk);color:white;
-  padding-top:var(--nav-h);padding-bottom:calc(var(--bot-h)+20px);}
+  padding-top:var(--nav-h);padding-bottom:calc(var(--bot-h)+80px);}
 
 /* NAV */
 .topnav{position:fixed;top:0;width:100%;z-index:1000;height:var(--nav-h);
@@ -61,7 +61,7 @@ body{font-family:'Tajawal',sans-serif;background:var(--dk);color:white;
 .fchip.active{background:var(--or);border-color:var(--or);color:white;}
 
 /* GRID */
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:0 16px;}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:0 16px 20px;}
 
 /* DESTINATION CARD */
 .dest-card{border-radius:20px;overflow:hidden;background:#1a1a1a;
@@ -111,10 +111,10 @@ body{font-family:'Tajawal',sans-serif;background:var(--dk);color:white;
   overflow:hidden;display:flex;flex-direction:column;}
 .sheet.open{transform:translateY(0);}
 .sheet-handle{width:36px;height:4px;border-radius:2px;
-  background:rgba(255,255,255,0.2);margin:12px auto 0;}
+  background:rgba(255,255,255,0.2);margin:8px auto 0;}
 
 /* SHEET IMAGES */
-.sheet-imgs{position:relative;height:220px;overflow:hidden;flex-shrink:0;}
+.sheet-imgs{position:relative;height:240px;overflow:hidden;flex-shrink:0;}
 .sheet-imgs img{width:100%;height:100%;object-fit:cover;
   position:absolute;top:0;left:0;opacity:0;transition:opacity .4s;}
 .sheet-imgs img.active{opacity:1;}
@@ -362,15 +362,14 @@ let selectedStar = 0, sheetImgIdx = 0;
 
 // توليد روابط صور Unsplash لكل وجهة
 function getUnsplashUrls(dest) {
-  const queries = [
-    `${dest.name} ${dest.country} city`,
-    `${dest.name} landmark architecture`,
-    `${dest.country} landscape nature`,
-    `${dest.name} travel tourism`,
+  // Use picsum with different seeds for reliable images
+  const seed = dest.name.charCodeAt(0) + dest.country.charCodeAt(0);
+  return [
+    `https://picsum.photos/seed/${seed}/800/500`,
+    `https://picsum.photos/seed/${seed+1}/800/500`,
+    `https://picsum.photos/seed/${seed+2}/800/500`,
+    `https://picsum.photos/seed/${seed+3}/800/500`,
   ];
-  return queries.map(q =>
-    `https://source.unsplash.com/800x500/?${encodeURIComponent(q)}&sig=${dest.id || Math.random()}`
-  );
 }
 
 // ═══ INIT NAV ═══
@@ -448,7 +447,7 @@ function renderGrid(dests) {
       <div class="dest-card" onclick="openDest(${i})">
         <div class="img-slider" id="slider-${i}">
           ${imgs.map((url,j) => `<img src="${url}" alt="${d.name}" class="${j===0?'active':''}"
-            onerror="this.src='https://source.unsplash.com/800x500/?travel,city&sig=${i}${j}'">`).join('')}
+            onerror="this.style.background='#1a1a1a'">`).join('')}
           <div class="img-overlay"></div>
           <div class="img-badges">
             ${noVisa ? '<span class="ibadge novisa">بلا تأشيرة</span>' : ''}
@@ -502,7 +501,7 @@ async function openDest(idx) {
   const sheetImgs = document.getElementById('sheetImgs');
   sheetImgs.innerHTML = `
     ${imgs.map((url,j) => `<img src="${url}" alt="${d.name}" class="${j===0?'active':''}"
-      onerror="this.src='https://source.unsplash.com/800x500/?travel&sig=${j}'">`).join('')}
+      onerror="this.style.background='#1a1a1a'">`).join('')}
     <div class="sheet-img-overlay"></div>
     <div class="sheet-title-over">
       <div class="sheet-city">${d.emoji||'🌍'} ${d.name}</div>
@@ -542,6 +541,10 @@ async function openDest(idx) {
   document.getElementById('sheetOverlay').classList.add('open');
   document.getElementById('sheet').classList.add('open');
   document.body.style.overflow = 'hidden';
+  const aiBtn = document.getElementById('rihlaAiBtn');
+  if(aiBtn) aiBtn.style.display = 'none';
+  const aiWin = document.getElementById('rihlaAiWin');
+  if(aiWin) aiWin.style.display = 'none';
 }
 
 function slideSheet(dir) {
@@ -563,6 +566,8 @@ function closeSheet() {
   document.getElementById('sheet').classList.remove('open');
   document.body.style.overflow = '';
   currentDest = null;
+  const aiBtn = document.getElementById('rihlaAiBtn');
+  if(aiBtn) aiBtn.style.display = 'flex';
 }
 
 // ═══ TABS ═══
