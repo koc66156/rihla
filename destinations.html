@@ -358,68 +358,47 @@ let currentDest = null, currentUser = null;
 let selectedStar = 0, sheetImgIdx = 0;
 
 // توليد روابط صور Unsplash لكل وجهة
-// Wikipedia page names for each city
-const WIKI_PAGES = {
-  'إسطنبول': 'Istanbul',
-  'كوالالمبور': 'Kuala_Lumpur',
-  'تبليسي': 'Tbilisi',
-  'باكو': 'Baku',
-  'بانكوك': 'Bangkok',
-  'لندن': 'London',
-  'باريس': 'Paris',
-  'دبي': 'Dubai',
-  'سراييفو': 'Sarajevo',
-  'زيورخ': 'Zurich',
-  'أنطاليا': 'Antalya',
-  'براغ': 'Prague',
-  'سنغافورة': 'Singapore',
-  'ميونيخ': 'Munich',
-  'كيب تاون': 'Cape_Town',
-  'المالديف': 'Maldives',
-  'مراكش': 'Marrakesh',
-  'بالي': 'Bali',
-  'طوكيو': 'Tokyo',
-  'كاندي': 'Kandy',
-  'روما': 'Rome',
-  'برشلونة': 'Barcelona',
-  'القاهرة': 'Cairo',
-  'أمستردام': 'Amsterdam',
-  'نيويورك': 'New_York_City',
-  'فيينا': 'Vienna',
-  'بودابست': 'Budapest',
-  'مانيلا': 'Manila',
+// تدرج لوني لكل وجهة كـ placeholder احترافي
+const CITY_GRADIENTS = {
+  'إسطنبول': '#C0392B,#8E44AD',
+  'كوالالمبور': '#16A085,#F39C12',
+  'تبليسي': '#E74C3C,#C0392B',
+  'باكو': '#2980B9,#27AE60',
+  'بانكوك': '#F39C12,#E74C3C',
+  'لندن': '#2C3E50,#95A5A6',
+  'باريس': '#8E44AD,#2980B9',
+  'دبي': '#F39C12,#E67E22',
+  'سراييفو': '#27AE60,#2980B9',
+  'زيورخ': '#2980B9,#ECF0F1',
+  'أنطاليا': '#3498DB,#16A085',
+  'براغ': '#8E44AD,#2C3E50',
+  'سنغافورة': '#E74C3C,#E67E22',
+  'ميونيخ': '#2980B9,#E74C3C',
+  'كيب تاون': '#27AE60,#F39C12',
+  'المالديف': '#16A085,#3498DB',
+  'مراكش': '#E67E22,#E74C3C',
+  'بالي': '#27AE60,#16A085',
+  'طوكيو': '#E74C3C,#ECF0F1',
+  'كاندي': '#27AE60,#F39C12',
+  'روما': '#E67E22,#E74C3C',
+  'برشلونة': '#E74C3C,#F39C12',
+  'القاهرة': '#F39C12,#E67E22',
+  'أمستردام': '#E74C3C,#2980B9',
+  'نيويورك': '#2C3E50,#3498DB',
+  'فيينا': '#8E44AD,#2C3E50',
+  'بودابست': '#C0392B,#8E44AD',
+  'مانيلا': '#16A085,#3498DB',
 };
+
+function getCityGradient(dest) {
+  const key = Object.keys(CITY_GRADIENTS).find(k => dest.name && dest.name.includes(k));
+  const colors = key ? CITY_GRADIENTS[key] : 'FF5C1A,FFD000';
+  return `linear-gradient(135deg,#${colors.replace(',','#')})`;
+}
 
 function getDestImages(dest) {
   if(dest.images && dest.images.length > 0) return dest.images;
-  // Fallback gradient placeholder
   return [];
-}
-
-// جلب صور Wikipedia لوجهة معينة
-async function loadWikiImages(dest, imgContainer) {
-  const cityKey = Object.keys(WIKI_PAGES).find(k => dest.name && dest.name.includes(k));
-  const wikiPage = cityKey ? WIKI_PAGES[cityKey] : (dest.name || 'Travel');
-  
-  try {
-    const url = `https://en.wikipedia.org/w/api.php?action=query&titles=${wikiPage}&prop=pageimages|images&format=json&pithumbsize=800&pilimit=4&origin=*`;
-    const resp = await fetch(url);
-    const data = await resp.json();
-    const pages = data.query?.pages;
-    const page = pages ? Object.values(pages)[0] : null;
-    
-    if(page?.thumbnail?.source) {
-      const mainImg = page.thumbnail.source.replace(/\/\d+px-/, '/800px-');
-      // Update first image
-      const imgs = imgContainer.querySelectorAll('img');
-      if(imgs[0]) {
-        imgs[0].src = mainImg;
-        imgs[0].classList.add('active');
-      }
-    }
-  } catch(e) {
-    console.log('Wiki image load failed:', e);
-  }
 }
 
 // ═══ INIT NAV ═══
@@ -495,10 +474,10 @@ function renderGrid(dests) {
     const isFamily = /عائلي|عائلة/.test((d.description||'')+(d.must_visit||[]).join(''));
     return `
       <div class="dest-card" onclick="openDest(${i})">
-        <div class="img-slider" id="slider-${i}">
+        <div class="img-slider" id="slider-${i}" style="background:${getCityGradient(d)}">
           ${imgs.length > 0 
-            ? imgs.map((url,j) => `<img src="${url}" alt="${d.name}" class="${j===0?'active':''}" onerror="this.style.background='#1a1a1a'">`).join('')
-            : `<img src="" alt="${d.name}" class="active" style="background:linear-gradient(135deg,#FF5C1A22,#FFD00022)" onerror="this.style.background='#1a1a1a'">`
+            ? imgs.map((url,j) => `<img src="${url}" alt="${d.name}" class="${j===0?'active':''}" loading="lazy" onerror="this.style.display='none'">`).join('')
+            : `<div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:52px">${d.emoji||'🌍'}</div>`
           }
           <div class="img-overlay"></div>
           <div class="img-badges">
@@ -521,15 +500,10 @@ function renderGrid(dests) {
       </div>`;
   }).join('');
 
-  // Load Wikipedia images and auto-slide
+  // Auto-slide images
   dests.forEach((d, i) => {
     const imgs = getDestImages(d);
-    autoSlide(i, Math.max(imgs.length, 1));
-    // Load wiki image if no DB images
-    if(!d.images || d.images.length === 0) {
-      const container = document.getElementById('slider-'+i);
-      if(container) loadWikiImages(d, container);
-    }
+    if(imgs.length > 1) autoSlide(i, imgs.length);
   });
 }
 
@@ -559,9 +533,12 @@ async function openDest(idx) {
   // Images
   const imgs = getDestImages(d);
   const sheetImgs = document.getElementById('sheetImgs');
+  sheetImgs.style.background = getCityGradient(d);
   sheetImgs.innerHTML = `
-    ${imgs.map((url,j) => `<img src="${url}" alt="${d.name}" class="${j===0?'active':''}"
-      onerror="this.style.background='#1a1a1a'">`).join('')}
+    ${imgs.length > 0
+      ? imgs.map((url,j) => `<img src="${url}" alt="${d.name}" class="${j===0?'active':''}" loading="lazy" onerror="this.style.display='none'">`).join('')
+      : `<div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:80px">${d.emoji||'🌍'}</div>`
+    }
     <div class="sheet-img-overlay"></div>
     <div class="sheet-title-over">
       <div class="sheet-city">${d.emoji||'🌍'} ${d.name}</div>
