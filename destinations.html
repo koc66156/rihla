@@ -108,14 +108,14 @@ body{font-family:'Tajawal',sans-serif;background:var(--dk);color:white;
 .sheet-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.7);
   z-index:2000;opacity:0;pointer-events:none;transition:opacity .3s;}
 .sheet-overlay.open{opacity:1;pointer-events:all;}
-.sheet{position:fixed;bottom:0;left:0;right:0;max-height:85vh;max-height:85dvh;
-  background:#111;border-radius:24px 24px 0 0;z-index:2001;
+.sheet{position:fixed;bottom:0;left:0;right:0;max-height:92vh;max-height:92dvh;
+  background:#111;border-radius:20px 20px 0 0;z-index:2001;
   transform:translateY(100%);transition:transform .4s cubic-bezier(.4,0,.2,1);
   overflow:hidden;display:flex;flex-direction:column;}
 .sheet.open{transform:translateY(0);}
 
 /* SHEET IMAGES */
-.sheet-imgs{position:relative;height:280px;overflow:hidden;flex-shrink:0;}
+.sheet-imgs{position:relative;height:260px;overflow:hidden;flex-shrink:0;}
 .sheet-imgs img{width:100%;height:100%;object-fit:cover;
   position:absolute;top:0;left:0;opacity:0;transition:opacity .4s;}
 .sheet-imgs img.active{opacity:1;}
@@ -391,6 +391,99 @@ const CITY_GRADIENTS = {
   'فيينا': '#8E44AD,#4776E6',
   'بودابست': '#C0392B,#8E44AD',
   'مانيلا': '#00B4DB,#56AB2F',
+  // سويسرا
+  'إنترلاكن': '#4776E6,#8E54E9',
+  'غرينديلفالد': '#2980B9,#6DD5FA',
+  'لوتسيرن': '#1A5276,#148F77',
+  'زيرمات': '#4CA1AF,#C4E0E5',
+  'جنيف': '#1D976C,#93F9B9',
+  // إيطاليا
+  'البندقية': '#1CB5E0,#000851',
+  'فلورنسا': '#C94B4B,#4B134F',
+  'ميلانو': '#2C3E50,#4CA1AF',
+  'سيرميوني': '#56AB2F,#A8E063',
+  'سينكوتيري': '#F7971E,#FFD200',
+  'بولونيا': '#E55D87,#5FC3E4',
+  // البوسنة
+  'موستار': '#11998E,#38EF7D',
+  'بلاتش': '#1A5276,#148F77',
+  'يايتسي': '#00B4DB,#0083B0',
+  // النمسا
+  'سالزبورغ': '#834D9B,#D04ED6',
+  'هالشتات': '#4776E6,#8E54E9',
+  'إنسبروك': '#2980B9,#6DD5FA',
+  'زيل أم سي': '#1CB5E0,#C4E0E5',
+  // ألمانيا
+  'روتنبرغ': '#C94B4B,#4B134F',
+  'فوسن': '#8E44AD,#4776E6',
+  'كولن': '#2C3E50,#4CA1AF',
+  'درسدن': '#E74C3C,#E67E22',
+  'فرانكفورت': '#1A5276,#2980B9',
+  // إسبانيا
+  'غرناطة': '#C0392B,#E74C3C',
+  'إشبيلية': '#F7971E,#FFD200',
+  'توليدو': '#E55D87,#C0392B',
+  'مالقا': '#F39C12,#F7971E',
+  'ماربيا': '#00B4DB,#56AB2F',
+  // فرنسا
+  'نيس': '#00B4DB,#0083B0',
+  'بوردو': '#C94B4B,#8E44AD',
+  'ستراسبورغ': '#E74C3C,#C0392B',
+  // هولندا وبلجيكا
+  'روتردام': '#F953C6,#B91D73',
+  'لاهاي': '#4776E6,#8E54E9',
+  'بروج': '#1D976C,#93F9B9',
+  'غنت': '#E55D87,#5FC3E4',
+  // البرتغال
+  'لشبونة': '#F7971E,#FFD200',
+  'بورتو': '#C94B4B,#4B134F',
+  'سينترا': '#56AB2F,#A8E063',
+  // اليونان
+  'سانتوريني': '#00B4DB,#4776E6',
+  'ميكونوس': '#1CB5E0,#F953C6',
+  'أثينا': '#C0392B,#8E44AD',
+  // كرواتيا
+  'دوبروفنيك': '#1A5276,#00B4DB',
+  'سبليت': '#11998E,#38EF7D',
+  'بليتفيش': '#56AB2F,#1D976C',
+  // بولندا ورومانيا
+  'كراكوف': '#8E44AD,#4776E6',
+  'وارسو': '#C0392B,#E74C3C',
+  'براشوف': '#2C3E50,#4CA1AF',
+  'بوخارست': '#F7971E,#E55D87',
+  // إسكندنافيا
+  'برغن': '#1A5276,#148F77',
+  'ريكيافيك': '#4776E6,#1CB5E0',
+  'كوبنهاغن': '#E74C3C,#F953C6',
+  // المجر والبلطيق
+  'بيك': '#C0392B,#8E44AD',
+  'تالين': '#2C3E50,#4CA1AF',
+  'ريغا': '#E55D87,#5FC3E4',
+  // البلقان
+  'كوتور': '#00B4DB,#1A5276',
+  'بودفا': '#56AB2F,#00B4DB',
+  'أوهريد': '#4776E6,#56AB2F',
+  'تيرانا': '#E74C3C,#F7971E',
+  // تركيا
+  'كابادوكيا': '#F7971E,#E74C3C',
+  'طرابزون': '#56AB2F,#1D976C',
+  // المغرب
+  'فاس': '#C94B4B,#E55D87',
+  'شفشاون': '#4776E6,#00B4DB',
+  // اسكتلندا وأيرلندا
+  'إدنبرة': '#2C3E50,#4CA1AF',
+  'المرتفعات الاسكتلندية': '#56AB2F,#1D976C',
+  'دبلن': '#56AB2F,#A8E063',
+  // آسيا
+  'سمرقند': '#C0392B,#8E44AD',
+  'طشقند': '#F7971E,#E74C3C',
+  'زنزبار': '#00B4DB,#56AB2F',
+  'جزيرة جيجو': '#11998E,#56AB2F',
+  'كيوتو': '#FF416C,#FF4B2B',
+  'أوساكا': '#F953C6,#B91D73',
+  // تايلاند
+  'بوكيت': '#00B4DB,#56AB2F',
+  'باتايا': '#1CB5E0,#0083B0',
 };
 
 function getCityGradient(dest) {
