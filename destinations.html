@@ -391,45 +391,53 @@ const CITY_IMAGES = {
 };
 
 function getUnsplashUrls(dest) {
-  // بنية seed ثابتة لكل مدينة لضمان صور مناسبة
-  const seeds = {
-    'إسطنبول': [10,11,12,13],
-    'كوالالمبور': [20,21,22,23],
-    'تبليسي': [30,31,32,33],
-    'باكو': [40,41,42,43],
-    'بانكوك': [50,51,52,53],
-    'لندن': [60,61,62,63],
-    'باريس': [70,71,72,73],
-    'دبي': [80,81,82,83],
-    'سراييفو': [90,91,92,93],
-    'زيورخ': [100,101,102,103],
-    'أنطاليا': [110,111,112,113],
-    'براغ': [120,121,122,123],
-    'سنغافورة': [130,131,132,133],
-    'ميونيخ': [140,141,142,143],
-    'كيب تاون': [150,151,152,153],
-    'المالديف': [160,161,162,163],
-    'مراكش': [170,171,172,173],
-    'بالي': [180,181,182,183],
-    'طوكيو': [190,191,192,193],
-    'كاندي': [200,201,202,203],
-    'روما': [210,211,212,213],
-    'برشلونة': [220,221,222,223],
-    'القاهرة': [230,231,232,233],
-    'أمستردام': [240,241,242,243],
-    'نيويورك': [250,251,252,253],
-    'فيينا': [260,261,262,263],
-    'بودابست': [270,271,272,273],
-    'مانيلا': [280,281,282,283],
+  // كلمات بحث مخصصة لكل مدينة - تجلب صور المعالم الحقيقية
+  const cityQueries = {
+    'إسطنبول': ['hagia+sophia+istanbul','blue+mosque+istanbul','bosphorus+istanbul','grand+bazaar+istanbul'],
+    'كوالالمبور': ['petronas+towers+kuala+lumpur','batu+caves+malaysia','klcc+malaysia','kuala+lumpur+skyline'],
+    'تبليسي': ['tbilisi+georgia+old+town','narikala+fortress+georgia','tbilisi+bridge','georgia+caucasus'],
+    'باكو': ['flame+towers+baku','baku+azerbaijan+old+city','baku+boulevard','azerbaijan+architecture'],
+    'بانكوك': ['grand+palace+bangkok','wat+arun+bangkok','bangkok+temple','thailand+skyline'],
+    'لندن': ['tower+bridge+london','big+ben+london','london+eye+thames','buckingham+palace+london'],
+    'باريس': ['eiffel+tower+paris','louvre+museum+paris','paris+seine+river','montmartre+paris'],
+    'دبي': ['burj+khalifa+dubai','palm+jumeirah+dubai','dubai+skyline+night','dubai+marina'],
+    'سراييفو': ['sarajevo+old+town','bascarsija+sarajevo','stari+most+bosnia','sarajevo+mountains'],
+    'زيورخ': ['zurich+lake+switzerland','zurich+old+town','swiss+alps+snow','zurich+city+skyline'],
+    'أنطاليا': ['antalya+beach+turkey','antalya+old+city+kaleici','turkish+riviera','antalya+harbor'],
+    'براغ': ['prague+castle+charles+bridge','old+town+square+prague','prague+skyline','prague+architecture'],
+    'سنغافورة': ['marina+bay+sands+singapore','gardens+by+the+bay','singapore+skyline','singapore+city'],
+    'ميونيخ': ['neuschwanstein+castle+germany','marienplatz+munich','bavarian+alps+germany','munich+city'],
+    'كيب تاون': ['table+mountain+cape+town','cape+town+waterfront','cape+good+hope','cape+town+city'],
+    'المالديف': ['maldives+overwater+bungalow','maldives+crystal+water','maldives+beach+resort','maldives+tropical'],
+    'مراكش': ['marrakech+medina+morocco','jemaa+el+fna+marrakech','moroccan+architecture','marrakech+souks'],
+    'بالي': ['bali+temple+indonesia','ubud+rice+terraces+bali','bali+beach+sunset','tanah+lot+bali'],
+    'طوكيو': ['tokyo+shibuya+crossing','mount+fuji+japan','tokyo+skyline+night','senso+ji+temple+tokyo'],
+    'كاندي': ['sigiriya+rock+sri+lanka','ella+sri+lanka','temple+tooth+kandy','sri+lanka+landscape'],
+    'روما': ['colosseum+rome+italy','trevi+fountain+rome','vatican+rome+italy','roman+forum+italy'],
+    'برشلونة': ['sagrada+familia+barcelona','barcelona+city+spain','park+guell+barcelona','gothic+quarter+barcelona'],
+    'القاهرة': ['pyramids+giza+egypt','sphinx+egypt','cairo+egypt+nile','cairo+city+egypt'],
+    'أمستردام': ['amsterdam+canals+netherlands','amsterdam+tulips','amsterdam+city+bikes','anne+frank+house'],
+    'نيويورك': ['new+york+skyline+manhattan','statue+of+liberty+nyc','times+square+new+york','central+park+nyc'],
+    'فيينا': ['schonbrunn+palace+vienna','vienna+opera+house','vienna+city+austria','st+stephens+cathedral+vienna'],
+    'بودابست': ['budapest+parliament+danube','chain+bridge+budapest','budapest+city+night','buda+castle+hungary'],
+    'مانيلا': ['boracay+beach+philippines','palawan+el+nido+philippines','philippines+islands','manila+philippines'],
   };
-  const cityKey = Object.keys(seeds).find(k => dest.name.includes(k));
-  const s = cityKey ? seeds[cityKey] : [
-    dest.name.charCodeAt(0)*3,
-    dest.name.charCodeAt(0)*3+1,
-    dest.name.charCodeAt(0)*3+2,
-    dest.name.charCodeAt(0)*3+3,
+
+  const cityKey = Object.keys(cityQueries).find(k =>
+    dest.name && (dest.name.includes(k) || k.includes(dest.name))
+  );
+
+  const queries = cityKey ? cityQueries[cityKey] : [
+    `${dest.name}+city+landmark`,
+    `${dest.name}+tourism+travel`,
+    `${dest.country}+architecture`,
+    `${dest.name}+nature+landscape`,
   ];
-  return s.map(seed => `https://picsum.photos/seed/${seed}/800/500`);
+
+  // Unsplash Source API - مجاني بدون key
+  return queries.map(q =>
+    `https://source.unsplash.com/800x500/?${q}`
+  );
 }
 
 // ═══ INIT NAV ═══
