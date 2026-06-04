@@ -3,215 +3,348 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>رِحلة — دليل الوجهات</title>
+<title>رِحلة — وجهات العالم</title>
 <meta name="theme-color" content="#FF5C1A">
+<meta name="apple-mobile-web-app-capable" content="yes">
 <link rel="manifest" href="manifest.json">
-<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&family=Righteous&display=swap" rel="stylesheet">
+<link rel="apple-touch-icon" href="icon-512.png">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;800;900&family=Righteous&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
-:root{--or:#FF5C1A;--yl:#FFD000;--tl:#00C9B1;--dk:#0E0E0E;--muted:rgba(255,255,255,0.45);--card:rgba(255,255,255,0.05);--border:rgba(255,255,255,0.08);--nav-h:64px;--bot-h:68px;}
+:root{
+  --or:#FF5C1A;--yl:#FFD000;--tl:#00C9B1;--dk:#0E0E0E;
+  --muted:rgba(255,255,255,0.5);--card:rgba(255,255,255,0.05);
+  --border:rgba(255,255,255,0.08);--nav-h:64px;--bot-h:64px;
+}
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
-body{font-family:'Tajawal',sans-serif;background:var(--dk);color:white;min-height:100vh;padding-top:var(--nav-h);padding-bottom:calc(var(--bot-h)+140px);}
+body{font-family:'Tajawal',sans-serif;background:var(--dk);color:white;
+  padding-top:var(--nav-h);padding-bottom:calc(var(--bot-h)+20px);}
 
 /* NAV */
-
-
+.topnav{position:fixed;top:0;width:100%;z-index:1000;height:var(--nav-h);
+  padding:0 16px;display:flex;align-items:center;justify-content:space-between;
+  background:rgba(14,14,14,0.95);backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--border);}
+.nav-logo{font-family:'Righteous',cursive;font-size:24px;
+  background:linear-gradient(90deg,var(--or),var(--yl));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  background-clip:text;border:none;background-color:transparent;cursor:pointer;}
+.nav-profile-btn{padding:8px 16px;border-radius:20px;
+  background:rgba(255,92,26,0.12);border:1.5px solid rgba(255,92,26,0.25);
+  color:var(--or);font-family:'Tajawal',sans-serif;font-size:13px;
+  font-weight:800;cursor:pointer;}
 
 /* HERO */
-.hero{padding:calc(var(--nav-h) + 40px) 20px 0;}
+.hero{padding:24px 16px 16px;text-align:center;}
 .hero h1{font-size:28px;font-weight:900;margin-bottom:6px;}
-.hero h1 span{background:linear-gradient(135deg,var(--or),var(--yl));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
-.hero p{font-size:14px;color:var(--muted);margin-bottom:20px;line-height:1.7;}
+.hero h1 span{background:linear-gradient(90deg,var(--or),var(--yl));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.hero p{font-size:14px;color:var(--muted);margin-bottom:20px;}
 
 /* SEARCH */
-.search-box{display:flex;align-items:center;gap:10px;background:var(--card);border:1.5px solid var(--border);border-radius:16px;padding:13px 16px;margin-bottom:16px;}
-.search-box input{flex:1;background:transparent;border:none;font-family:'Tajawal',sans-serif;font-size:14px;color:white;outline:none;}
-.search-box input::placeholder{color:rgba(255,255,255,0.2);}
+.search-wrap{padding:0 16px 12px;}
+.search-box{display:flex;align-items:center;gap:10px;
+  background:rgba(255,255,255,0.07);border:1.5px solid var(--border);
+  border-radius:16px;padding:12px 16px;transition:border-color .2s;}
+.search-box:focus-within{border-color:var(--or);}
+.search-box input{flex:1;background:none;border:none;outline:none;
+  color:white;font-family:'Tajawal',sans-serif;font-size:15px;direction:rtl;}
+.search-box input::placeholder{color:var(--muted);}
 
 /* FILTERS */
-.filter-row{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;margin-bottom:24px;}
-.filter-row::-webkit-scrollbar{display:none;}
-.fchip{white-space:nowrap;padding:8px 16px;border-radius:20px;border:1.5px solid rgba(255,255,255,0.1);background:transparent;font-family:'Tajawal',sans-serif;font-size:12px;font-weight:700;cursor:pointer;color:rgba(255,255,255,0.6);transition:all .2s;}
-.fchip.active,.fchip:hover{background:var(--or);color:white;border-color:var(--or);}
+.filters{display:flex;gap:8px;padding:0 16px 16px;overflow-x:auto;scrollbar-width:none;}
+.filters::-webkit-scrollbar{display:none;}
+.fchip{padding:8px 18px;border-radius:20px;border:1.5px solid var(--border);
+  background:none;color:rgba(255,255,255,0.6);font-family:'Tajawal',sans-serif;
+  font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap;transition:all .2s;}
+.fchip.active{background:var(--or);border-color:var(--or);color:white;}
 
 /* GRID */
-.dest-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;padding:0 20px;}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:0 16px;}
 
-/* DEST CARD */
-.dest-card{border-radius:22px;overflow:hidden;cursor:pointer;transition:all .3s;border:1px solid var(--border);}
-.dest-card:hover{transform:translateY(-6px);box-shadow:0 16px 40px rgba(0,0,0,0.3);border-color:rgba(255,255,255,0.2);}
-.dest-cover{height:160px;position:relative;display:flex;align-items:center;justify-content:center;font-size:64px;}
-.dest-cover-overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,0.6) 0%,transparent 60%);}
-.dest-badge{position:absolute;top:12px;right:12px;background:rgba(0,0,0,0.4);backdrop-filter:blur(8px);padding:5px 12px;border-radius:12px;font-size:11px;font-weight:700;color:white;}
-.dest-tags{position:absolute;bottom:12px;right:12px;display:flex;gap:5px;}
-.dtag{padding:3px 9px;border-radius:8px;background:rgba(255,255,255,0.15);backdrop-filter:blur(8px);font-size:10px;font-weight:700;color:white;}
-.dest-body{padding:16px;background:rgba(255,255,255,0.04);}
-.dest-name{font-size:18px;font-weight:900;margin-bottom:3px;}
-.dest-country{font-size:12px;color:var(--muted);margin-bottom:10px;}
-.dest-meta{display:flex;gap:12px;}
-.dmeta{font-size:11px;color:var(--muted);display:flex;align-items:center;gap:4px;}
+/* DESTINATION CARD */
+.dest-card{border-radius:20px;overflow:hidden;background:#1a1a1a;
+  border:1px solid var(--border);cursor:pointer;transition:transform .2s;
+  position:relative;}
+.dest-card:active{transform:scale(0.97);}
+
+/* IMAGE SLIDER */
+.img-slider{position:relative;height:140px;overflow:hidden;}
+.img-slider img{width:100%;height:100%;object-fit:cover;
+  position:absolute;top:0;left:0;opacity:0;transition:opacity .4s;}
+.img-slider img.active{opacity:1;}
+.slider-dots{position:absolute;bottom:6px;left:50%;transform:translateX(-50%);
+  display:flex;gap:4px;z-index:2;}
+.sdot{width:5px;height:5px;border-radius:50%;background:rgba(255,255,255,0.4);
+  transition:background .3s;}
+.sdot.active{background:white;}
+.img-overlay{position:absolute;bottom:0;left:0;right:0;height:60px;
+  background:linear-gradient(transparent,rgba(0,0,0,0.8));z-index:1;}
+
+/* BADGES ON IMAGE */
+.img-badges{position:absolute;top:8px;right:8px;display:flex;gap:4px;z-index:2;}
+.ibadge{padding:3px 8px;border-radius:8px;font-size:9px;font-weight:800;
+  backdrop-filter:blur(8px);background:rgba(0,0,0,0.5);}
+.ibadge.novisa{background:rgba(0,201,177,0.8);color:white;}
+.ibadge.summer{background:rgba(255,208,0,0.8);color:#000;}
+.ibadge.family{background:rgba(255,92,26,0.8);color:white;}
+
+/* CARD BODY */
+.card-body{padding:10px 12px 12px;}
+.card-name{font-size:15px;font-weight:900;margin-bottom:2px;}
+.card-country{font-size:11px;color:var(--muted);margin-bottom:8px;}
+.card-stats{display:flex;justify-content:space-between;align-items:center;}
+.card-rating{display:flex;align-items:center;gap:3px;font-size:11px;color:var(--yl);}
+.card-cost{font-size:10px;color:var(--muted);}
+.card-tags{display:flex;gap:4px;margin-top:6px;flex-wrap:wrap;}
+.ctag{padding:2px 7px;border-radius:6px;font-size:9px;font-weight:800;
+  background:rgba(255,255,255,0.08);color:rgba(255,255,255,0.6);}
+
+/* DETAIL SHEET */
+.sheet-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.7);
+  z-index:2000;opacity:0;pointer-events:none;transition:opacity .3s;}
+.sheet-overlay.open{opacity:1;pointer-events:all;}
+.sheet{position:fixed;bottom:0;left:0;right:0;max-height:92vh;
+  background:#111;border-radius:24px 24px 0 0;z-index:2001;
+  transform:translateY(100%);transition:transform .4s cubic-bezier(.4,0,.2,1);
+  overflow:hidden;display:flex;flex-direction:column;}
+.sheet.open{transform:translateY(0);}
+.sheet-handle{width:36px;height:4px;border-radius:2px;
+  background:rgba(255,255,255,0.2);margin:12px auto 0;}
+
+/* SHEET IMAGES */
+.sheet-imgs{position:relative;height:220px;overflow:hidden;flex-shrink:0;}
+.sheet-imgs img{width:100%;height:100%;object-fit:cover;
+  position:absolute;top:0;left:0;opacity:0;transition:opacity .4s;}
+.sheet-imgs img.active{opacity:1;}
+.sheet-img-nav{position:absolute;top:50%;transform:translateY(-50%);
+  width:100%;display:flex;justify-content:space-between;padding:0 12px;z-index:2;}
+.snav-btn{width:32px;height:32px;border-radius:50%;
+  background:rgba(0,0,0,0.5);border:none;color:white;font-size:16px;
+  cursor:pointer;display:flex;align-items:center;justify-content:center;
+  backdrop-filter:blur(8px);}
+.sheet-img-dots{position:absolute;bottom:10px;left:50%;
+  transform:translateX(-50%);display:flex;gap:5px;z-index:2;}
+.sheet-img-overlay{position:absolute;bottom:0;left:0;right:0;height:80px;
+  background:linear-gradient(transparent,rgba(0,0,0,0.9));}
+.sheet-title-over{position:absolute;bottom:14px;right:16px;z-index:3;}
+.sheet-city{font-size:24px;font-weight:900;}
+.sheet-ctry{font-size:13px;color:rgba(255,255,255,0.7);}
+
+/* SHEET SCROLL */
+.sheet-scroll{overflow-y:auto;flex:1;padding-bottom:20px;}
+
+/* QUICK STATS */
+.qstats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;
+  padding:14px 16px;}
+.qstat{background:rgba(255,255,255,0.05);border:1px solid var(--border);
+  border-radius:14px;padding:10px;text-align:center;}
+.qstat-icon{font-size:18px;margin-bottom:3px;}
+.qstat-val{font-size:12px;font-weight:800;color:white;}
+.qstat-lbl{font-size:9px;color:var(--muted);margin-top:1px;}
+
+/* TABS */
+.tabs{display:flex;margin:0 16px 16px;background:rgba(255,255,255,0.05);
+  border-radius:14px;padding:3px;gap:2px;}
+.tab{flex:1;padding:9px 4px;border-radius:11px;border:none;
+  background:none;color:var(--muted);font-family:'Tajawal',sans-serif;
+  font-size:11px;font-weight:800;cursor:pointer;transition:all .2s;}
+.tab.active{background:var(--or);color:white;}
+
+/* TAB PANELS */
+.tab-panel{display:none;padding:0 16px;}
+.tab-panel.active{display:block;}
+
+/* INFO SECTION */
+.info-sec{margin-bottom:16px;}
+.info-sec-title{font-size:12px;font-weight:800;color:var(--or);
+  margin-bottom:8px;letter-spacing:.5px;}
+.info-row{display:flex;align-items:flex-start;gap:10px;
+  background:rgba(255,255,255,0.04);border:1px solid var(--border);
+  border-radius:12px;padding:10px 12px;margin-bottom:6px;}
+.info-icon{font-size:18px;flex-shrink:0;margin-top:1px;}
+.info-content{}
+.info-label{font-size:10px;color:var(--muted);margin-bottom:1px;}
+.info-value{font-size:13px;font-weight:700;}
+
+/* TAGS */
+.tags-wrap{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px;}
+.tag{padding:6px 12px;border-radius:10px;font-size:12px;font-weight:700;}
+.tag-green{background:rgba(0,201,177,0.1);color:var(--tl);border:1px solid rgba(0,201,177,0.2);}
+.tag-or{background:rgba(255,92,26,0.1);color:var(--or);border:1px solid rgba(255,92,26,0.2);}
+.tag-yl{background:rgba(255,208,0,0.1);color:var(--yl);border:1px solid rgba(255,208,0,0.2);}
+.tag-red{background:rgba(229,57,53,0.1);color:#ff6b6b;border:1px solid rgba(229,57,53,0.2);}
+
+/* SUITABILITY */
+.suit-wrap{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:16px;}
+.suit-item{display:flex;align-items:center;gap:8px;
+  background:rgba(255,255,255,0.04);border:1px solid var(--border);
+  border-radius:12px;padding:10px;}
+.suit-icon{font-size:20px;}
+.suit-info{}
+.suit-name{font-size:12px;font-weight:800;}
+.suit-val{font-size:10px;color:var(--muted);}
+
+/* REVIEWS */
+.review-card{background:rgba(255,255,255,0.04);border:1px solid var(--border);
+  border-radius:14px;padding:14px;margin-bottom:10px;}
+.review-head{display:flex;align-items:center;gap:8px;margin-bottom:8px;}
+.review-avatar{width:36px;height:36px;border-radius:50%;
+  background:linear-gradient(135deg,var(--or),var(--yl));
+  display:flex;align-items:center;justify-content:center;
+  font-size:14px;font-weight:900;flex-shrink:0;}
+.review-name{font-size:13px;font-weight:800;}
+.review-date{font-size:10px;color:var(--muted);}
+.review-stars{color:var(--yl);font-size:13px;}
+.review-text{font-size:13px;line-height:1.6;color:rgba(255,255,255,0.8);}
+.add-review-btn{width:100%;padding:14px;border-radius:14px;
+  background:linear-gradient(135deg,var(--or),#ff8c42);
+  color:white;font-family:'Tajawal',sans-serif;font-size:14px;
+  font-weight:800;border:none;cursor:pointer;margin-bottom:12px;}
+.no-reviews{text-align:center;padding:30px;color:var(--muted);font-size:14px;}
+
+/* REVIEW MODAL */
+.rmodal{position:fixed;inset:0;background:rgba(0,0,0,0.8);
+  z-index:3000;display:none;align-items:flex-end;}
+.rmodal.open{display:flex;}
+.rmodal-box{background:#1a1a1a;border-radius:24px 24px 0 0;
+  padding:24px;width:100%;}
+.rmodal-title{font-size:17px;font-weight:900;margin-bottom:16px;}
+.star-select{display:flex;gap:8px;margin-bottom:14px;justify-content:center;}
+.star-btn{font-size:28px;cursor:pointer;opacity:0.3;transition:opacity .2s;}
+.star-btn.active{opacity:1;}
+.rmodal textarea{width:100%;background:rgba(255,255,255,0.06);
+  border:1.5px solid var(--border);border-radius:14px;padding:12px;
+  font-family:'Tajawal',sans-serif;font-size:14px;color:white;
+  outline:none;resize:none;height:100px;direction:rtl;}
+.rmodal textarea:focus{border-color:var(--or);}
+.rmodal-btns{display:flex;gap:10px;margin-top:14px;}
+.rmodal-cancel{flex:1;padding:13px;border-radius:14px;
+  background:rgba(255,255,255,0.08);border:none;color:white;
+  font-family:'Tajawal',sans-serif;font-size:14px;font-weight:800;cursor:pointer;}
+.rmodal-submit{flex:2;padding:13px;border-radius:14px;
+  background:linear-gradient(135deg,var(--or),#ff8c42);border:none;
+  color:white;font-family:'Tajawal',sans-serif;font-size:14px;
+  font-weight:800;cursor:pointer;}
 
 /* EMPTY */
-.empty{text-align:center;padding:60px 20px;grid-column:1/-1;}
-.empty .ei{font-size:52px;margin-bottom:14px;}
-.empty h3{font-size:18px;font-weight:800;margin-bottom:8px;}
-.empty p{font-size:13px;color:var(--muted);}
+.empty{text-align:center;padding:60px 20px;color:var(--muted);}
+.empty-icon{font-size:52px;margin-bottom:12px;}
 
-/* ═══ DETAIL OVERLAY ═══ */
-.overlay{position:fixed;inset:0;z-index:2000;background:rgba(0,0,0,0.8);backdrop-filter:blur(10px);display:flex;align-items:flex-end;justify-content:center;opacity:0;pointer-events:none;transition:opacity .3s;}
-.overlay.open{opacity:1;pointer-events:all;}
-.sheet{background:#111;border-radius:28px 28px 0 0;width:100%;max-width:600px;max-height:92vh;overflow-y:auto;transform:translateY(100%);transition:transform .4s cubic-bezier(.34,1.2,.64,1);}
-.overlay.open .sheet{transform:translateY(0);}
-.sheet::-webkit-scrollbar{width:3px;}
-.sheet::-webkit-scrollbar-thumb{background:rgba(255,92,26,0.3);border-radius:3px;}
+/* BOTNAV */
+.botnav{position:fixed;bottom:0;width:100%;
+  background:rgba(14,14,14,0.97);backdrop-filter:blur(16px);
+  border-top:1px solid var(--border);display:flex;height:var(--bot-h);z-index:1000;}
+.bitem{flex:1;display:flex;flex-direction:column;align-items:center;
+  justify-content:center;gap:3px;cursor:pointer;color:var(--muted);
+  font-size:10px;font-weight:700;border:none;background:none;
+  font-family:'Tajawal',sans-serif;text-decoration:none;}
+.bitem.active,.bitem:hover{color:var(--or);}
+.bi{font-size:22px;}
 
-/* SHEET COVER */
-.sheet-cover{height:200px;position:relative;display:flex;align-items:center;justify-content:center;font-size:80px;flex-shrink:0;}
-.sheet-cover-overlay{position:absolute;inset:0;background:linear-gradient(to top,#111 0%,transparent 50%);}
-.sheet-close{position:absolute;top:16px;left:16px;width:36px;height:36px;border-radius:50%;background:rgba(0,0,0,0.5);border:none;color:white;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(8px);}
-
-/* SHEET BODY */
-.sheet-body{padding:0 20px 32px;}
-.sheet-name{font-size:28px;font-weight:900;margin-bottom:4px;}
-.sheet-country{font-size:14px;color:var(--muted);margin-bottom:16px;}
-
-/* INFO GRID */
-.info-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px;}
-.info-box{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px;}
-.info-box .il{font-size:10px;font-weight:800;color:var(--muted);letter-spacing:1px;margin-bottom:5px;}
-.info-box .iv{font-size:13px;font-weight:700;line-height:1.4;}
-
-/* VISA BOX */
-.visa-box{background:rgba(0,201,177,0.08);border:1px solid rgba(0,201,177,0.2);border-radius:14px;padding:16px;margin-bottom:20px;display:flex;gap:12px;align-items:flex-start;}
-.visa-box .vi{font-size:24px;flex-shrink:0;}
-.visa-box .vt strong{display:block;font-size:13px;font-weight:800;color:var(--tl);margin-bottom:4px;}
-.visa-box .vt span{font-size:13px;color:rgba(255,255,255,0.7);line-height:1.6;}
-
-/* SECTION */
-.sec{margin-bottom:20px;}
-.sec-title{font-size:14px;font-weight:800;margin-bottom:12px;display:flex;align-items:center;gap:8px;}
-.sec-title.green{color:#4CAF50;}
-.sec-title.red{color:#EF5350;}
-.sec-title.yellow{color:var(--yl);}
-.sec-title.blue{color:var(--tl);}
-
-/* LIST ITEMS */
-.list-item{display:flex;align-items:flex-start;gap:10px;padding:10px 14px;background:var(--card);border-radius:12px;margin-bottom:8px;font-size:13px;line-height:1.6;}
-.list-item .li-icon{font-size:16px;flex-shrink:0;margin-top:1px;}
-.list-item.green-item{background:rgba(76,175,80,0.08);border:1px solid rgba(76,175,80,0.15);}
-.list-item.red-item{background:rgba(239,83,80,0.08);border:1px solid rgba(239,83,80,0.15);}
-.list-item.yellow-item{background:rgba(255,208,0,0.08);border:1px solid rgba(255,208,0,0.15);}
-.list-item.blue-item{background:rgba(0,201,177,0.08);border:1px solid rgba(0,201,177,0.15);}
-
-/* TRIPS IN DEST */
-.dest-trips{display:flex;flex-direction:column;gap:10px;}
-.dest-trip{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px;display:flex;gap:12px;align-items:center;cursor:pointer;transition:all .2s;}
-.dest-trip:hover{border-color:var(--or);}
-.dt-emoji{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;}
-.dt-info{flex:1;}
-.dt-name{font-size:13px;font-weight:800;margin-bottom:3px;}
-.dt-meta{font-size:11px;color:var(--muted);}
-.dt-join{padding:7px 14px;border-radius:10px;background:var(--or);color:white;border:none;font-family:'Tajawal',sans-serif;font-size:12px;font-weight:800;cursor:pointer;}
-
-/* BOTTOM NAV */
-
-.botnav a{display:flex;flex-direction:column;align-items:center;gap:4px;flex:1;text-decoration:none;padding:8px 0;}
-.botnav a span:first-child{font-size:20px;}
-.botnav a span:last-child{font-size:10px;font-weight:700;color:var(--muted);}
-.botnav a.active span{color:var(--or);}
-
-/* TOAST */
-.toast{position:fixed;bottom:calc(var(--bot-h)+14px);left:50%;transform:translateX(-50%) translateY(80px);background:#1a1a1a;color:white;padding:11px 20px;border-radius:20px;font-size:13px;font-weight:700;box-shadow:0 8px 24px rgba(0,0,0,0.4);transition:transform .4s cubic-bezier(.34,1.56,.64,1);z-index:9999;border:1px solid rgba(255,255,255,0.08);pointer-events:none;opacity:0;}
-.toast.show{transform:translateX(-50%) translateY(0);opacity:1;pointer-events:all;}
-/* ── SHARED NAV ── */
-.topnav{position:fixed;top:0;width:100%;z-index:1000;height:var(--nav-h);padding:0 16px;display:flex;align-items:center;justify-content:space-between;background:rgba(14,14,14,0.95);backdrop-filter:blur(16px);border-bottom:1px solid rgba(255,255,255,0.07);}
-.nav-logo{font-family:'Righteous',cursive;font-size:22px;background:linear-gradient(90deg,#FF5C1A,#FFD000);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;border:none;background-color:transparent;cursor:pointer;padding:0;}
-.nav-profile-btn{padding:7px 16px;border-radius:20px;background:rgba(255,92,26,0.12);border:1.5px solid rgba(255,92,26,0.25);color:#FF5C1A;font-family:'Tajawal',sans-serif;font-size:13px;font-weight:800;cursor:pointer;white-space:nowrap;transition:all .2s;}
-.botnav{position:fixed;bottom:0;width:100%;z-index:1000;height:var(--bot-h);background:rgba(14,14,14,0.97);backdrop-filter:blur(20px);border-top:1px solid rgba(255,255,255,0.07);display:flex;align-items:center;padding-bottom:env(safe-area-inset-bottom);}
-.bitem{display:flex;flex-direction:column;align-items:center;gap:3px;flex:1;text-decoration:none;padding:6px 0;transition:all .2s;}
-.bitem .bi{font-size:20px;line-height:1;}
-.bitem .bl{font-size:10px;font-weight:700;color:rgba(255,255,255,0.4);}
-.bitem.active .bl{color:#FF5C1A;}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+/* CLOSE SHEET BTN */
+.sheet-close{position:absolute;top:12px;left:12px;width:32px;height:32px;
+  border-radius:50%;background:rgba(0,0,0,0.5);border:none;color:white;
+  font-size:18px;cursor:pointer;display:flex;align-items:center;
+  justify-content:center;z-index:4;backdrop-filter:blur(8px);}
 </style>
 </head>
 <body>
 
-<!-- NAV -->
 <nav class="topnav">
-  <button class="nav-logo" onclick="window.location.href='index.html'">Rihla</button>
-  <button class="nav-profile-btn" id="navProfileBtn" onclick="goToProfile()">تسجيل دخول 👤</button>
+  <div class="nav-logo">Rihla</div>
+  <button class="nav-profile-btn" id="navProfileBtn" onclick="goToProfile()">ملفي 👤</button>
 </nav>
 
-<!-- HERO -->
 <div class="hero">
-  <h1>اكتشف <span>وجهات العالم</span> 🌍</h1>
-  <p>دليل شامل للمسافر العربي — أين تذهب وماذا تتجنب في كل دولة</p>
+  <h1>🌍 اكتشف <span>وجهات العالم</span></h1>
+  <p>دليل المسافر الخليجي — معلومات حقيقية وتجارب موثوقة</p>
+</div>
 
+<div class="search-wrap">
   <div class="search-box">
-    <span>🔍</span>
-    <input type="text" id="searchInput" placeholder="ابحث عن وجهة أو دولة..." oninput="applyFilter()">
-  </div>
-
-  <div class="filter-row">
-    <button class="fchip active" onclick="setFilter('الكل',this)">🌍 الكل</button>
-    <button class="fchip" onclick="setFilter('ثقافة',this)">🏛️ ثقافة</button>
-    <button class="fchip" onclick="setFilter('شاطئ',this)">🌊 شاطئ</button>
-    <button class="fchip" onclick="setFilter('مغامرة',this)">🔥 مغامرة</button>
-    <button class="fchip" onclick="setFilter('طعام',this)">🍜 طعام</button>
-    <button class="fchip" onclick="setFilter('تسوق',this)">🛍️ تسوق</button>
-    <button class="fchip" onclick="setFilter('عائلي',this)">👨‍👩‍👧 عائلي</button>
+    <span style="font-size:18px;color:var(--muted)">🔍</span>
+    <input type="text" id="searchInp" placeholder="ابحث عن وجهة أو دولة..." oninput="filterDests()">
   </div>
 </div>
 
-<!-- GRID -->
-<div class="dest-grid" id="grid" style="padding-bottom:100px;">
-  <div class="empty" style="grid-column:1/-1">
-    <div class="ei">⏳</div>
-    <h3>جاري تحميل الوجهات...</h3>
-  </div>
+<div class="filters">
+  <button class="fchip active" onclick="setFilter('all',this)">🌍 الكل</button>
+  <button class="fchip" onclick="setFilter('summer',this)">☀️ الصيف</button>
+  <button class="fchip" onclick="setFilter('novisa',this)">🛂 بلا تأشيرة</button>
+  <button class="fchip" onclick="setFilter('family',this)">👨‍👩‍👧 عائلي</button>
+  <button class="fchip" onclick="setFilter('beach',this)">🌊 شاطئ</button>
+  <button class="fchip" onclick="setFilter('culture',this)">🏛️ ثقافة</button>
+  <button class="fchip" onclick="setFilter('adventure',this)">🔥 مغامرة</button>
+  <button class="fchip" onclick="setFilter('food',this)">🍜 طعام</button>
 </div>
 
-<!-- BOTTOM NAV -->
+<div class="grid" id="destsGrid">
+  <div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--muted)">⏳ جاري التحميل...</div>
+</div>
 
-<nav class="botnav">
-  <a href="index.html" class="bitem"><div class="bi">🏠</div><div class="bl">الرئيسية</div></a>
-  <a href="trips.html" class="bitem"><div class="bi">✈️</div><div class="bl">الرحلات</div></a>
-  <a href="destinations.html" class="bitem active"><div class="bi">🗺️</div><div class="bl">الوجهات</div></a>
-  <a href="flights.html" class="bitem"><div class="bi">🛫</div><div class="bl">طيران</div></a>
-  <a href="agents.html" class="bitem"><div class="bi">🤝</div><div class="bl">المرشدون</div></a>
-</nav>
+<!-- DETAIL SHEET -->
+<div class="sheet-overlay" id="sheetOverlay" onclick="closeSheet()"></div>
+<div class="sheet" id="sheet">
+  <div class="sheet-handle"></div>
+  <button class="sheet-close" onclick="closeSheet()">✕</button>
 
-<!-- DETAIL OVERLAY -->
-<div class="overlay" id="detailOverlay" onclick="closeDetail(event)">
-  <button onclick="closeDetailOverlay()" style="position:absolute;top:16px;left:16px;z-index:9999;width:40px;height:40px;border-radius:50%;background:rgba(0,0,0,0.7);border:2px solid rgba(255,255,255,0.2);color:white;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;">✕</button>
-  <div class="sheet" id="detailSheet">
-    <div class="sheet-cover" id="sheetCover">
-      <div class="sheet-cover-overlay"></div>
+  <div class="sheet-imgs" id="sheetImgs"></div>
+
+  <div class="sheet-scroll">
+    <!-- QUICK STATS -->
+    <div class="qstats" id="sheetQstats"></div>
+
+    <!-- TABS -->
+    <div class="tabs">
+      <button class="tab active" onclick="switchTab('general',this)">📍 عام</button>
+      <button class="tab" onclick="switchTab('food',this)">🍽️ طعام</button>
+      <button class="tab" onclick="switchTab('tips',this)">💡 نصائح</button>
+      <button class="tab" onclick="switchTab('reviews',this)">⭐ تقييمات</button>
     </div>
-    <div class="sheet-body" id="sheetBody"></div>
+
+    <!-- TAB: GENERAL -->
+    <div class="tab-panel active" id="panel-general"></div>
+
+    <!-- TAB: FOOD -->
+    <div class="tab-panel" id="panel-food"></div>
+
+    <!-- TAB: TIPS -->
+    <div class="tab-panel" id="panel-tips"></div>
+
+    <!-- TAB: REVIEWS -->
+    <div class="tab-panel" id="panel-reviews"></div>
   </div>
 </div>
 
-<div class="toast" id="toast"></div>
+<!-- REVIEW MODAL -->
+<div class="rmodal" id="reviewModal">
+  <div class="rmodal-box">
+    <div class="rmodal-title">⭐ أضف تقييمك</div>
+    <div class="star-select" id="starSelect">
+      <span class="star-btn" onclick="setStar(1)">⭐</span>
+      <span class="star-btn" onclick="setStar(2)">⭐</span>
+      <span class="star-btn" onclick="setStar(3)">⭐</span>
+      <span class="star-btn" onclick="setStar(4)">⭐</span>
+      <span class="star-btn" onclick="setStar(5)">⭐</span>
+    </div>
+    <textarea id="reviewText" placeholder="شارك تجربتك مع هذه الوجهة..."></textarea>
+    <div class="rmodal-btns">
+      <button class="rmodal-cancel" onclick="closeReviewModal()">إلغاء</button>
+      <button class="rmodal-submit" onclick="submitReview()">نشر التقييم</button>
+    </div>
+  </div>
+</div>
+
+<!-- BOTNAV -->
+<nav class="botnav">
+  <a href="index.html" class="bitem"><div class="bi">🏠</div><div>الرئيسية</div></a>
+  <a href="trips.html" class="bitem"><div class="bi">✈️</div><div>الرحلات</div></a>
+  <a href="destinations.html" class="bitem active"><div class="bi">🗺️</div><div>الوجهات</div></a>
+  <a href="flights.html" class="bitem"><div class="bi">🛫</div><div>طيران</div></a>
+  <a href="agents.html" class="bitem"><div class="bi">🤝</div><div>المرشدون</div></a>
+</nav>
 
 <script>
 const{createClient}=supabase;
@@ -219,309 +352,427 @@ const sb=createClient(
   'https://ybjdagurvkweabujkeyz.supabase.co',
   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InliamRhZ3Vydmt3ZWFidWprZXl6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkzNjQyMDAsImV4cCI6MjA5NDk0MDIwMH0.CIK7sew_-kBlC_t_szCjKjjnFNg695kwSryuRshQ9nI'
 );
-// ── NAV FUNCTIONS ──
-async function goToProfile(){
-  try{
-    const{data:{session}}=await sb.auth.getSession();
-    window.location.href=session?'profile.html':'auth.html';
-  }catch(e){window.location.href='auth.html';}
+
+// Unsplash Access Key (free)
+const UNSPLASH_KEY = 'mVBbzNqjbEZDFQKFG0GJA3CsLvmT7oJBmkjVNpXrg0Y';
+
+let allDests = [], filtered = [], activeFilter = 'all';
+let currentDest = null, currentUser = null;
+let selectedStar = 0, sheetImgIdx = 0;
+
+// توليد روابط صور Unsplash لكل وجهة
+function getUnsplashUrls(dest) {
+  const queries = [
+    `${dest.name} ${dest.country} city`,
+    `${dest.name} landmark architecture`,
+    `${dest.country} landscape nature`,
+    `${dest.name} travel tourism`,
+  ];
+  return queries.map(q =>
+    `https://source.unsplash.com/800x500/?${encodeURIComponent(q)}&sig=${dest.id || Math.random()}`
+  );
 }
-async function initNav(){
-  try{
-    const{data:{session}}=await sb.auth.getSession();
-    const btn=document.getElementById('navProfileBtn');
-    if(!btn) return;
-    if(session){
-      const{data:p}=await sb.from('profiles').select('full_name').eq('id',session.user.id).maybeSingle();
-      btn.textContent=(p?.full_name?.split(' ')[0]||'ملفي')+' 👤';
-    }else{
-      btn.textContent='تسجيل دخول 👤';
-    }
-  }catch(e){
-    const btn=document.getElementById('navProfileBtn');
-    if(btn) btn.textContent='تسجيل دخول 👤';
+
+// ═══ INIT NAV ═══
+async function goToProfile() {
+  const{data:{session}} = await sb.auth.getSession();
+  window.location.href = session ? 'profile.html' : 'auth.html';
+}
+
+async function initNav() {
+  const{data:{session}} = await sb.auth.getSession();
+  currentUser = session?.user || null;
+  const btn = document.getElementById('navProfileBtn');
+  if(currentUser) {
+    const{data:p} = await sb.from('profiles').select('full_name').eq('id',currentUser.id).maybeSingle();
+    btn.textContent = (p?.full_name?.split(' ')[0] || 'ملفي') + ' 👤';
   }
 }
-initNav();
 
-
-let all=[], filtered=[], activeFilter='الكل';
-
-// ══ INIT ══
-async function init(){
-  const{data,error}=await sb.from('destinations').select('*').order('visits',{ascending:false});
-  const grid=document.getElementById('grid');
-  if(error||!data){
-    grid.innerHTML=`<div class="empty"><div class="ei">⚠️</div><h3>تعذّر التحميل</h3><p>${error?.message||''}</p></div>`;
-    return;
-  }
-  all=data;filtered=data;
-  render();
+// ═══ LOAD DESTINATIONS ═══
+async function loadDests() {
+  const{data} = await sb.from('destinations').select('*').order('name');
+  allDests = data || [];
+  filtered = allDests;
+  renderGrid(filtered);
 }
 
-// ══ RENDER ══
-function render(){
-  const grid=document.getElementById('grid');
-  if(filtered.length===0){
-    grid.innerHTML=`<div class="empty"><div class="ei">🔍</div><h3>لا توجد نتائج</h3><p>جرب بحثاً مختلفاً</p></div>`;
-    return;
-  }
-  grid.innerHTML=filtered.map(d=>`
-    <div class="dest-card" onclick="openDetail('${d.id}')">
-      <div class="dest-cover" style="background:${d.cover_gradient}">
-        <span style="position:relative;z-index:1">${d.emoji}</span>
-        <div class="dest-cover-overlay"></div>
-        <div class="dest-badge">${d.best_time||''}</div>
-        <div class="dest-tags">
-          ${(d.tags||[]).slice(0,2).map(t=>`<span class="dtag">${t}</span>`).join('')}
-        </div>
-      </div>
-      <div class="dest-body">
-        <div class="dest-name">${d.name}</div>
-        <div class="dest-country">${d.country}</div>
-        <div class="dest-meta">
-          <div class="dmeta">💰 ${d.daily_cost||'—'}</div>
-          <div class="dmeta">🗣️ ${d.language||'—'}</div>
-        </div>
-      </div>
-    </div>`).join('');
-}
-
-// ══ OPEN DETAIL ══
-async function openDetail(id){
-  const d=all.find(x=>x.id===id);
-  if(!d) return;
-
-  // Cover
-  const cover=document.getElementById('sheetCover');
-  cover.style.background=d.cover_gradient;
-  cover.innerHTML=`
-    <span style="position:relative;z-index:1;font-size:80px">${d.emoji}</span>
-    <div class="sheet-cover-overlay"></div>`;
-  
-  // إضافة زر الإغلاق بشكل منفصل
-  const closeBtn=document.getElementById('sheetCloseBtn');
-  if(closeBtn) closeBtn.style.display='flex';
-
-  // جلب رحلات هذه الوجهة
-  const{data:trips}=await sb.from('trips').select('id,title,emoji,date,duration,seats,seats_taken,country')
-    .ilike('country',`%${d.country}%`).eq('status','active').limit(5);
-
-  // Body
-  document.getElementById('sheetBody').innerHTML=`
-    <div class="sheet-name">${d.name} ${d.emoji}</div>
-    <div class="sheet-country">📍 ${d.country}</div>
-
-    ${d.description?`<p style="font-size:14px;color:rgba(255,255,255,0.7);line-height:1.8;margin-bottom:20px">${d.description}</p>`:''}
-
-    <!-- INFO GRID -->
-    <div class="info-grid">
-      <div class="info-box"><div class="il">⏰ أفضل وقت</div><div class="iv">${d.best_time||'—'}</div></div>
-      <div class="info-box"><div class="il">💰 التكلفة اليومية</div><div class="iv">${d.daily_cost||'—'}</div></div>
-      <div class="info-box"><div class="il">💵 العملة</div><div class="iv">${d.currency||'—'}</div></div>
-      <div class="info-box"><div class="il">🗣️ اللغة</div><div class="iv">${d.language||'—'}</div></div>
-      ${d.flight_time?`<div class="info-box" style="grid-column:1/-1"><div class="il">🛫 وقت الطيران من الكويت</div><div class="iv" style="font-size:16px">${d.flight_time}</div></div>`:''}
-    </div>
-
-    <!-- VISA -->
-    <div class="visa-box">
-      <div class="vi">🛂</div>
-      <div class="vt">
-        <strong>معلومات التأشيرة للكويتيين</strong>
-        <span>${d.visa_info||'تحقق من السفارة'}</span>
-      </div>
-    </div>
-
-    <!-- HALAL & MOSQUES -->
-    ${d.halal_food||d.mosques?`
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;">
-      ${d.halal_food?`<div style="background:rgba(0,201,177,0.08);border:1px solid rgba(0,201,177,0.2);border-radius:14px;padding:12px;">
-        <div style="font-size:11px;color:var(--tl);font-weight:800;margin-bottom:6px;">🥩 الطعام الحلال</div>
-        <div style="font-size:12px;color:rgba(255,255,255,0.75);line-height:1.6;">${d.halal_food}</div>
-      </div>`:''}
-      ${d.mosques?`<div style="background:rgba(255,208,0,0.08);border:1px solid rgba(255,208,0,0.2);border-radius:14px;padding:12px;">
-        <div style="font-size:11px;color:var(--yl);font-weight:800;margin-bottom:6px;">🕌 المساجد</div>
-        <div style="font-size:12px;color:rgba(255,255,255,0.75);line-height:1.6;">${d.mosques}</div>
-      </div>`:''}
-    </div>`:''}
-
-    <!-- MUST VISIT -->
-    ${d.must_visit?.length?`
-    <div class="sec">
-      <div class="sec-title green">📍 أماكن يجب زيارتها</div>
-      ${d.must_visit.map(i=>`<div class="list-item green-item"><span class="li-icon">✅</span><span>${i}</span></div>`).join('')}
-    </div>`:''}
-
-    <!-- MUST EAT -->
-    ${d.must_eat?.length?`
-    <div class="sec">
-      <div class="sec-title" style="color:#ff8c42">🍽️ يجب تجربة هذه الأكلات</div>
-      ${d.must_eat.map(i=>`<div class="list-item" style="background:rgba(255,140,66,0.08);border:1px solid rgba(255,140,66,0.15);border-radius:10px;padding:10px 12px;margin-bottom:6px;display:flex;align-items:center;gap:8px;"><span class="li-icon">🍴</span><span style="font-size:13px;">${i}</span></div>`).join('')}
-    </div>`:''}
-
-    <!-- SHOPPING -->
-    ${d.shopping?`
-    <div class="sec">
-      <div class="sec-title" style="color:#CE93D8">🛍️ التسوق</div>
-      <div style="background:rgba(206,147,216,0.08);border:1px solid rgba(206,147,216,0.15);border-radius:12px;padding:12px;font-size:13px;color:rgba(255,255,255,0.75);line-height:1.7;">${d.shopping}</div>
-    </div>`:''}
-
-    <!-- TIPS -->
-    ${d.tips?.length?`
-    <div class="sec">
-      <div class="sec-title yellow">💡 نصائح مهمة</div>
-      ${d.tips.map(i=>`<div class="list-item yellow-item"><span class="li-icon">💡</span><span>${i}</span></div>`).join('')}
-    </div>`:''}
-
-    <!-- WARNINGS -->
-    ${d.warnings?.length?`
-    <div class="sec">
-      <div class="sec-title red">🚨 تحذيرات وتنبيهات</div>
-      ${d.warnings.map(i=>`<div class="list-item red-item"><span class="li-icon">🚨</span><span>${i}</span></div>`).join('')}
-    </div>`:''}
-
-    <!-- TRIPS -->
-    ${trips&&trips.length>0?`
-    <div class="sec">
-      <div class="sec-title blue">✈️ رحلات متاحة لهذه الوجهة</div>
-      <div class="dest-trips">
-        ${trips.map(t=>{
-          const left=(t.seats||5)-(t.seats_taken||0);
-          const dt=new Date(t.date).toLocaleDateString('ar-KW',{day:'numeric',month:'long'});
-          return`<div class="dest-trip" onclick="window.location.href='trip.html?id=${t.id}'">
-            <div class="dt-emoji">${t.emoji||'✈️'}</div>
-            <div class="dt-info">
-              <div class="dt-name">${t.title}</div>
-              <div class="dt-meta">📅 ${dt} · ${t.duration||''}</div>
-            </div>
-            <button class="dt-join">انضم</button>
-          </div>`;
-        }).join('')}
-      </div>
-    </div>`:`
-    <div class="sec">
-      <div class="sec-title blue">✈️ رحلات لهذه الوجهة</div>
-      <div style="text-align:center;padding:20px;background:var(--card);border-radius:14px;border:1px dashed var(--border)">
-        <div style="font-size:32px;margin-bottom:10px">✈️</div>
-        <div style="font-size:13px;color:var(--muted);margin-bottom:12px">لا توجد رحلات متاحة الآن</div>
-        <button onclick="window.location.href='post-trip.html'" style="padding:10px 20px;border-radius:12px;background:var(--or);color:white;border:none;font-family:'Tajawal',sans-serif;font-size:13px;font-weight:800;cursor:pointer">+ انشر رحلة</button>
-      </div>
-    </div>`}
-
-    <!-- SEARCH FLIGHTS -->
-    <button onclick="window.location.href='flights.html'" style="width:100%;padding:14px;border-radius:14px;background:rgba(0,201,177,0.1);color:var(--tl);border:1.5px solid rgba(0,201,177,0.2);font-family:'Tajawal',sans-serif;font-size:15px;font-weight:800;cursor:pointer;margin-top:8px;">
-      🛫 ابحث عن رحلة طيران لـ${d.name}
-    </button>
-  `;
-
-  document.getElementById('detailOverlay').classList.add('open');
-
-  // زيادة عداد الزيارات
-  await sb.from('destinations').update({visits:(d.visits||0)+1}).eq('id',id);
-}
-
-function closeDetailOverlay(){
-  document.getElementById('detailOverlay').classList.remove('open');
-}
-
-function closeDetail(e){
-  if(e.target===document.getElementById('detailOverlay'))
-    document.getElementById('detailOverlay').classList.remove('open');
-}
-
-// ══ FILTER ══
-function setFilter(tag,el){
-  activeFilter=tag;
-  document.querySelectorAll('.fchip').forEach(c=>c.classList.remove('active'));
+// ═══ FILTER ═══
+function setFilter(f, el) {
+  activeFilter = f;
+  document.querySelectorAll('.fchip').forEach(c => c.classList.remove('active'));
   el.classList.add('active');
   applyFilter();
 }
 
-function applyFilter(){
-  const q=document.getElementById('searchInput').value.toLowerCase();
-  filtered=all.filter(d=>{
-    const mq=!q||d.name.toLowerCase().includes(q)||d.country.toLowerCase().includes(q);
-    // فلتر ذكي بناءً على محتوى الوجهة
-    let mf = activeFilter === 'الكل';
-    if(!mf){
-      const txt = (d.description||'') + (d.must_visit||[]).join(' ') + (d.must_eat||[]).join(' ') + (d.shopping||'') + (d.name||'');
-      if(activeFilter === 'شاطئ'){
-        mf = /شاطئ|بحر|ساحل|شواطئ|مياه|جزيرة|بحري/.test(txt);
-      } else if(activeFilter === 'ثقافة'){
-        mf = /متحف|تاريخ|قصر|قلعة|كاتدرائية|معبد|تراث|أثري|فن|بلدة قديمة/.test(txt);
-      } else if(activeFilter === 'مغامرة'){
-        mf = /جبل|سفاري|غطس|تسلق|مغامرة|طبيعة|شلال|بركان|غابة/.test(txt);
-      } else if(activeFilter === 'طعام'){
-        mf = /مطعم|طعام|أكل|كباب|سوشي|مأكولات|شهير بالطعام|تجربة الطعام|أكلات|كاري|رامن|بيتزا|شاورما/.test(txt) || (d.must_eat||[]).length >= 4;
-      } else if(activeFilter === 'تسوق'){
-        mf = /تسوق|مول|سوق|بازار|ماركات|خصومات|Outlet|Mall|Shopping/.test(txt) || (d.shopping||'').length > 30;
-      } else if(activeFilter === 'عائلي'){
-        mf = /عائلي|عائلة|أطفال|مدينة ملاهي|حديقة حيوان|مناسب للعائلة|ديزني|يونيفرسال|منتجع|All Inclusive/.test(txt);
-      }
+function filterDests() {
+  applyFilter();
+}
+
+function applyFilter() {
+  const q = document.getElementById('searchInp').value.toLowerCase().trim();
+  filtered = allDests.filter(d => {
+    const txt = (d.name||'') + (d.country||'') + (d.description||'') +
+      (d.must_visit||[]).join(' ') + (d.must_eat||[]).join(' ');
+    const matchQ = !q || txt.toLowerCase().includes(q);
+    let matchF = activeFilter === 'all';
+    if(!matchF) {
+      const t = txt.toLowerCase();
+      if(activeFilter==='summer') matchF = /صيف|يونيو|يوليو|أغسطس|مايو|أبريل|ربيع/.test(t);
+      else if(activeFilter==='novisa') matchF = /بدون تأشيرة|بلا تأشيرة|مجاناً/.test(d.visa_info||'');
+      else if(activeFilter==='family') matchF = /عائلي|عائلة|أطفال|all inclusive|منتجع/.test(t);
+      else if(activeFilter==='beach') matchF = /شاطئ|بحر|ساحل|جزيرة/.test(t);
+      else if(activeFilter==='culture') matchF = /متحف|تاريخ|قصر|قلعة|تراث|معبد/.test(t);
+      else if(activeFilter==='adventure') matchF = /جبل|سفاري|غطس|مغامرة|شلال|بركان/.test(t);
+      else if(activeFilter==='food') matchF = (d.must_eat||[]).length >= 4;
     }
-    return mq&&mf;
+    return matchQ && matchF;
   });
-  render();
+  renderGrid(filtered);
 }
 
-function showToast(msg){
-  const t=document.getElementById('toast');
-  t.textContent=msg;t.classList.add('show');
-  setTimeout(()=>t.classList.remove('show'),3500);
+// ═══ RENDER GRID ═══
+function renderGrid(dests) {
+  const grid = document.getElementById('destsGrid');
+  if(!dests.length) {
+    grid.innerHTML = '<div class="empty" style="grid-column:1/-1"><div class="empty-icon">🔍</div><div>لا توجد نتائج</div></div>';
+    return;
+  }
+  grid.innerHTML = dests.map((d,i) => {
+    const imgs = getUnsplashUrls(d);
+    const stars = d.rating_avg ? '⭐'.repeat(Math.round(d.rating_avg)) : '';
+    const noVisa = /بدون تأشيرة|بلا تأشيرة/.test(d.visa_info||'');
+    const isSummer = /صيف|يونيو|يوليو|أغسطس|مايو|أبريل/.test(d.best_time||'');
+    const isFamily = /عائلي|عائلة/.test((d.description||'')+(d.must_visit||[]).join(''));
+    return `
+      <div class="dest-card" onclick="openDest(${i})">
+        <div class="img-slider" id="slider-${i}">
+          ${imgs.map((url,j) => `<img src="${url}" alt="${d.name}" class="${j===0?'active':''}"
+            onerror="this.src='https://source.unsplash.com/800x500/?travel,city&sig=${i}${j}'">`).join('')}
+          <div class="img-overlay"></div>
+          <div class="img-badges">
+            ${noVisa ? '<span class="ibadge novisa">بلا تأشيرة</span>' : ''}
+            ${isSummer ? '<span class="ibadge summer">☀️ صيف</span>' : ''}
+            ${isFamily ? '<span class="ibadge family">👨‍👩‍👧</span>' : ''}
+          </div>
+          <div class="slider-dots">
+            ${imgs.map((_,j) => `<div class="sdot ${j===0?'active':''}"></div>`).join('')}
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="card-name">${d.emoji||'🌍'} ${d.name}</div>
+          <div class="card-country">${d.country}</div>
+          <div class="card-stats">
+            <div class="card-rating">${stars||'☆☆☆☆☆'} <span style="color:var(--muted)">(${d.reviews_count||0})</span></div>
+            <div class="card-cost">${d.daily_cost?.split(' ')[0]||'—'}</div>
+          </div>
+        </div>
+      </div>`;
+  }).join('');
+
+  // Auto-slide images
+  dests.forEach((d, i) => autoSlide(i, getUnsplashUrls(d).length));
 }
 
-init();
+// ═══ AUTO SLIDE ═══
+function autoSlide(idx, total) {
+  if(total <= 1) return;
+  let current = 0;
+  setInterval(() => {
+    const slider = document.getElementById('slider-'+idx);
+    if(!slider) return;
+    const imgs = slider.querySelectorAll('img');
+    const dots = slider.querySelectorAll('.sdot');
+    imgs[current].classList.remove('active');
+    dots[current]?.classList.remove('active');
+    current = (current + 1) % total;
+    imgs[current].classList.add('active');
+    dots[current]?.classList.add('active');
+  }, 3000 + idx * 500);
+}
 
-const GEMINI_KEY='AIzaSyBM32nz_C5xNPLSCI3RcLnmZZgXEJBxxcw';
-async function askGemini(prompt,ctx=''){
-  try{
-    const r=await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-lite:generateContent?key='+GEMINI_KEY,{
-      method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({contents:[{parts:[{text:ctx+'\n'+prompt}]}],generationConfig:{temperature:0.7,maxOutputTokens:500}})});
-    const d=await r.json();
-    return d.candidates?.[0]?.content?.parts?.[0]?.text||'عذراً، حاول مرة أخرى.';
-  }catch(e){return 'حدث خطأ. تحقق من الإنترنت.';}
+// ═══ OPEN DETAIL ═══
+async function openDest(idx) {
+  currentDest = filtered[idx];
+  const d = currentDest;
+  sheetImgIdx = 0;
+
+  // Images
+  const imgs = getUnsplashUrls(d);
+  const sheetImgs = document.getElementById('sheetImgs');
+  sheetImgs.innerHTML = `
+    ${imgs.map((url,j) => `<img src="${url}" alt="${d.name}" class="${j===0?'active':''}"
+      onerror="this.src='https://source.unsplash.com/800x500/?travel&sig=${j}'">`).join('')}
+    <div class="sheet-img-overlay"></div>
+    <div class="sheet-title-over">
+      <div class="sheet-city">${d.emoji||'🌍'} ${d.name}</div>
+      <div class="sheet-ctry">${d.country}</div>
+    </div>
+    <div class="sheet-img-nav">
+      <button class="snav-btn" onclick="slideSheet(-1)">‹</button>
+      <button class="snav-btn" onclick="slideSheet(1)">›</button>
+    </div>
+    <div class="sheet-img-dots">
+      ${imgs.map((_,j) => `<div class="sdot ${j===0?'active':''}" style="width:6px;height:6px"></div>`).join('')}
+    </div>`;
+
+  // Quick stats
+  document.getElementById('sheetQstats').innerHTML = `
+    <div class="qstat"><div class="qstat-icon">🛫</div>
+      <div class="qstat-val">${d.flight_time?.split(' ')[0]||'—'}</div>
+      <div class="qstat-lbl">ساعات طيران</div></div>
+    <div class="qstat"><div class="qstat-icon">💰</div>
+      <div class="qstat-val">${d.daily_cost?.split('-')[0]||'—'}</div>
+      <div class="qstat-lbl">يومياً (د.ك)</div></div>
+    <div class="qstat"><div class="qstat-icon">🌡️</div>
+      <div class="qstat-val">${d.best_time?.split('-')[0]?.trim()||'—'}</div>
+      <div class="qstat-lbl">أفضل شهر</div></div>`;
+
+  renderGeneralTab(d);
+  renderFoodTab(d);
+  renderTipsTab(d);
+  await renderReviewsTab(d);
+
+  // Reset tabs
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelector('.tab').classList.add('active');
+  document.getElementById('panel-general').classList.add('active');
+
+  document.getElementById('sheetOverlay').classList.add('open');
+  document.getElementById('sheet').classList.add('open');
+  document.body.style.overflow = 'hidden';
 }
-let aiInCtx='';
-function setAIInlineSuggs(arr){document.getElementById('aiISuggsEl').innerHTML=arr.map(s=>`<button class="ai-sugg" onclick="quickAskI('${s}')">${s}</button>`).join('');}
-function quickAskI(t){document.getElementById('aiIInpEl').value=t;sendAII();}
-async function sendAII(){
-  const inp=document.getElementById('aiIInpEl'),btn=document.getElementById('aiISendEl'),msgs=document.getElementById('aiIMsgsEl');
-  const msg=inp.value.trim();if(!msg)return;
-  msgs.style.display='flex';msgs.style.flexDirection='column';
-  msgs.innerHTML+=`<div class="ai-msg-u">${msg}</div><div class="ai-msg-b" id="aiITyping">⏳ جاري التفكير...</div>`;
-  msgs.scrollTop=msgs.scrollHeight;inp.value='';btn.disabled=true;
-  const ans=await askGemini(msg,aiInCtx);
-  document.getElementById('aiITyping')?.remove();
-  msgs.innerHTML+=`<div class="ai-msg-b">${ans.replace(/\n/g,'<br>')}</div>`;
-  msgs.scrollTop=msgs.scrollHeight;btn.disabled=false;
+
+function slideSheet(dir) {
+  const d = currentDest;
+  const imgs = getUnsplashUrls(d);
+  const total = imgs.length;
+  const container = document.getElementById('sheetImgs');
+  const imgEls = container.querySelectorAll('img');
+  const dots = container.querySelectorAll('.sdot');
+  imgEls[sheetImgIdx].classList.remove('active');
+  dots[sheetImgIdx]?.classList.remove('active');
+  sheetImgIdx = (sheetImgIdx + dir + total) % total;
+  imgEls[sheetImgIdx].classList.add('active');
+  dots[sheetImgIdx]?.classList.add('active');
 }
-aiInCtx='أنت مساعد سفر متخصص بالوجهات السياحية للمسافرين الكويتيين والخليجيين. أجب بالعربية عن: أفضل الأوقات، التكاليف، التأشيرات، المطاعم الحلال، الفنادق، والنصائح العملية.';
-setAIInlineSuggs(['أفضل وقت للزيارة؟','ما تكلفة الرحلة تقريباً؟','هل الطعام الحلال متوفر؟','اقترح مسار ٧ أيام']);
+
+function closeSheet() {
+  document.getElementById('sheetOverlay').classList.remove('open');
+  document.getElementById('sheet').classList.remove('open');
+  document.body.style.overflow = '';
+  currentDest = null;
+}
+
+// ═══ TABS ═══
+function switchTab(tab, el) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('panel-'+tab).classList.add('active');
+}
+
+// ═══ GENERAL TAB ═══
+function renderGeneralTab(d) {
+  const noVisa = /بدون تأشيرة|بلا تأشيرة/.test(d.visa_info||'');
+  document.getElementById('panel-general').innerHTML = `
+    <div class="info-sec">
+      <div class="info-row">
+        <div class="info-icon">🛂</div>
+        <div class="info-content">
+          <div class="info-label">التأشيرة للكويتيين</div>
+          <div class="info-value" style="color:${noVisa?'var(--tl)':'var(--or)'}">${d.visa_info||'—'}</div>
+        </div>
+      </div>
+      <div class="info-row">
+        <div class="info-icon">⏰</div>
+        <div class="info-content">
+          <div class="info-label">أفضل وقت للزيارة</div>
+          <div class="info-value">${d.best_time||'—'}</div>
+        </div>
+      </div>
+      <div class="info-row">
+        <div class="info-icon">💵</div>
+        <div class="info-content">
+          <div class="info-label">التكلفة اليومية</div>
+          <div class="info-value">${d.daily_cost||'—'}</div>
+        </div>
+      </div>
+      <div class="info-row">
+        <div class="info-icon">🗣️</div>
+        <div class="info-content">
+          <div class="info-label">اللغة والعملة</div>
+          <div class="info-value">${d.language||'—'} · ${d.currency||'—'}</div>
+        </div>
+      </div>
+    </div>
+    ${(d.must_visit||[]).length ? `
+    <div class="info-sec">
+      <div class="info-sec-title">📍 أماكن يجب زيارتها</div>
+      <div class="tags-wrap">
+        ${d.must_visit.map(p=>`<span class="tag tag-green">${p}</span>`).join('')}
+      </div>
+    </div>` : ''}
+    <div class="info-sec">
+      <div class="info-sec-title">🧭 مناسب لـ</div>
+      <div class="suit-wrap">
+        <div class="suit-item"><div class="suit-icon">👨‍👩‍👧</div><div class="suit-info"><div class="suit-name">العائلات</div><div class="suit-val">مناسب جداً</div></div></div>
+        <div class="suit-item"><div class="suit-icon">🎒</div><div class="suit-info"><div class="suit-name">الشباب</div><div class="suit-val">مناسب</div></div></div>
+        <div class="suit-item"><div class="suit-icon">💑</div><div class="suit-info"><div class="suit-name">الأزواج</div><div class="suit-val">رومانسي</div></div></div>
+        <div class="suit-item"><div class="suit-icon">💼</div><div class="suit-info"><div class="suit-name">الأعمال</div><div class="suit-val">مناسب</div></div></div>
+      </div>
+    </div>`;
+}
+
+// ═══ FOOD TAB ═══
+function renderFoodTab(d) {
+  document.getElementById('panel-food').innerHTML = `
+    ${d.halal_food ? `
+    <div class="info-sec">
+      <div class="info-row">
+        <div class="info-icon">🥩</div>
+        <div class="info-content">
+          <div class="info-label">الطعام الحلال</div>
+          <div class="info-value">${d.halal_food}</div>
+        </div>
+      </div>
+    </div>` : ''}
+    ${d.mosques ? `
+    <div class="info-sec">
+      <div class="info-row">
+        <div class="info-icon">🕌</div>
+        <div class="info-content">
+          <div class="info-label">المساجد</div>
+          <div class="info-value">${d.mosques}</div>
+        </div>
+      </div>
+    </div>` : ''}
+    ${(d.must_eat||[]).length ? `
+    <div class="info-sec">
+      <div class="info-sec-title">🍽️ يجب تجربة هذه الأكلات</div>
+      <div class="tags-wrap">
+        ${d.must_eat.map(f=>`<span class="tag tag-or">${f}</span>`).join('')}
+      </div>
+    </div>` : ''}
+    ${d.shopping ? `
+    <div class="info-sec">
+      <div class="info-row">
+        <div class="info-icon">🛍️</div>
+        <div class="info-content">
+          <div class="info-label">التسوق</div>
+          <div class="info-value">${d.shopping}</div>
+        </div>
+      </div>
+    </div>` : ''}`;
+}
+
+// ═══ TIPS TAB ═══
+function renderTipsTab(d) {
+  document.getElementById('panel-tips').innerHTML = `
+    ${(d.tips||[]).length ? `
+    <div class="info-sec">
+      <div class="info-sec-title">💡 نصائح مهمة</div>
+      <div class="tags-wrap">
+        ${d.tips.map(t=>`<span class="tag tag-yl">💡 ${t}</span>`).join('')}
+      </div>
+    </div>` : ''}
+    ${(d.warnings||[]).length ? `
+    <div class="info-sec">
+      <div class="info-sec-title">⚠️ تحذيرات</div>
+      <div class="tags-wrap">
+        ${d.warnings.map(w=>`<span class="tag tag-red">⚠️ ${w}</span>`).join('')}
+      </div>
+    </div>` : ''}`;
+}
+
+// ═══ REVIEWS TAB ═══
+async function renderReviewsTab(d) {
+  const panel = document.getElementById('panel-reviews');
+  panel.innerHTML = '<div class="no-reviews">⏳ جاري التحميل...</div>';
+
+  const{data:reviews} = await sb.from('destination_reviews')
+    .select('*, profiles(full_name)')
+    .eq('destination_id', d.id)
+    .order('created_at', {ascending: false})
+    .limit(20);
+
+  const addBtn = currentUser
+    ? `<button class="add-review-btn" onclick="openReviewModal()">✍️ أضف تقييمك</button>`
+    : `<button class="add-review-btn" onclick="window.location.href='auth.html'">سجّل دخولك لإضافة تقييم 👤</button>`;
+
+  if(!reviews?.length) {
+    panel.innerHTML = `
+      ${addBtn}
+      <div class="no-reviews">😊 كن أول من يقيّم هذه الوجهة!</div>`;
+    return;
+  }
+
+  panel.innerHTML = addBtn + reviews.map(r => {
+    const name = r.profiles?.full_name || 'عضو';
+    const initial = name[0].toUpperCase();
+    const stars = '⭐'.repeat(r.rating||0);
+    const date = new Date(r.created_at).toLocaleDateString('ar-KW');
+    return `
+      <div class="review-card">
+        <div class="review-head">
+          <div class="review-avatar">${initial}</div>
+          <div style="flex:1">
+            <div class="review-name">${name}</div>
+            <div class="review-date">${date}</div>
+          </div>
+          <div class="review-stars">${stars}</div>
+        </div>
+        ${r.comment ? `<div class="review-text">${r.comment}</div>` : ''}
+      </div>`;
+  }).join('');
+}
+
+// ═══ REVIEW MODAL ═══
+function openReviewModal() {
+  if(!currentUser) { window.location.href='auth.html'; return; }
+  selectedStar = 0;
+  document.querySelectorAll('.star-btn').forEach(s => s.classList.remove('active'));
+  document.getElementById('reviewText').value = '';
+  document.getElementById('reviewModal').classList.add('open');
+}
+
+function closeReviewModal() {
+  document.getElementById('reviewModal').classList.remove('open');
+}
+
+function setStar(n) {
+  selectedStar = n;
+  document.querySelectorAll('.star-btn').forEach((s,i) => {
+    s.classList.toggle('active', i < n);
+  });
+}
+
+async function submitReview() {
+  if(!selectedStar) { alert('اختر تقييماً بالنجوم'); return; }
+  const comment = document.getElementById('reviewText').value.trim();
+  await sb.from('destination_reviews').upsert({
+    destination_id: currentDest.id,
+    user_id: currentUser.id,
+    rating: selectedStar,
+    comment: comment || null
+  }, {onConflict: 'destination_id,user_id'});
+  closeReviewModal();
+  await renderReviewsTab(currentDest);
+}
+
+// ═══ INIT ═══
+initNav();
+loadDests();
 </script>
 
-
-
-
-    <button class="ai-x" onclick="toggleAI()">✕</button>
-  </div>
-  <div class="ai-suggs" id="aiSuggsEl"></div>
-  <div class="ai-msgs" id="aiMsgsEl">
-    <div class="ai-msg-b">مرحباً! أنا مساعدك للسفر 🌍 كيف أساعدك؟</div>
-  </div>
-  <div class="ai-row">
-    <input class="ai-inp" id="aiInpEl" placeholder="اسألني عن السفر..." onkeydown="if(event.key==='Enter')sendAI()">
-    <button class="ai-send" id="aiSendEl" onclick="sendAI()">↑</button>
-  </div>
-</div>
-
-<!-- ═══ RIHLA AI ASSISTANT ═══ -->
+<!-- AI Assistant -->
 <style>
 #rihlaAiBtn{position:fixed;bottom:80px;right:16px;width:54px;height:54px;border-radius:50%;background:linear-gradient(135deg,#4285f4,#34a853);border:none;color:white;font-size:26px;cursor:pointer;z-index:9999;box-shadow:0 4px 20px rgba(66,133,244,0.5);display:flex;align-items:center;justify-content:center;}
 #rihlaAiWin{position:fixed;bottom:145px;right:12px;width:calc(100% - 24px);max-width:360px;background:#1a1a1a;border:1px solid rgba(255,255,255,0.12);border-radius:20px;z-index:9999;display:none;flex-direction:column;overflow:hidden;box-shadow:0 8px 32px rgba(0,0,0,0.6);}
 .rAiH{background:linear-gradient(135deg,#4285f4,#34a853);padding:13px 16px;display:flex;align-items:center;justify-content:space-between;}
 .rAiHT{color:white;font-weight:800;font-size:14px;font-family:"Tajawal",sans-serif;}
-.rAiX{background:none;border:none;color:white;font-size:20px;cursor:pointer;line-height:1;}
+.rAiX{background:none;border:none;color:white;font-size:20px;cursor:pointer;}
 .rAiSuggs{display:flex;gap:6px;padding:8px 10px;overflow-x:auto;border-bottom:1px solid rgba(255,255,255,0.07);}
 .rAiSugg{white-space:nowrap;padding:6px 11px;border-radius:14px;background:rgba(66,133,244,0.12);border:1px solid rgba(66,133,244,0.25);color:#4285f4;font-family:"Tajawal",sans-serif;font-size:12px;font-weight:700;cursor:pointer;flex-shrink:0;}
 .rAiMsgs{height:200px;overflow-y:auto;padding:10px 12px;display:flex;flex-direction:column;gap:7px;}
@@ -529,11 +780,8 @@ setAIInlineSuggs(['أفضل وقت للزيارة؟','ما تكلفة الرحل
 .rAiB{align-self:flex-start;background:rgba(255,255,255,0.08);color:rgba(255,255,255,0.9);padding:9px 13px;border-radius:4px 16px 16px 16px;font-size:13px;line-height:1.6;max-width:85%;font-family:"Tajawal",sans-serif;}
 .rAiRow{display:flex;gap:8px;padding:10px 12px;border-top:1px solid rgba(255,255,255,0.07);}
 .rAiInp{flex:1;background:rgba(255,255,255,0.07);border:1.5px solid rgba(255,255,255,0.12);border-radius:20px;padding:9px 14px;font-family:"Tajawal",sans-serif;font-size:13px;color:white;outline:none;direction:rtl;}
-.rAiInp:focus{border-color:#4285f4;}
 .rAiSend{width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,#4285f4,#34a853);border:none;color:white;font-size:17px;cursor:pointer;flex-shrink:0;}
-.rAiSend:disabled{opacity:0.5;}
 </style>
-
 <button id="rihlaAiBtn" onclick="rToggle()">🤖</button>
 <div id="rihlaAiWin">
   <div class="rAiH">
@@ -549,58 +797,31 @@ setAIInlineSuggs(['أفضل وقت للزيارة؟','ما تكلفة الرحل
     <button class="rAiSend" id="rAiSend" onclick="rSend()">↑</button>
   </div>
 </div>
-
 <script>
-(function(){
-  const CTX='أنت مساعد وجهات للمسافرين الخليجيين. أجب عن أفضل الأوقات والتكاليف والطعام الحلال.';
-  let open=false;
-  let chatHistory=[];
-
-  window.rToggle=function(){
-    open=!open;
-    document.getElementById('rihlaAiWin').style.display=open?'flex':'none';
-    if(open)document.getElementById('rAiInp').focus();
-  };
-
-  // Suggestions
-  const suggs=["أفضل وقت للزيارة؟", "تكلفة الرحلة تقريباً؟", "هل الطعام الحلال متوفر؟", "مسار ٧ أيام؟"];
-  document.getElementById('rAiSuggs').innerHTML=suggs.map(s=>
-    `<button class="rAiSugg" onclick="rQuick('${s}')">${s}</button>`
-  ).join('');
-
-  window.rQuick=function(t){document.getElementById('rAiInp').value=t;rSend();};
-
-  window.rSend=async function(){
-    const inp=document.getElementById('rAiInp');
-    const btn=document.getElementById('rAiSend');
-    const msgs=document.getElementById('rAiMsgs');
-    const msg=inp.value.trim();
-    if(!msg)return;
-    msgs.innerHTML+=`<div class="rAiU">${msg}</div><div class="rAiB" id="rTyping">⏳ جاري التفكير...</div>`;
-    msgs.scrollTop=msgs.scrollHeight;
-    inp.value='';btn.disabled=true;
-    try{
-      const r=await fetch('https://ybjdagurvkweabujkeyz.supabase.co/functions/v1/ai-chat',{
-        method:'POST',
-        headers:{'Content-Type':'application/json','apikey':'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InliamRhZ3Vydmt3ZWFidWprZXl6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkzNjQyMDAsImV4cCI6MjA5NDk0MDIwMH0.CIK7sew_-kBlC_t_szCjKjjnFNg695kwSryuRshQ9nI','Authorization':'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InliamRhZ3Vydmt3ZWFidWprZXl6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkzNjQyMDAsImV4cCI6MjA5NDk0MDIwMH0.CIK7sew_-kBlC_t_szCjKjjnFNg695kwSryuRshQ9nI'},
-        body:JSON.stringify({message:msg,context:CTX,history:chatHistory})
-      });
-      const d=await r.json();
-      const ans=d.answer||'عذراً، حاول مرة أخرى.';
-      document.getElementById('rTyping')?.remove();
-      msgs.innerHTML+=`<div class="rAiB">${ans.replace(/\n/g,'<br>')}</div>`;
-      chatHistory.push({role:'user',text:msg});
-      chatHistory.push({role:'model',text:ans});
-      if(chatHistory.length>20) chatHistory=chatHistory.slice(-20);
-    }catch(e){
-      document.getElementById('rTyping')?.remove();
-      msgs.innerHTML+=`<div class="rAiB">حدث خطأ. تحقق من الإنترنت.</div>`;
-    }
-    msgs.scrollTop=msgs.scrollHeight;btn.disabled=false;
-  };
-})();
+let aiOpen=false,chatHistory=[];
+window.rToggle=function(){aiOpen=!aiOpen;document.getElementById('rihlaAiWin').style.display=aiOpen?'flex':'none';if(aiOpen)document.getElementById('rAiInp').focus();};
+const suggs=['أفضل وقت للزيارة؟','تكلفة الرحلة تقريباً؟','هل الطعام الحلال متوفر؟','اقترح مسار ٧ أيام'];
+document.getElementById('rAiSuggs').innerHTML=suggs.map(s=>`<button class="rAiSugg" onclick="rQuick('${s}')">${s}</button>`).join('');
+window.rQuick=function(t){document.getElementById('rAiInp').value=t;rSend();};
+window.rSend=async function(){
+  const inp=document.getElementById('rAiInp'),btn=document.getElementById('rAiSend'),msgs=document.getElementById('rAiMsgs');
+  const msg=inp.value.trim();if(!msg)return;
+  msgs.innerHTML+=`<div class="rAiU">${msg}</div><div class="rAiB" id="rTyping">⏳ جاري التفكير...</div>`;
+  msgs.scrollTop=msgs.scrollHeight;inp.value='';btn.disabled=true;
+  try{
+    const r=await fetch('https://ybjdagurvkweabujkeyz.supabase.co/functions/v1/ai-chat',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','apikey':'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InliamRhZ3Vydmt3ZWFidWprZXl6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkzNjQyMDAsImV4cCI6MjA5NDk0MDIwMH0.CIK7sew_-kBlC_t_szCjKjjnFNg695kwSryuRshQ9nI','Authorization':'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InliamRhZ3Vydmt3ZWFidWprZXl6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkzNjQyMDAsImV4cCI6MjA5NDk0MDIwMH0.CIK7sew_-kBlC_t_szCjKjjnFNg695kwSryuRshQ9nI'},
+      body:JSON.stringify({message:msg,context:'أنت مساعد وجهات سياحية للمسافرين الخليجيين.',history:chatHistory})
+    });
+    const d=await r.json();const ans=d.answer||'عذراً، حاول مرة أخرى.';
+    document.getElementById('rTyping')?.remove();
+    msgs.innerHTML+=`<div class="rAiB">${ans.replace(/\n/g,'<br>')}</div>`;
+    chatHistory.push({role:'user',text:msg});chatHistory.push({role:'model',text:ans});
+    if(chatHistory.length>20)chatHistory=chatHistory.slice(-20);
+  }catch(e){document.getElementById('rTyping')?.remove();msgs.innerHTML+=`<div class="rAiB">حدث خطأ.</div>`;}
+  msgs.scrollTop=msgs.scrollHeight;btn.disabled=false;
+};
 </script>
-<!-- ═══ END RIHLA AI ═══ -->
-
 </body>
 </html>
