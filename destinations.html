@@ -358,16 +358,68 @@ let currentDest = null, currentUser = null;
 let selectedStar = 0, sheetImgIdx = 0;
 
 // توليد روابط صور Unsplash لكل وجهة
+// Wikipedia page names for each city
+const WIKI_PAGES = {
+  'إسطنبول': 'Istanbul',
+  'كوالالمبور': 'Kuala_Lumpur',
+  'تبليسي': 'Tbilisi',
+  'باكو': 'Baku',
+  'بانكوك': 'Bangkok',
+  'لندن': 'London',
+  'باريس': 'Paris',
+  'دبي': 'Dubai',
+  'سراييفو': 'Sarajevo',
+  'زيورخ': 'Zurich',
+  'أنطاليا': 'Antalya',
+  'براغ': 'Prague',
+  'سنغافورة': 'Singapore',
+  'ميونيخ': 'Munich',
+  'كيب تاون': 'Cape_Town',
+  'المالديف': 'Maldives',
+  'مراكش': 'Marrakesh',
+  'بالي': 'Bali',
+  'طوكيو': 'Tokyo',
+  'كاندي': 'Kandy',
+  'روما': 'Rome',
+  'برشلونة': 'Barcelona',
+  'القاهرة': 'Cairo',
+  'أمستردام': 'Amsterdam',
+  'نيويورك': 'New_York_City',
+  'فيينا': 'Vienna',
+  'بودابست': 'Budapest',
+  'مانيلا': 'Manila',
+};
+
 function getDestImages(dest) {
-  // إذا كانت الصور محفوظة في قاعدة البيانات استخدمها
   if(dest.images && dest.images.length > 0) return dest.images;
-  // fallback: صورة عامة للمدينة
-  const seed = (dest.name||'').charCodeAt(0) * 7 + (dest.country||'').charCodeAt(0) * 3;
-  return [
-    `https://picsum.photos/seed/${seed}/800/500`,
-    `https://picsum.photos/seed/${seed+1}/800/500`,
-    `https://picsum.photos/seed/${seed+2}/800/500`,
-  ];
+  // Fallback gradient placeholder
+  return [];
+}
+
+// جلب صور Wikipedia لوجهة معينة
+async function loadWikiImages(dest, imgContainer) {
+  const cityKey = Object.keys(WIKI_PAGES).find(k => dest.name && dest.name.includes(k));
+  const wikiPage = cityKey ? WIKI_PAGES[cityKey] : (dest.name || 'Travel');
+  
+  try {
+    const url = `https://en.wikipedia.org/w/api.php?action=query&titles=${wikiPage}&prop=pageimages|images&format=json&pithumbsize=800&pilimit=4&origin=*`;
+    const resp = await fetch(url);
+    const data = await resp.json();
+    const pages = data.query?.pages;
+    const page = pages ? Object.values(pages)[0] : null;
+    
+    if(page?.thumbnail?.source) {
+      const mainImg = page.thumbnail.source.replace(/\/\d+px-/, '/800px-');
+      // Update first image
+      const imgs = imgContainer.querySelectorAll('img');
+      if(imgs[0]) {
+        imgs[0].src = mainImg;
+        imgs[0].classList.add('active');
+      }
+    }
+  } catch(e) {
+    console.log('Wiki image load failed:', e);
+  }
 }
 
 // ═══ INIT NAV ═══
@@ -444,8 +496,10 @@ function renderGrid(dests) {
     return `
       <div class="dest-card" onclick="openDest(${i})">
         <div class="img-slider" id="slider-${i}">
-          ${imgs.map((url,j) => `<img src="${url}" alt="${d.name}" class="${j===0?'active':''}"
-            onerror="this.style.background='#1a1a1a'">`).join('')}
+          ${imgs.length > 0 
+            ? imgs.map((url,j) => `<img src="${url}" alt="${d.name}" class="${j===0?'active':''}" onerror="this.style.background='#1a1a1a'">`).join('')
+            : `<img src="" alt="${d.name}" class="active" style="background:linear-gradient(135deg,#FF5C1A22,#FFD00022)" onerror="this.style.background='#1a1a1a'">`
+          }
           <div class="img-overlay"></div>
           <div class="img-badges">
             ${noVisa ? '<span class="ibadge novisa">بلا تأشيرة</span>' : ''}
@@ -467,8 +521,16 @@ function renderGrid(dests) {
       </div>`;
   }).join('');
 
-  // Auto-slide images
-  dests.forEach((d, i) => autoSlide(i, getDestImages(d).length));
+  // Load Wikipedia images and auto-slide
+  dests.forEach((d, i) => {
+    const imgs = getDestImages(d);
+    autoSlide(i, Math.max(imgs.length, 1));
+    // Load wiki image if no DB images
+    if(!d.images || d.images.length === 0) {
+      const container = document.getElementById('slider-'+i);
+      if(container) loadWikiImages(d, container);
+    }
+  });
 }
 
 // ═══ AUTO SLIDE ═══
