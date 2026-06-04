@@ -19,7 +19,7 @@
 }
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
 body{font-family:'Tajawal',sans-serif;background:var(--dk);color:white;
-  padding-top:var(--nav-h);padding-bottom:calc(var(--bot-h)+80px);}
+  padding-top:var(--nav-h);padding-bottom:calc(var(--bot-h)+120px);}
 
 /* NAV */
 .topnav{position:fixed;top:0;width:100%;z-index:1000;height:var(--nav-h);
@@ -111,10 +111,10 @@ body{font-family:'Tajawal',sans-serif;background:var(--dk);color:white;
   overflow:hidden;display:flex;flex-direction:column;}
 .sheet.open{transform:translateY(0);}
 .sheet-handle{width:36px;height:4px;border-radius:2px;
-  background:rgba(255,255,255,0.2);margin:8px auto 0;}
+  background:rgba(255,255,255,0.2);margin:6px auto 2px;}
 
 /* SHEET IMAGES */
-.sheet-imgs{position:relative;height:240px;overflow:hidden;flex-shrink:0;}
+.sheet-imgs{position:relative;height:260px;overflow:hidden;flex-shrink:0;}
 .sheet-imgs img{width:100%;height:100%;object-fit:cover;
   position:absolute;top:0;left:0;opacity:0;transition:opacity .4s;}
 .sheet-imgs img.active{opacity:1;}
@@ -137,7 +137,7 @@ body{font-family:'Tajawal',sans-serif;background:var(--dk);color:white;
 
 /* QUICK STATS */
 .qstats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;
-  padding:14px 16px;}
+  padding:10px 16px;}
 .qstat{background:rgba(255,255,255,0.05);border:1px solid var(--border);
   border-radius:14px;padding:10px;text-align:center;}
 .qstat-icon{font-size:18px;margin-bottom:3px;}
@@ -145,7 +145,7 @@ body{font-family:'Tajawal',sans-serif;background:var(--dk);color:white;
 .qstat-lbl{font-size:9px;color:var(--muted);margin-top:1px;}
 
 /* TABS */
-.tabs{display:flex;margin:0 16px 16px;background:rgba(255,255,255,0.05);
+.tabs{display:flex;margin:0 16px 10px;background:rgba(255,255,255,0.05);
   border-radius:14px;padding:3px;gap:2px;}
 .tab{flex:1;padding:9px 4px;border-radius:11px;border:none;
   background:none;color:var(--muted);font-family:'Tajawal',sans-serif;
@@ -361,15 +361,49 @@ let currentDest = null, currentUser = null;
 let selectedStar = 0, sheetImgIdx = 0;
 
 // توليد روابط صور Unsplash لكل وجهة
+// خريطة صور حقيقية لكل وجهة
+const CITY_IMAGES = {
+  'إسطنبول': ['hagia-sophia-istanbul','istanbul-bosphorus','grand-bazaar-istanbul','blue-mosque-istanbul'],
+  'كوالالمبور': ['petronas-towers','kuala-lumpur-city','batu-caves','klcc-park'],
+  'تبليسي': ['tbilisi-old-town','narikala-fortress','tbilisi-bridge','georgia-mountains'],
+  'باكو': ['baku-flame-towers','baku-old-city','baku-boulevard','azerbaijan-architecture'],
+  'بانكوك': ['grand-palace-bangkok','wat-arun-bangkok','bangkok-skyline','chatuchak-market'],
+  'لندن': ['tower-bridge-london','big-ben-london','london-eye','buckingham-palace'],
+  'باريس': ['eiffel-tower-paris','louvre-museum','paris-streets','notre-dame-paris'],
+  'دبي': ['burj-khalifa-dubai','dubai-mall','palm-jumeirah','dubai-skyline'],
+  'سراييفو': ['sarajevo-old-town','bascarsija-sarajevo','sarajevo-mountains','bosnia-bridge'],
+  'زيورخ': ['zurich-lake','zurich-old-town','swiss-alps','zurich-city'],
+  'أنطاليا': ['antalya-beach','antalya-old-city','turkish-riviera','antalya-harbor'],
+  'براغ': ['prague-castle','charles-bridge-prague','old-town-square-prague','prague-skyline'],
+  'سنغافورة': ['marina-bay-sands','gardens-by-the-bay','singapore-skyline','sentosa-singapore'],
+  'ميونيخ': ['neuschwanstein-castle','marienplatz-munich','bavarian-alps','munich-city'],
+  'كيب تاون': ['table-mountain-cape-town','cape-town-waterfront','cape-of-good-hope','cape-town-city'],
+  'المالديف': ['maldives-overwater-bungalow','maldives-beach','maldives-crystal-water','maldives-resort'],
+  'مراكش': ['marrakech-medina','jemaa-el-fna','moroccan-architecture','marrakech-souks'],
+  'بالي': ['bali-temple','ubud-rice-terraces','bali-beach','tanah-lot-bali'],
+  'طوكيو': ['tokyo-shibuya','mount-fuji-japan','tokyo-tower','senso-ji-temple'],
+  'كاندي': ['sri-lanka-temple','ella-sri-lanka','sigiriya-rock','sri-lanka-tea'],
+  'روما': ['colosseum-rome','trevi-fountain','vatican-rome','roman-forum'],
+  'برشلونة': ['sagrada-familia','barcelona-city','park-guell','barcelona-beach'],
+  'القاهرة': ['pyramids-giza','sphinx-egypt','cairo-city','nile-river'],
+  'أمستردام': ['amsterdam-canals','tulip-fields-netherlands','amsterdam-city','anne-frank-house'],
+  'نيويورك': ['new-york-skyline','statue-of-liberty','central-park-nyc','times-square'],
+  'فيينا': ['schonbrunn-palace','vienna-opera','vienna-city','st-stephens-cathedral'],
+  'بودابست': ['budapest-parliament','chain-bridge-budapest','budapest-city','buda-castle'],
+  'مانيلا': ['boracay-beach','palawan-philippines','el-nido-philippines','philippines-islands'],
+};
+
 function getUnsplashUrls(dest) {
-  // Use picsum with different seeds for reliable images
-  const seed = dest.name.charCodeAt(0) + dest.country.charCodeAt(0);
-  return [
-    `https://picsum.photos/seed/${seed}/800/500`,
-    `https://picsum.photos/seed/${seed+1}/800/500`,
-    `https://picsum.photos/seed/${seed+2}/800/500`,
-    `https://picsum.photos/seed/${seed+3}/800/500`,
+  const cityKey = Object.keys(CITY_IMAGES).find(k => dest.name.includes(k) || k.includes(dest.name));
+  const queries = cityKey ? CITY_IMAGES[cityKey] : [
+    `${dest.name} city travel`,
+    `${dest.name} landmark`,
+    `${dest.country} tourism`,
+    `${dest.name} architecture`,
   ];
+  return queries.map((q, i) =>
+    `https://source.unsplash.com/featured/800x500/?${encodeURIComponent(q)}&t=${dest.name}${i}`
+  );
 }
 
 // ═══ INIT NAV ═══
