@@ -672,11 +672,14 @@ async function loadPosts(){
       `<div class="post-img-grid">${imgs.slice(0,4).map(i=>`<img src="${i}" loading="lazy">`).join('')}</div>`;
     const liked=myLikes.has(p.id);
     const dt=new Date(p.created_at).toLocaleDateString('ar-KW',{day:'numeric',month:'long'});
-    return`<div class="post-card" onclick="window.location.href='post.html?id=${p.id}'" style="cursor:pointer;">${imgHtml}
+    return`<div class="post-card" onclick="window.location.href='post.html?id=${p.id}'" style="cursor:pointer;">
       <div class="post-body">
         ${p.destination?`<div class="post-dest">📍 ${p.destination}</div>`:''}
         <div class="post-title">${p.title}</div>
         ${p.content?`<div class="post-text">${p.content}</div>`:''}
+      </div>
+      ${imgHtml}
+      <div class="post-body" style="padding-top:8px;">
         <div class="post-foot">
           <div class="post-time">${dt}</div>
           <div style="display:flex;gap:6px;">
