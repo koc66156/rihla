@@ -360,6 +360,78 @@ let allDests = [], filtered = [], activeFilter = 'all';
 let currentDest = null, currentUser = null;
 let selectedStar = 0, sheetImgIdx = 0;
 
+
+const CITY_EN = {
+  'إسطنبول': 'Istanbul', 'كوالالمبور': 'Kuala-Lumpur', 'تبليسي': 'Tbilisi',
+  'باكو': 'Baku', 'بانكوك': 'Bangkok', 'لندن': 'London', 'باريس': 'Paris',
+  'دبي': 'Dubai', 'سراييفو': 'Sarajevo', 'زيورخ': 'Zurich', 'أنطاليا': 'Antalya',
+  'براغ': 'Prague', 'سنغافورة': 'Singapore', 'ميونيخ': 'Munich',
+  'كيب تاون': 'Cape-Town', 'المالديف': 'Maldives', 'مراكش': 'Marrakech',
+  'بالي': 'Bali', 'طوكيو': 'Tokyo', 'كاندي': 'Kandy', 'روما': 'Rome',
+  'برشلونة': 'Barcelona', 'القاهرة': 'Cairo', 'أمستردام': 'Amsterdam',
+  'نيويورك': 'New-York', 'فيينا': 'Vienna', 'بودابست': 'Budapest',
+  'مانيلا': 'Manila', 'إنترلاكن': 'Interlaken', 'غرينديلفالد': 'Grindelwald',
+  'لوتسيرن': 'Lucerne', 'زيرمات': 'Zermatt', 'جنيف': 'Geneva',
+  'البندقية': 'Venice', 'فلورنسا': 'Florence', 'ميلانو': 'Milan',
+  'سيرميوني': 'Sirmione', 'سينكوتيري': 'Cinque-Terre', 'بولونيا': 'Bologna',
+  'موستار': 'Mostar', 'سالزبورغ': 'Salzburg', 'هالشتات': 'Hallstatt',
+  'إنسبروك': 'Innsbruck', 'زيل أم سي': 'Zell-am-See',
+  'فوسن': 'Fussen', 'كولن': 'Cologne', 'درسدن': 'Dresden',
+  'فرانكفورت': 'Frankfurt', 'غرناطة': 'Granada', 'إشبيلية': 'Seville',
+  'توليدو': 'Toledo', 'مالقا': 'Malaga', 'ماربيا': 'Marbella',
+  'نيس': 'Nice', 'بوردو': 'Bordeaux', 'ستراسبورغ': 'Strasbourg',
+  'روتردام': 'Rotterdam', 'لاهاي': 'The-Hague', 'بروج': 'Bruges',
+  'غنت': 'Ghent', 'لشبونة': 'Lisbon', 'بورتو': 'Porto', 'سينترا': 'Sintra',
+  'سانتوريني': 'Santorini', 'ميكونوس': 'Mykonos', 'أثينا': 'Athens',
+  'دوبروفنيك': 'Dubrovnik', 'سبليت': 'Split', 'كراكوف': 'Krakow',
+  'وارسو': 'Warsaw', 'براشوف': 'Brasov', 'بوخارست': 'Bucharest',
+  'برغن': 'Bergen', 'ريكيافيك': 'Reykjavik', 'كوبنهاغن': 'Copenhagen',
+  'تالين': 'Tallinn', 'ريغا': 'Riga', 'كوتور': 'Kotor', 'بودفا': 'Budva',
+  'أوهريد': 'Ohrid', 'تيرانا': 'Tirana', 'كابادوكيا': 'Cappadocia',
+  'طرابزون': 'Trabzon', 'فاس': 'Fes', 'شفشاون': 'Chefchaouen',
+  'إدنبرة': 'Edinburgh', 'دبلن': 'Dublin', 'سمرقند': 'Samarkand',
+  'طشقند': 'Tashkent', 'بوخارى': 'Bukhara', 'زنزبار': 'Zanzibar',
+  'جزيرة جيجو': 'Jeju', 'كيوتو': 'Kyoto', 'أوساكا': 'Osaka',
+  'شيانغ ماي': 'Chiang-Mai', 'كوه سامي': 'Koh-Samui', 'كوه تاو': 'Koh-Tao',
+  'آيوتايا': 'Ayutthaya', 'باي': 'Pai', 'بوكيت': 'Phuket', 'باتايا': 'Pattaya',
+  'شنغهاي': 'Shanghai', 'بكين': 'Beijing', 'غوانغتشو': 'Guangzhou',
+  'تشنغدو': 'Chengdu', 'شيان': 'Xian', 'غيلين': 'Guilin',
+  'لنكاوي': 'Langkawi', 'بينانغ': 'Penang', 'ملاكا': 'Malacca',
+  'كوتا كينابالو': 'Kota-Kinabalu', 'يوغياكارتا': 'Yogyakarta',
+  'لومبوك': 'Lombok', 'جاكارتا': 'Jakarta', 'سيبو': 'Cebu',
+  'بالاوان': 'Palawan', 'هانوي': 'Hanoi', 'هوي آن': 'Hoi-An',
+  'هوشي منه': 'Ho-Chi-Minh', 'موسكو': 'Moscow',
+  'سانت بطرسبرغ': 'Saint-Petersburg', 'سوتشي': 'Sochi', 'قازان': 'Kazan',
+  'ألماتي': 'Almaty', 'نور سلطان': 'Nur-Sultan', 'بيشكيك': 'Bishkek',
+  'سيسكي كروملوف': 'Cesky-Krumlov', 'برنو': 'Brno', 'كييف': 'Kyiv',
+  'مينسك': 'Minsk', 'براتيسلافا': 'Bratislava', 'لجبلانا': 'Ljubljana',
+  'بليد': 'Bled', 'صوفيا': 'Sofia', 'كلوج نابوكا': 'Cluj-Napoca',
+  'سيغيشوارا': 'Sighisoara',
+};
+
+function getAffiliateLinks(dest) {
+  const nameKey = Object.keys(CITY_EN).find(k => dest.name && dest.name.includes(k));
+  const cityEN = nameKey ? CITY_EN[nameKey] : encodeURIComponent(dest.name);
+  const aff = '169114';
+
+  const agodaURL = encodeURIComponent(`https://www.agoda.com/search?city=${cityEN}&tag=${aff}`);
+  const tripURL  = encodeURIComponent(`https://www.trip.com/hotels/list?city=${cityEN}`);
+  const expURL   = encodeURIComponent(`https://www.expedia.com/Hotel-Search?destination=${cityEN}`);
+  const qrURL    = encodeURIComponent(`https://www.qatarairways.com/en/flights-to-${cityEN}.html`);
+  const etURL    = encodeURIComponent(`https://www.etihad.com/en/fly/destinations/${cityEN}`);
+
+  return {
+    agoda:   `https://go.urtrackinglink.com/aff_c?offer_id=252&aff_id=${aff}&url=${agodaURL}`,
+    trip:    `https://go.urtrackinglink.com/aff_c?offer_id=1321&aff_id=${aff}&url=${tripURL}`,
+    expedia: `https://go.urtrackinglink.com/aff_c?offer_id=1868&aff_id=${aff}&url=${expURL}`,
+    qatar:   `https://go.urtrackinglink.com/aff_c?offer_id=1843&aff_id=${aff}&url=${qrURL}`,
+    etihad:  `https://go.urtrackinglink.com/aff_c?offer_id=1692&aff_id=${aff}&url=${etURL}`,
+    flynas:  `https://go.urtrackinglink.com/aff_c?offer_id=1799&aff_id=${aff}`,
+    ihg:     `https://go.urtrackinglink.com/aff_c?offer_id=1956&aff_id=${aff}`,
+    tickets: `https://go.urtrackinglink.com/aff_c?offer_id=128&aff_id=${aff}`,
+  };
+}
+
 // توليد روابط صور Unsplash لكل وجهة
 // تدرج لوني لكل وجهة كـ placeholder احترافي
 const CITY_GRADIENTS = {
@@ -837,6 +909,7 @@ function switchTab(tab, el) {
 
 // ═══ GENERAL TAB ═══
 function renderGeneralTab(d) {
+  const links = getAffiliateLinks(d);
   const noVisa = /بدون تأشيرة|بلا تأشيرة/.test(d.visa_info||'');
   document.getElementById('panel-general').innerHTML = `
     <div class="info-sec">
@@ -880,25 +953,25 @@ function renderGeneralTab(d) {
     <div class="info-sec">
       <div class="info-sec-title">✈️ احجز تذكرتك</div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;">
-        <a href="https://go.urtrackinglink.com/aff_c?offer_id=1843&aff_id=169114" target="_blank" style="text-decoration:none;">
+        <a href="${links.qatar}" target="_blank" style="text-decoration:none;">
           <div style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:10px;text-align:center;">
             <div style="font-size:18px;margin-bottom:2px;">🇶🇦</div>
             <div style="font-size:11px;font-weight:800;color:white;">Qatar Airways</div>
           </div>
         </a>
-        <a href="https://go.urtrackinglink.com/aff_c?offer_id=1692&aff_id=169114" target="_blank" style="text-decoration:none;">
+        <a href="${links.etihad}" target="_blank" style="text-decoration:none;">
           <div style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:10px;text-align:center;">
             <div style="font-size:18px;margin-bottom:2px;">🇦🇪</div>
             <div style="font-size:11px;font-weight:800;color:white;">Etihad</div>
           </div>
         </a>
-        <a href="https://go.urtrackinglink.com/aff_c?offer_id=1799&aff_id=169114" target="_blank" style="text-decoration:none;">
+        <a href="${links.flynas}" target="_blank" style="text-decoration:none;">
           <div style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:10px;text-align:center;">
             <div style="font-size:18px;margin-bottom:2px;">🇸🇦</div>
             <div style="font-size:11px;font-weight:800;color:white;">Flynas</div>
           </div>
         </a>
-        <a href="https://go.urtrackinglink.com/aff_c?offer_id=1868&aff_id=169114" target="_blank" style="text-decoration:none;">
+        <a href="${links.expedia}" target="_blank" style="text-decoration:none;">
           <div style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:10px;text-align:center;">
             <div style="font-size:18px;margin-bottom:2px;">🌍</div>
             <div style="font-size:11px;font-weight:800;color:white;">Expedia</div>
@@ -910,25 +983,25 @@ function renderGeneralTab(d) {
     <div class="info-sec">
       <div class="info-sec-title">🏨 احجز فندقك</div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;">
-        <a href="https://go.urtrackinglink.com/aff_c?offer_id=252&aff_id=169114" target="_blank" style="text-decoration:none;">
+        <a href="${links.agoda}" target="_blank" style="text-decoration:none;">
           <div style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:10px;text-align:center;">
             <div style="font-size:18px;margin-bottom:2px;">🟣</div>
             <div style="font-size:11px;font-weight:800;color:white;">Agoda</div>
           </div>
         </a>
-        <a href="https://go.urtrackinglink.com/aff_c?offer_id=1321&aff_id=169114" target="_blank" style="text-decoration:none;">
+        <a href="${links.trip}" target="_blank" style="text-decoration:none;">
           <div style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:10px;text-align:center;">
             <div style="font-size:18px;margin-bottom:2px;">🌐</div>
             <div style="font-size:11px;font-weight:800;color:white;">Trip.com</div>
           </div>
         </a>
-        <a href="https://go.urtrackinglink.com/aff_c?offer_id=1956&aff_id=169114" target="_blank" style="text-decoration:none;">
+        <a href="${links.ihg}" target="_blank" style="text-decoration:none;">
           <div style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:10px;text-align:center;">
             <div style="font-size:18px;margin-bottom:2px;">🏨</div>
             <div style="font-size:11px;font-weight:800;color:white;">IHG Hotels</div>
           </div>
         </a>
-        <a href="https://go.urtrackinglink.com/aff_c?offer_id=128&aff_id=169114" target="_blank" style="text-decoration:none;">
+        <a href="${links.tickets}" target="_blank" style="text-decoration:none;">
           <div style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:10px;text-align:center;">
             <div style="font-size:18px;margin-bottom:2px;">🎟️</div>
             <div style="font-size:11px;font-weight:800;color:white;">TicketsToDo</div>
