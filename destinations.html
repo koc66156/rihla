@@ -857,10 +857,11 @@ function renderGeneralTab(d) {
     if(d.direct_airlines) {
       directAirlines = typeof d.direct_airlines === 'string'
         ? JSON.parse(d.direct_airlines)
-        : d.direct_airlines;
+        : Array.isArray(d.direct_airlines) ? d.direct_airlines : [];
     }
   } catch(e) { directAirlines = []; }
-  const connectingAirlines = d.connecting_airlines || [];
+  const connectingAirlines = Array.isArray(d.connecting_airlines) ? d.connecting_airlines : [];
+  console.log('🔍 DEBUG:', d.name, '| direct_airlines:', d.direct_airlines, '| parsed:', directAirlines, '| connecting:', connectingAirlines);
   document.getElementById('panel-general').innerHTML = `
     <div class="info-sec">
       <div class="info-row">
