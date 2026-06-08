@@ -702,6 +702,7 @@ function renderGrid(dests) {
     const noVisa = /بدون تأشيرة|بلا تأشيرة/.test(d.visa_info||'');
     const isSummer = /صيف|يونيو|يوليو|أغسطس|مايو|أبريل/.test(d.best_time||'');
     const isFamily = /عائلي|عائلة/.test((d.description||'')+(d.must_visit||[]).join(''));
+    const hasDirect = d.has_direct === true;
     return `
       <div class="dest-card" onclick="openDest(${i})">
         <div class="img-slider" id="slider-${i}" style="background:${getCityGradient(d)}">
@@ -711,6 +712,7 @@ function renderGrid(dests) {
           }
           <div class="img-overlay"></div>
           <div class="img-badges">
+            ${hasDirect ? '<span class="ibadge novisa">✈️ مباشر</span>' : ''}
             ${noVisa ? '<span class="ibadge novisa">بلا تأشيرة</span>' : ''}
             ${isSummer ? '<span class="ibadge summer">☀️ صيف</span>' : ''}
             ${isFamily ? '<span class="ibadge family">👨‍👩‍👧</span>' : ''}
@@ -801,8 +803,8 @@ async function openDest(idx) {
       <div style="display:flex;gap:8px;margin-bottom:8px;">
         <a href="https://go.urtrackinglink.com/aff_c?offer_id=252&aff_id=169114" target="_blank" style="flex:1;text-decoration:none;">
           <div style="background:rgba(220,30,30,0.12);border:1px solid rgba(220,30,30,0.3);border-radius:12px;padding:10px;text-align:center;">
-            <div style="font-size:11px;font-weight:900;color:#ff4444;letter-spacing:-0.5px;margin-bottom:2px;">agoda</div>
-            <div style="width:16px;height:3px;background:#ff4444;border-radius:2px;margin:0 auto;"></div>
+            <div style="font-size:18px;margin-bottom:2px;">🔴</div>
+            <div style="font-size:11px;font-weight:900;color:#ff4444;">agoda</div>
           </div>
         </a>
         <a href="https://go.urtrackinglink.com/aff_c?offer_id=1956&aff_id=169114" target="_blank" style="flex:1;text-decoration:none;">
@@ -942,6 +944,31 @@ function renderGeneralTab(d) {
         </div>
       </div>
     </div>
+
+    ${(d.direct_airlines && d.direct_airlines.length > 0) ? `
+    <div class="info-sec">
+      <div class="info-sec-title" style="color:var(--tl);">✈️ رحلات مباشرة من الكويت</div>
+      <div style="display:flex;flex-direction:column;gap:6px;">
+        ${d.direct_airlines.map(f=>`
+          <div style="display:flex;justify-content:space-between;align-items:center;
+            background:rgba(0,201,177,0.06);border:1px solid rgba(0,201,177,0.15);
+            border-radius:10px;padding:8px 12px;">
+            <span style="font-size:13px;font-weight:800;color:white;">🟢 ${f.airline}</span>
+            <span style="font-size:11px;color:rgba(255,255,255,0.6);">${f.days}</span>
+          </div>`).join('')}
+      </div>
+    </div>` : ''}
+
+    ${(d.connecting_airlines && d.connecting_airlines.length > 0) ? `
+    <div class="info-sec">
+      <div class="info-sec-title" style="color:var(--muted);">🔀 خيارات أخرى</div>
+      <div style="background:rgba(255,255,255,0.04);border:1px solid var(--border);
+        border-radius:10px;padding:10px 12px;">
+        <span style="font-size:12px;color:rgba(255,255,255,0.6);line-height:2;">
+          ${d.connecting_airlines.join(' · ')}
+        </span>
+      </div>
+    </div>` : ''}
 
     ${(d.must_visit||[]).length ? `
     <div class="info-sec">
