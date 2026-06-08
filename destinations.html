@@ -299,19 +299,19 @@ body{font-family:'Tajawal',sans-serif;background:var(--dk);color:white;
     <!-- TABS -->
     <div class="tabs">
       <button class="tab active" onclick="switchTab('general',this)">📍 عام</button>
-      <button class="tab" onclick="switchTab('food',this)">🍽️ طعام</button>
       <button class="tab" onclick="switchTab('tips',this)">💡 نصائح</button>
+      <button class="tab" onclick="switchTab('booking',this)">🏨 حجز</button>
       <button class="tab" onclick="switchTab('reviews',this)">⭐ تقييمات</button>
     </div>
 
     <!-- TAB: GENERAL -->
     <div class="tab-panel active" id="panel-general"></div>
 
-    <!-- TAB: FOOD -->
-    <div class="tab-panel" id="panel-food"></div>
-
-    <!-- TAB: TIPS -->
+    <!-- TAB: TIPS + FOOD -->
     <div class="tab-panel" id="panel-tips"></div>
+
+    <!-- TAB: BOOKING -->
+    <div class="tab-panel" id="panel-booking"></div>
 
     <!-- TAB: REVIEWS -->
     <div class="tab-panel" id="panel-reviews"></div>
@@ -854,8 +854,8 @@ async function openDest(idx) {
     </div>`;
 
   renderGeneralTab(d);
-  renderFoodTab(d);
   renderTipsTab(d);
+  renderBookingTab(d);
   await renderReviewsTab(d);
 
   // Add booking after general tab
@@ -942,6 +942,7 @@ function renderGeneralTab(d) {
         </div>
       </div>
     </div>
+
     ${(d.must_visit||[]).length ? `
     <div class="info-sec">
       <div class="info-sec-title">📍 أماكن يجب زيارتها</div>
@@ -949,66 +950,6 @@ function renderGeneralTab(d) {
         ${d.must_visit.map(p=>`<span class="tag tag-green">${p}</span>`).join('')}
       </div>
     </div>` : ''}
-
-    <div class="info-sec">
-      <div class="info-sec-title">✈️ احجز تذكرتك</div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;">
-        <a href="${links.qatar}" target="_blank" style="text-decoration:none;">
-          <div style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:10px;text-align:center;">
-            <div style="font-size:18px;margin-bottom:2px;">🇶🇦</div>
-            <div style="font-size:11px;font-weight:800;color:white;">Qatar Airways</div>
-          </div>
-        </a>
-        <a href="${links.etihad}" target="_blank" style="text-decoration:none;">
-          <div style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:10px;text-align:center;">
-            <div style="font-size:18px;margin-bottom:2px;">🇦🇪</div>
-            <div style="font-size:11px;font-weight:800;color:white;">Etihad</div>
-          </div>
-        </a>
-        <a href="${links.flynas}" target="_blank" style="text-decoration:none;">
-          <div style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:10px;text-align:center;">
-            <div style="font-size:18px;margin-bottom:2px;">🇸🇦</div>
-            <div style="font-size:11px;font-weight:800;color:white;">Flynas</div>
-          </div>
-        </a>
-        <a href="${links.expedia}" target="_blank" style="text-decoration:none;">
-          <div style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:10px;text-align:center;">
-            <div style="font-size:18px;margin-bottom:2px;">🌍</div>
-            <div style="font-size:11px;font-weight:800;color:white;">Expedia</div>
-          </div>
-        </a>
-      </div>
-    </div>
-
-    <div class="info-sec">
-      <div class="info-sec-title">🏨 احجز فندقك</div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;">
-        <a href="${links.agoda}" target="_blank" style="text-decoration:none;">
-          <div style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:10px;text-align:center;">
-            <div style="font-size:18px;margin-bottom:2px;">🟣</div>
-            <div style="font-size:11px;font-weight:800;color:white;">Agoda</div>
-          </div>
-        </a>
-        <a href="${links.trip}" target="_blank" style="text-decoration:none;">
-          <div style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:10px;text-align:center;">
-            <div style="font-size:18px;margin-bottom:2px;">🌐</div>
-            <div style="font-size:11px;font-weight:800;color:white;">Trip.com</div>
-          </div>
-        </a>
-        <a href="${links.ihg}" target="_blank" style="text-decoration:none;">
-          <div style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:10px;text-align:center;">
-            <div style="font-size:18px;margin-bottom:2px;">🏨</div>
-            <div style="font-size:11px;font-weight:800;color:white;">IHG Hotels</div>
-          </div>
-        </a>
-        <a href="${links.tickets}" target="_blank" style="text-decoration:none;">
-          <div style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:10px;text-align:center;">
-            <div style="font-size:18px;margin-bottom:2px;">🎟️</div>
-            <div style="font-size:11px;font-weight:800;color:white;">TicketsToDo</div>
-          </div>
-        </a>
-      </div>
-    </div>
 
     <div class="info-sec">
       <div class="info-sec-title">🧭 مناسب لـ</div>
@@ -1021,9 +962,23 @@ function renderGeneralTab(d) {
     </div>`;
 }
 
-// ═══ FOOD TAB ═══
-function renderFoodTab(d) {
-  document.getElementById('panel-food').innerHTML = `
+
+function renderTipsTab(d) {
+  document.getElementById('panel-tips').innerHTML = `
+    ${(d.tips||[]).length ? `
+    <div class="info-sec">
+      <div class="info-sec-title">💡 نصائح مهمة</div>
+      <div class="tags-wrap">
+        ${d.tips.map(t=>`<span class="tag tag-yl">💡 ${t}</span>`).join('')}
+      </div>
+    </div>` : ''}
+    ${(d.warnings||[]).length ? `
+    <div class="info-sec">
+      <div class="info-sec-title">⚠️ تحذيرات</div>
+      <div class="tags-wrap">
+        ${d.warnings.map(w=>`<span class="tag tag-red">⚠️ ${w}</span>`).join('')}
+      </div>
+    </div>` : ''}
     ${d.halal_food ? `
     <div class="info-sec">
       <div class="info-row">
@@ -1063,24 +1018,78 @@ function renderFoodTab(d) {
     </div>` : ''}`;
 }
 
-// ═══ TIPS TAB ═══
-function renderTipsTab(d) {
-  document.getElementById('panel-tips').innerHTML = `
-    ${(d.tips||[]).length ? `
+function renderBookingTab(d) {
+  const links = getAffiliateLinks(d);
+  document.getElementById('panel-booking').innerHTML = `
     <div class="info-sec">
-      <div class="info-sec-title">💡 نصائح مهمة</div>
-      <div class="tags-wrap">
-        ${d.tips.map(t=>`<span class="tag tag-yl">💡 ${t}</span>`).join('')}
+      <div class="info-sec-title">✈️ احجز تذكرتك</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;">
+        <a href="${links.qatar}" target="_blank" style="text-decoration:none;">
+          <div style="background:rgba(92,45,145,0.15);border:1px solid rgba(92,45,145,0.3);border-radius:12px;padding:12px;text-align:center;">
+            <div style="font-size:22px;margin-bottom:4px;color:#5C2D91;">✈</div>
+            <div style="font-size:12px;font-weight:800;color:#5C2D91;">Qatar Airways</div>
+            <div style="font-size:10px;color:var(--muted);">احجز الآن</div>
+          </div>
+        </a>
+        <a href="${links.etihad}" target="_blank" style="text-decoration:none;">
+          <div style="background:rgba(139,90,43,0.15);border:1px solid rgba(139,90,43,0.3);border-radius:12px;padding:12px;text-align:center;">
+            <div style="font-size:22px;margin-bottom:4px;">🇦🇪</div>
+            <div style="font-size:12px;font-weight:800;color:white;">Etihad Airways</div>
+            <div style="font-size:10px;color:var(--muted);">احجز الآن</div>
+          </div>
+        </a>
+        <a href="${links.flynas}" target="_blank" style="text-decoration:none;">
+          <div style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:12px;text-align:center;">
+            <div style="font-size:22px;margin-bottom:4px;">🇸🇦</div>
+            <div style="font-size:12px;font-weight:800;color:white;">Flynas</div>
+            <div style="font-size:10px;color:var(--muted);">احجز الآن</div>
+          </div>
+        </a>
+        <a href="${links.expedia}" target="_blank" style="text-decoration:none;">
+          <div style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:12px;text-align:center;">
+            <div style="font-size:22px;margin-bottom:4px;">🌍</div>
+            <div style="font-size:12px;font-weight:800;color:white;">Expedia</div>
+            <div style="font-size:10px;color:var(--muted);">طيران + فندق</div>
+          </div>
+        </a>
       </div>
-    </div>` : ''}
-    ${(d.warnings||[]).length ? `
+    </div>
+
     <div class="info-sec">
-      <div class="info-sec-title">⚠️ تحذيرات</div>
-      <div class="tags-wrap">
-        ${d.warnings.map(w=>`<span class="tag tag-red">⚠️ ${w}</span>`).join('')}
+      <div class="info-sec-title">🏨 احجز فندقك</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;">
+        <a href="${links.agoda}" target="_blank" style="text-decoration:none;">
+          <div style="background:rgba(220,30,30,0.1);border:1px solid rgba(220,30,30,0.25);border-radius:12px;padding:12px;text-align:center;">
+            <div style="font-size:22px;margin-bottom:4px;">🔴</div>
+            <div style="font-size:12px;font-weight:800;color:#ff6b6b;">Agoda</div>
+            <div style="font-size:10px;color:var(--muted);">أفضل أسعار آسيا</div>
+          </div>
+        </a>
+        <a href="${links.trip}" target="_blank" style="text-decoration:none;">
+          <div style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:12px;text-align:center;">
+            <div style="font-size:22px;margin-bottom:4px;">🌐</div>
+            <div style="font-size:12px;font-weight:800;color:white;">Trip.com</div>
+            <div style="font-size:10px;color:var(--muted);">فنادق وطيران</div>
+          </div>
+        </a>
+        <a href="${links.ihg}" target="_blank" style="text-decoration:none;">
+          <div style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:12px;text-align:center;">
+            <div style="font-size:22px;margin-bottom:4px;">🏨</div>
+            <div style="font-size:12px;font-weight:800;color:white;">IHG Hotels</div>
+            <div style="font-size:10px;color:var(--muted);">فنادق فاخرة</div>
+          </div>
+        </a>
+        <a href="${links.tickets}" target="_blank" style="text-decoration:none;">
+          <div style="background:rgba(0,201,177,0.1);border:1px solid rgba(0,201,177,0.2);border-radius:12px;padding:12px;text-align:center;">
+            <div style="font-size:22px;margin-bottom:4px;">🎟️</div>
+            <div style="font-size:12px;font-weight:800;color:var(--tl);">TicketsToDo</div>
+            <div style="font-size:10px;color:var(--muted);">تجارب وتذاكر</div>
+          </div>
+        </a>
       </div>
-    </div>` : ''}`;
+    </div>`;
 }
+
 
 // ═══ REVIEWS TAB ═══
 async function renderReviewsTab(d) {
