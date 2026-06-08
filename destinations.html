@@ -945,6 +945,24 @@ function renderGeneralTab(d) {
       </div>
     </div>
 
+    ${(d.must_visit||[]).length ? `
+    <div class="info-sec">
+      <div class="info-sec-title">📍 أماكن يجب زيارتها</div>
+      <div class="tags-wrap">
+        ${d.must_visit.map(p=>`<span class="tag tag-green">${p}</span>`).join('')}
+      </div>
+    </div>` : ''}
+
+    <div class="info-sec">
+      <div class="info-sec-title">🧭 مناسب لـ</div>
+      <div class="suit-wrap">
+        <div class="suit-item"><div class="suit-icon">👨‍👩‍👧</div><div class="suit-info"><div class="suit-name">العائلات</div><div class="suit-val">مناسب جداً</div></div></div>
+        <div class="suit-item"><div class="suit-icon">🎒</div><div class="suit-info"><div class="suit-name">الشباب</div><div class="suit-val">مناسب</div></div></div>
+        <div class="suit-item"><div class="suit-icon">💑</div><div class="suit-info"><div class="suit-name">الأزواج</div><div class="suit-val">رومانسي</div></div></div>
+        <div class="suit-item"><div class="suit-icon">💼</div><div class="suit-info"><div class="suit-name">الأعمال</div><div class="suit-val">مناسب</div></div></div>
+      </div>
+    </div>
+
     ${(d.direct_airlines && d.direct_airlines.length > 0) ? `
     <div class="info-sec">
       <div class="info-sec-title" style="color:var(--tl);">✈️ رحلات مباشرة من الكويت</div>
@@ -968,25 +986,8 @@ function renderGeneralTab(d) {
           ${d.connecting_airlines.join(' · ')}
         </span>
       </div>
-    </div>` : ''}
-
-    ${(d.must_visit||[]).length ? `
-    <div class="info-sec">
-      <div class="info-sec-title">📍 أماكن يجب زيارتها</div>
-      <div class="tags-wrap">
-        ${d.must_visit.map(p=>`<span class="tag tag-green">${p}</span>`).join('')}
-      </div>
-    </div>` : ''}
-
-    <div class="info-sec">
-      <div class="info-sec-title">🧭 مناسب لـ</div>
-      <div class="suit-wrap">
-        <div class="suit-item"><div class="suit-icon">👨‍👩‍👧</div><div class="suit-info"><div class="suit-name">العائلات</div><div class="suit-val">مناسب جداً</div></div></div>
-        <div class="suit-item"><div class="suit-icon">🎒</div><div class="suit-info"><div class="suit-name">الشباب</div><div class="suit-val">مناسب</div></div></div>
-        <div class="suit-item"><div class="suit-icon">💑</div><div class="suit-info"><div class="suit-name">الأزواج</div><div class="suit-val">رومانسي</div></div></div>
-        <div class="suit-item"><div class="suit-icon">💼</div><div class="suit-info"><div class="suit-name">الأعمال</div><div class="suit-val">مناسب</div></div></div>
-      </div>
-    </div>`;
+    </div>` : ''}`;
+}
 }
 
 
@@ -1067,8 +1068,7 @@ function renderBookingTab(d) {
         </a>
         <a href="${links.flynas}" target="_blank" style="text-decoration:none;">
           <div style="background:rgba(255,102,0,0.12);border:1px solid rgba(255,102,0,0.3);border-radius:12px;padding:12px;text-align:center;">
-            <div style="font-size:14px;font-weight:900;color:#FF6600;letter-spacing:-0.5px;margin-bottom:0px;">fly</div>
-            <div style="font-size:14px;font-weight:900;color:#FF6600;margin-top:-4px;margin-bottom:4px;">nas</div>
+            <div style="font-size:13px;font-weight:900;color:#FF6600;letter-spacing:-0.5px;margin-bottom:2px;">flynas</div>
             <div style="font-size:10px;color:var(--muted);">احجز الآن</div>
           </div>
         </a>
