@@ -796,72 +796,10 @@ async function openDest(idx) {
       <div class="qstat-val">${d.best_time?.split('-')[0]?.trim()||'—'}</div>
       <div class="qstat-lbl">أفضل شهر</div></div>`;
 
-  // ═══ BOOKING SECTION ═══
-  const bookingHtml = `
-    <div style="padding:0 16px 16px;">
-      <div style="font-size:13px;font-weight:800;color:var(--or);margin-bottom:10px;">🏨 احجز إقامتك</div>
-      <div style="display:flex;gap:8px;margin-bottom:8px;">
-        <a href="https://go.urtrackinglink.com/aff_c?offer_id=252&aff_id=169114" target="_blank" style="flex:1;text-decoration:none;">
-          <div style="background:rgba(220,30,30,0.12);border:1px solid rgba(220,30,30,0.3);border-radius:12px;padding:10px;text-align:center;">
-            <div style="font-size:18px;margin-bottom:2px;">🔴</div>
-            <div style="font-size:11px;font-weight:900;color:#ff4444;">agoda</div>
-          </div>
-        </a>
-        <a href="https://go.urtrackinglink.com/aff_c?offer_id=1956&aff_id=169114" target="_blank" style="flex:1;text-decoration:none;">
-          <div style="background:rgba(255,255,255,0.05);border:1px solid var(--border);border-radius:12px;padding:10px;text-align:center;">
-            <div style="font-size:18px">🏨</div>
-            <div style="font-size:11px;font-weight:800;color:white">IHG</div>
-          </div>
-        </a>
-        <a href="https://go.urtrackinglink.com/aff_c?offer_id=1321&aff_id=169114" target="_blank" style="flex:1;text-decoration:none;">
-          <div style="background:rgba(255,255,255,0.05);border:1px solid var(--border);border-radius:12px;padding:10px;text-align:center;">
-            <div style="font-size:18px">🌐</div>
-            <div style="font-size:11px;font-weight:800;color:white">Trip.com</div>
-          </div>
-        </a>
-        <a href="https://go.urtrackinglink.com/aff_c?offer_id=1868&aff_id=169114" target="_blank" style="flex:1;text-decoration:none;">
-          <div style="background:rgba(255,255,255,0.05);border:1px solid var(--border);border-radius:12px;padding:10px;text-align:center;">
-            <div style="font-size:18px">🌍</div>
-            <div style="font-size:11px;font-weight:800;color:white">Expedia</div>
-          </div>
-        </a>
-      </div>
-      <div style="font-size:13px;font-weight:800;color:var(--tl);margin-bottom:10px;margin-top:14px;">✈️ احجز تذكرتك</div>
-      <div style="display:flex;gap:8px;">
-        <a href="https://go.urtrackinglink.com/aff_c?offer_id=1843&aff_id=169114" target="_blank" style="flex:1;text-decoration:none;">
-          <div style="background:rgba(92,45,145,0.15);border:1px solid rgba(92,45,145,0.4);border-radius:12px;padding:10px;text-align:center;">
-            <div style="font-size:11px;font-weight:900;color:#8B5CF6;letter-spacing:-0.5px;margin-bottom:2px;">QATAR</div>
-            <div style="font-size:9px;font-weight:800;color:#8B5CF6;opacity:0.8;">AIRWAYS</div>
-          </div>
-        </a>
-        <a href="https://go.urtrackinglink.com/aff_c?offer_id=1692&aff_id=169114" target="_blank" style="flex:1;text-decoration:none;">
-          <div style="background:rgba(180,140,90,0.12);border:1px solid rgba(180,140,90,0.3);border-radius:12px;padding:10px;text-align:center;">
-            <div style="font-size:10px;font-weight:900;color:#B48C5A;letter-spacing:0.5px;margin-bottom:2px;">ETIHAD</div>
-            <div style="font-size:9px;font-weight:700;color:#B48C5A;opacity:0.8;">AIRWAYS</div>
-          </div>
-        </a>
-        <a href="https://go.urtrackinglink.com/aff_c?offer_id=1799&aff_id=169114" target="_blank" style="flex:1;text-decoration:none;">
-          <div style="background:rgba(255,102,0,0.12);border:1px solid rgba(255,102,0,0.3);border-radius:12px;padding:10px;text-align:center;">
-            <div style="font-size:11px;font-weight:900;color:#FF6600;letter-spacing:-0.5px;margin-bottom:2px;">fly</div>
-            <div style="font-size:11px;font-weight:900;color:#FF6600;margin-top:-4px;">nas</div>
-          </div>
-        </a>
-        <a href="https://go.urtrackinglink.com/aff_c?offer_id=1777&aff_id=169114" target="_blank" style="flex:1;text-decoration:none;">
-          <div style="background:rgba(200,16,46,0.12);border:1px solid rgba(200,16,46,0.3);border-radius:12px;padding:10px;text-align:center;">
-            <div style="font-size:10px;font-weight:900;color:#C8102E;letter-spacing:0.3px;margin-bottom:2px;">AIR</div>
-            <div style="font-size:10px;font-weight:900;color:#C8102E;margin-top:-2px;">INDIA</div>
-          </div>
-        </a>
-      </div>
-    </div>`;
-
   renderGeneralTab(d);
   renderTipsTab(d);
   renderBookingTab(d);
   await renderReviewsTab(d);
-
-  // Add booking after general tab
-  document.getElementById('panel-general').innerHTML += bookingHtml;
 
   // Reset tabs
   document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
