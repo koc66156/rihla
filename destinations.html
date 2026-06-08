@@ -851,7 +851,6 @@ function switchTab(tab, el) {
 function renderGeneralTab(d) {
   const links = getAffiliateLinks(d);
   const noVisa = /بدون تأشيرة|بلا تأشيرة/.test(d.visa_info||'');
-  // تحويل آمن للرحلات
   let directAirlines = [];
   try {
     if(d.direct_airlines) {
@@ -861,7 +860,6 @@ function renderGeneralTab(d) {
     }
   } catch(e) { directAirlines = []; }
   const connectingAirlines = Array.isArray(d.connecting_airlines) ? d.connecting_airlines : [];
-  console.log('🔍 DEBUG:', d.name, '| direct_airlines:', d.direct_airlines, '| parsed:', directAirlines, '| connecting:', connectingAirlines);
   document.getElementById('panel-general').innerHTML = `
     <div class="info-sec">
       <div class="info-row">
@@ -935,7 +933,64 @@ function renderGeneralTab(d) {
           ${connectingAirlines.join(' · ')}
         </span>
       </div>
-    </div>` : ''}`;
+    </div>` : ''}
+
+    <div class="info-sec">
+      <div class="info-sec-title" style="color:var(--or);">🏨 احجز إقامتك</div>
+      <div style="display:flex;gap:8px;margin-bottom:12px;">
+        <a href="https://go.urtrackinglink.com/aff_c?offer_id=252&aff_id=169114" target="_blank" style="flex:1;text-decoration:none;">
+          <div style="background:rgba(220,30,30,0.12);border:1px solid rgba(220,30,30,0.3);border-radius:12px;padding:10px;text-align:center;">
+            <div style="font-size:18px;margin-bottom:2px;">🔴</div>
+            <div style="font-size:11px;font-weight:900;color:#ff4444;">agoda</div>
+          </div>
+        </a>
+        <a href="https://go.urtrackinglink.com/aff_c?offer_id=1956&aff_id=169114" target="_blank" style="flex:1;text-decoration:none;">
+          <div style="background:rgba(255,255,255,0.05);border:1px solid var(--border);border-radius:12px;padding:10px;text-align:center;">
+            <div style="font-size:18px;">🏨</div>
+            <div style="font-size:11px;font-weight:800;color:white;">IHG</div>
+          </div>
+        </a>
+        <a href="https://go.urtrackinglink.com/aff_c?offer_id=1321&aff_id=169114" target="_blank" style="flex:1;text-decoration:none;">
+          <div style="background:rgba(255,255,255,0.05);border:1px solid var(--border);border-radius:12px;padding:10px;text-align:center;">
+            <div style="font-size:18px;">🌐</div>
+            <div style="font-size:11px;font-weight:800;color:white;">Trip.com</div>
+          </div>
+        </a>
+        <a href="https://go.urtrackinglink.com/aff_c?offer_id=1868&aff_id=169114" target="_blank" style="flex:1;text-decoration:none;">
+          <div style="background:rgba(255,255,255,0.05);border:1px solid var(--border);border-radius:12px;padding:10px;text-align:center;">
+            <div style="font-size:18px;">🌍</div>
+            <div style="font-size:11px;font-weight:800;color:white;">Expedia</div>
+          </div>
+        </a>
+      </div>
+      <div class="info-sec-title" style="color:var(--tl);margin-bottom:8px;">✈️ احجز تذكرتك</div>
+      <div style="display:flex;gap:8px;">
+        <a href="https://go.urtrackinglink.com/aff_c?offer_id=1843&aff_id=169114" target="_blank" style="flex:1;text-decoration:none;">
+          <div style="background:rgba(92,45,145,0.15);border:1px solid rgba(92,45,145,0.4);border-radius:12px;padding:10px;text-align:center;">
+            <div style="font-size:11px;font-weight:900;color:#8B5CF6;margin-bottom:1px;">QATAR</div>
+            <div style="font-size:9px;font-weight:800;color:#8B5CF6;opacity:0.8;">AIRWAYS</div>
+          </div>
+        </a>
+        <a href="https://go.urtrackinglink.com/aff_c?offer_id=1692&aff_id=169114" target="_blank" style="flex:1;text-decoration:none;">
+          <div style="background:rgba(180,140,90,0.12);border:1px solid rgba(180,140,90,0.3);border-radius:12px;padding:10px;text-align:center;">
+            <div style="font-size:10px;font-weight:900;color:#B48C5A;margin-bottom:1px;">ETIHAD</div>
+            <div style="font-size:9px;font-weight:700;color:#B48C5A;opacity:0.8;">AIRWAYS</div>
+          </div>
+        </a>
+        <a href="https://go.urtrackinglink.com/aff_c?offer_id=1799&aff_id=169114" target="_blank" style="flex:1;text-decoration:none;">
+          <div style="background:rgba(255,102,0,0.12);border:1px solid rgba(255,102,0,0.3);border-radius:12px;padding:10px;text-align:center;">
+            <div style="font-size:11px;font-weight:900;color:#FF6600;margin-bottom:1px;">flynas</div>
+            <div style="font-size:9px;font-weight:700;color:#FF6600;opacity:0.8;">السعودية</div>
+          </div>
+        </a>
+        <a href="https://go.urtrackinglink.com/aff_c?offer_id=1777&aff_id=169114" target="_blank" style="flex:1;text-decoration:none;">
+          <div style="background:rgba(200,16,46,0.12);border:1px solid rgba(200,16,46,0.3);border-radius:12px;padding:10px;text-align:center;">
+            <div style="font-size:10px;font-weight:900;color:#C8102E;margin-bottom:1px;">AIR</div>
+            <div style="font-size:9px;font-weight:900;color:#C8102E;opacity:0.8;">INDIA</div>
+          </div>
+        </a>
+      </div>
+    </div>`;
 }
 
 
