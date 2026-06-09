@@ -1,4 +1,4 @@
-const CACHE = 'rihla-v3';
+const CACHE = 'rihla-v10';
 
 self.addEventListener('install', e => {
   self.skipWaiting();
@@ -13,7 +13,6 @@ self.addEventListener('activate', e => {
   self.clients.claim();
 });
 
-// لا كاش أبداً - دائماً من الشبكة
 self.addEventListener('fetch', e => {
   e.respondWith(
     fetch(e.request).catch(() => new Response('offline'))
