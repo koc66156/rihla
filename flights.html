@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>رِحلة — ابحث عن رحلة طيران</title>
+<title>رِحلة — احجز رحلتك</title>
 <meta name="theme-color" content="#FF5C1A">
 <link rel="manifest" href="manifest.json">
 <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&family=Righteous&display=swap" rel="stylesheet">
@@ -13,514 +13,584 @@
 body{font-family:'Tajawal',sans-serif;background:var(--dk);color:white;min-height:100vh;padding-bottom:calc(var(--bot-h) + 48px);}
 
 /* NAV */
-
-
-
+.topnav{position:fixed;top:0;width:100%;z-index:1000;height:var(--nav-h);padding:0 16px;display:flex;align-items:center;justify-content:space-between;background:rgba(14,14,14,0.95);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);}
+.nav-logo{font-family:'Righteous',cursive;font-size:24px;background:linear-gradient(90deg,var(--or),var(--yl));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;border:none;background-color:transparent;cursor:pointer;}
+.nav-profile-btn{padding:8px 16px;border-radius:20px;background:rgba(255,92,26,0.12);border:1.5px solid rgba(255,92,26,0.25);color:var(--or);font-family:'Tajawal',sans-serif;font-size:13px;font-weight:800;cursor:pointer;}
 
 /* HERO */
-.hero{padding:calc(var(--nav-h) + 44px) 20px 0;text-align:center;}
-.hero-icon{font-size:64px;margin-bottom:16px;display:block;animation:float 3s ease-in-out infinite;}
-@keyframes float{0%,100%{transform:translateY(0);}50%{transform:translateY(-10px);}}
-.hero h1{font-size:28px;font-weight:900;margin-bottom:8px;}
+.hero{padding:calc(var(--nav-h) + 28px) 20px 0;text-align:center;}
+.hero-icon{font-size:56px;margin-bottom:12px;display:block;animation:float 3s ease-in-out infinite;}
+@keyframes float{0%,100%{transform:translateY(0);}50%{transform:translateY(-8px);}}
+.hero h1{font-size:26px;font-weight:900;margin-bottom:6px;}
 .hero h1 span{background:linear-gradient(135deg,var(--or),var(--yl));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
-.hero p{font-size:14px;color:var(--muted);margin-bottom:32px;line-height:1.7;}
+.hero p{font-size:13px;color:var(--muted);margin-bottom:24px;line-height:1.7;}
+
+/* MAIN TABS */
+.main-tabs{display:flex;margin:0 20px 20px;background:rgba(255,255,255,0.05);border-radius:16px;padding:4px;gap:4px;}
+.main-tab{flex:1;padding:12px 8px;border-radius:13px;border:none;background:none;color:var(--muted);font-family:'Tajawal',sans-serif;font-size:14px;font-weight:800;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:6px;}
+.main-tab.active{background:linear-gradient(135deg,var(--or),#ff8c42);color:white;box-shadow:0 4px 16px rgba(255,92,26,0.3);}
 
 /* SEARCH CARD */
-.search-card{background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:24px;padding:24px 20px;margin:0 20px 24px;}
+.search-card{background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:24px;padding:20px;margin:0 20px 20px;}
+.search-panel{display:none;}
+.search-panel.active{display:block;}
 
 /* TRIP TYPE */
-.trip-type{display:flex;background:rgba(255,255,255,0.05);border-radius:14px;padding:4px;margin-bottom:20px;}
-.tt-btn{flex:1;padding:10px;border-radius:11px;border:none;background:transparent;font-family:'Tajawal',sans-serif;font-size:14px;font-weight:700;color:rgba(255,255,255,0.5);cursor:pointer;transition:all .2s;}
+.trip-type{display:flex;background:rgba(255,255,255,0.05);border-radius:12px;padding:3px;margin-bottom:16px;}
+.tt-btn{flex:1;padding:9px;border-radius:10px;border:none;background:transparent;font-family:'Tajawal',sans-serif;font-size:13px;font-weight:700;color:rgba(255,255,255,0.5);cursor:pointer;transition:all .2s;}
 .tt-btn.active{background:var(--or);color:white;}
 
 /* FIELD */
-.field{margin-bottom:14px;}
-.field label{display:block;font-size:12px;font-weight:800;color:rgba(255,255,255,0.4);margin-bottom:7px;letter-spacing:1px;}
-.field-inner{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,0.06);border:1.5px solid rgba(255,255,255,0.1);border-radius:14px;padding:12px 14px;cursor:pointer;transition:all .2s;overflow:hidden;}
-.field-inner:focus-within{border-color:var(--or);background:rgba(255,92,26,0.06);}
+.field{margin-bottom:12px;}
+.field label{display:block;font-size:11px;font-weight:800;color:rgba(255,255,255,0.4);margin-bottom:6px;letter-spacing:.8px;}
+.field-inner{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,0.06);border:1.5px solid rgba(255,255,255,0.1);border-radius:14px;padding:12px 14px;cursor:pointer;transition:all .2s;}
+.field-inner:focus-within{border-color:var(--or);}
 .field-icon{font-size:18px;flex-shrink:0;}
-.field-inner input{flex:1;min-width:0;background:transparent;border:none;font-family:'Tajawal',sans-serif;font-size:14px;color:white;outline:none;}
+.field-inner input{flex:1;background:transparent;border:none;font-family:'Tajawal',sans-serif;font-size:14px;color:white;outline:none;}
 .field-inner input::placeholder{color:rgba(255,255,255,0.2);}
+.field-inner select{flex:1;background:transparent;border:none;font-family:'Tajawal',sans-serif;font-size:14px;color:white;outline:none;-webkit-appearance:none;}
+.field-inner select option{background:#1a1a1a;color:white;}
 
 /* SWAP BTN */
-.swap-wrap{display:flex;justify-content:center;margin:-6px 0;position:relative;z-index:1;}
-.swap-btn{width:36px;height:36px;border-radius:50%;background:var(--or);border:3px solid var(--dk);color:white;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:transform .3s;}
-.swap-btn:hover{transform:rotate(180deg);}
+.swap-wrap{display:flex;justify-content:center;margin:-4px 0;position:relative;z-index:1;}
+.swap-btn{width:34px;height:34px;border-radius:50%;background:var(--or);border:3px solid var(--dk);color:white;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:transform .3s;}
+.swap-btn:active{transform:rotate(180deg);}
 
 /* DATE ROW */
-.date-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px;}
-.date-row.one-way{grid-template-columns:1fr;}
-.field-inner input[type="date"]{width:100%;min-width:0;font-size:11px;color:white;background:transparent;border:none;outline:none;font-family:'Tajawal',sans-serif;-webkit-appearance:none;appearance:none;}
-.field-inner input[type="date"]::-webkit-calendar-picker-indicator{filter:invert(1);opacity:0.5;font-size:12px;}
+.date-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;}
 
 /* PASSENGERS */
-.pass-row{display:flex;align-items:center;justify-content:space-between;background:rgba(255,255,255,0.06);border:1.5px solid rgba(255,255,255,0.1);border-radius:14px;padding:14px 16px;margin-bottom:20px;}
-.pass-label{display:flex;align-items:center;gap:10px;}
-.pass-label span{font-size:20px;}
-.pass-label div strong{display:block;font-size:14px;font-weight:800;}
-.pass-label div small{font-size:11px;color:var(--muted);}
-.pass-ctrl{display:flex;align-items:center;gap:12px;}
-.pass-btn{width:32px;height:32px;border-radius:50%;border:1.5px solid rgba(255,255,255,0.2);background:transparent;color:white;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;}
-.pass-btn:hover{border-color:var(--or);color:var(--or);}
-.pass-num{font-size:18px;font-weight:900;min-width:24px;text-align:center;}
-
-/* CLASS SELECT */
-.class-row{display:flex;gap:8px;margin-bottom:20px;}
-.class-btn{flex:1;padding:9px 8px;border-radius:12px;border:1.5px solid rgba(255,255,255,0.1);background:transparent;font-family:'Tajawal',sans-serif;font-size:12px;font-weight:700;cursor:pointer;color:rgba(255,255,255,0.5);transition:all .2s;text-align:center;}
-.class-btn.active{background:rgba(255,208,0,0.12);color:var(--yl);border-color:rgba(255,208,0,0.25);}
+.pass-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;}
 
 /* SEARCH BTN */
-.search-btn{width:100%;padding:16px;border-radius:16px;border:none;font-family:'Tajawal',sans-serif;font-size:17px;font-weight:900;cursor:pointer;transition:all .25s;background:linear-gradient(135deg,var(--or),#ff8c42);color:white;box-shadow:0 8px 24px rgba(255,92,26,0.35);}
-.search-btn:hover{transform:translateY(-2px);box-shadow:0 12px 32px rgba(255,92,26,0.45);}
+.search-btn{width:100%;padding:15px;border-radius:16px;background:linear-gradient(135deg,var(--or),#ff8c42);color:white;font-family:'Tajawal',sans-serif;font-size:16px;font-weight:900;border:none;cursor:pointer;box-shadow:0 4px 20px rgba(255,92,26,0.4);transition:transform .2s;}
+.search-btn:active{transform:scale(0.98);}
 
-/* ENGINES */
-.engines-title{font-size:13px;font-weight:800;color:var(--muted);text-align:center;margin-bottom:14px;letter-spacing:1px;}
-.engines{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:0 20px 24px;}
-.engine-card{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:18px 16px;text-align:center;cursor:pointer;transition:all .25s;text-decoration:none;display:block;}
-.engine-card:hover{transform:translateY(-4px);border-color:rgba(255,255,255,0.2);box-shadow:0 10px 28px rgba(0,0,0,0.3);}
-.engine-logo{font-size:32px;margin-bottom:8px;}
-.engine-name{font-size:14px;font-weight:800;margin-bottom:4px;}
-.engine-desc{font-size:11px;color:var(--muted);line-height:1.5;}
-
-/* POPULAR ROUTES */
+/* SECTION */
 .section{padding:0 20px 24px;}
-.sec-title{font-size:16px;font-weight:800;margin-bottom:14px;display:flex;align-items:center;gap:8px;}
-.routes-grid{display:flex;flex-direction:column;gap:10px;}
-.route-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:14px 16px;display:flex;align-items:center;gap:14px;cursor:pointer;transition:all .2s;}
-.route-card:hover{border-color:var(--or);transform:translateX(-3px);}
+.sec-title{font-size:15px;font-weight:900;margin-bottom:14px;display:flex;align-items:center;gap:8px;}
+
+/* PARTNERS GRID */
+.partners-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:8px;}
+.partner-card{text-decoration:none;display:block;}
+.partner-inner{border-radius:16px;padding:14px 12px;text-align:center;border:1px solid var(--border);background:rgba(255,255,255,0.04);transition:all .2s;}
+.partner-inner:active{transform:scale(0.97);}
+.partner-logo{font-size:13px;font-weight:900;margin-bottom:3px;}
+.partner-sub{font-size:10px;color:var(--muted);}
+.partner-full{grid-column:1/-1;}
+.partner-full .partner-inner{display:flex;align-items:center;justify-content:center;gap:12px;background:linear-gradient(135deg,rgba(255,92,26,0.08),rgba(255,208,0,0.04));border-color:rgba(255,92,26,0.2);}
+
+/* ROUTE CARD */
+.route-card{display:flex;align-items:center;gap:12px;background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:16px;padding:14px;margin-bottom:10px;cursor:pointer;transition:all .2s;}
+.route-card:active{transform:scale(0.98);}
 .route-flag{font-size:28px;flex-shrink:0;}
 .route-info{flex:1;}
 .route-info strong{display:block;font-size:14px;font-weight:800;margin-bottom:3px;}
-.route-info span{font-size:12px;color:var(--muted);}
-.route-arrow{color:rgba(255,255,255,0.2);font-size:16px;}
+.route-info span{font-size:11px;color:var(--muted);}
+.route-arrow{color:var(--or);font-size:18px;}
 
 /* TIPS */
-.tips{margin:0 20px 24px;background:rgba(0,201,177,0.06);border:1px solid rgba(0,201,177,0.15);border-radius:18px;padding:18px;}
-.tips h3{font-size:14px;font-weight:800;color:var(--tl);margin-bottom:12px;}
-.tip-item{display:flex;align-items:flex-start;gap:10px;margin-bottom:10px;font-size:13px;color:rgba(255,255,255,0.7);line-height:1.6;}
-.tip-item:last-child{margin-bottom:0;}
-.tip-item span{font-size:16px;flex-shrink:0;}
+.tips-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.tip-card{background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:16px;padding:14px;}
+.tip-icon{font-size:24px;margin-bottom:8px;}
+.tip-title{font-size:13px;font-weight:800;margin-bottom:4px;}
+.tip-text{font-size:11px;color:var(--muted);line-height:1.5;}
 
-/* BOTTOM NAV */
-
-.botnav a{display:flex;flex-direction:column;align-items:center;gap:4px;flex:1;text-decoration:none;padding:8px 0;}
-.botnav a span:first-child{font-size:22px;}
-.botnav a span:last-child{font-size:11px;font-weight:700;color:var(--muted);}
-.botnav a.active span{color:var(--or);}
-/* ── SHARED NAV ── */
-.topnav{position:fixed;top:0;width:100%;z-index:1000;height:var(--nav-h);padding:0 16px;display:flex;align-items:center;justify-content:space-between;background:rgba(14,14,14,0.95);backdrop-filter:blur(16px);border-bottom:1px solid rgba(255,255,255,0.07);}
-.nav-logo{font-family:'Righteous',cursive;font-size:22px;background:linear-gradient(90deg,#FF5C1A,#FFD000);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;border:none;background-color:transparent;cursor:pointer;padding:0;}
-.nav-profile-btn{padding:7px 16px;border-radius:20px;background:rgba(255,92,26,0.12);border:1.5px solid rgba(255,92,26,0.25);color:#FF5C1A;font-family:'Tajawal',sans-serif;font-size:13px;font-weight:800;cursor:pointer;white-space:nowrap;transition:all .2s;}
-.botnav{position:fixed;bottom:0;width:100%;z-index:1000;height:var(--bot-h);background:rgba(14,14,14,0.97);backdrop-filter:blur(20px);border-top:1px solid rgba(255,255,255,0.07);display:flex;align-items:center;padding-bottom:env(safe-area-inset-bottom);}
-.bitem{display:flex;flex-direction:column;align-items:center;gap:3px;flex:1;text-decoration:none;padding:6px 0;transition:all .2s;}
-.bitem .bi{font-size:20px;line-height:1;}
-.bitem .bl{font-size:10px;font-weight:700;color:rgba(255,255,255,0.4);}
-.bitem.active .bl{color:#FF5C1A;}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+/* BOTNAV */
+.botnav{position:fixed;bottom:0;width:100%;background:rgba(14,14,14,0.97);backdrop-filter:blur(16px);border-top:1px solid var(--border);display:flex;height:var(--bot-h);z-index:1000;}
+.bitem{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;cursor:pointer;color:var(--muted);font-size:10px;font-weight:700;border:none;background:none;font-family:'Tajawal',sans-serif;text-decoration:none;}
+.bitem.active,.bitem:hover{color:var(--or);}
+.bi{font-size:20px;}
 </style>
 </head>
 <body>
 
-<!-- NAV -->
 <nav class="topnav">
   <button class="nav-logo" onclick="window.location.href='index.html'">Rihla</button>
-  <button class="nav-profile-btn" id="navProfileBtn" onclick="goToProfile()">تسجيل دخول 👤</button>
+  <button class="nav-profile-btn" id="navProfileBtn" onclick="goToProfile()">ملفي 👤</button>
 </nav>
 
 <!-- HERO -->
 <div class="hero">
-  <span class="hero-icon">✈️</span>
-  <h1>ابحث عن <span>أرخص الرحلات</span></h1>
-  <p>أدخل تفاصيل رحلتك وسنوصلك لأفضل الأسعار</p>
+  <span class="hero-icon">🎫</span>
+  <h1>احجز <span>رحلتك</span> بسهولة</h1>
+  <p>طيران وفنادق بأفضل الأسعار لمسافري الكويت</p>
+</div>
+
+<!-- MAIN TABS -->
+<div class="main-tabs">
+  <button class="main-tab active" onclick="switchMain('flight',this)">✈️ طيران</button>
+  <button class="main-tab" onclick="switchMain('hotel',this)">🏨 فنادق</button>
 </div>
 
 <!-- SEARCH CARD -->
 <div class="search-card">
 
-  <!-- TRIP TYPE -->
-  <div class="trip-type">
-    <button class="tt-btn active" onclick="setTripType('roundtrip',this)">ذهاب وعودة</button>
-    <button class="tt-btn" onclick="setTripType('oneway',this)">ذهاب فقط</button>
-  </div>
-
-  <!-- FROM -->
-  <div class="field">
-    <label>من</label>
-    <div class="field-inner">
-      <span class="field-icon">🛫</span>
-      <input type="text" id="fromCity" placeholder="مثال: الكويت، KWI">
+  <!-- FLIGHT PANEL -->
+  <div class="search-panel active" id="panel-flight">
+    <div class="trip-type">
+      <button class="tt-btn active" onclick="setTrip('round',this)">ذهاب وعودة</button>
+      <button class="tt-btn" onclick="setTrip('one',this)">ذهاب فقط</button>
     </div>
-  </div>
-
-  <!-- SWAP -->
-  <div class="swap-wrap">
-    <button class="swap-btn" onclick="swapCities()">⇅</button>
-  </div>
-
-  <!-- TO -->
-  <div class="field">
-    <label>إلى</label>
-    <div class="field-inner">
-      <span class="field-icon">🛬</span>
-      <input type="text" id="toCity" placeholder="مثال: دبي، DXB">
-    </div>
-  </div>
-
-  <!-- DATES -->
-  <div class="date-row" id="dateRow">
     <div class="field">
-      <label>تاريخ الذهاب</label>
+      <label>FROM المغادرة</label>
       <div class="field-inner">
-        <span class="field-icon">📅</span>
-        <input type="date" id="depDate">
+        <span class="field-icon">🛫</span>
+        <input type="text" id="fromCity" value="الكويت" placeholder="مدينة المغادرة">
       </div>
     </div>
-    <div class="field" id="retDateField">
-      <label>تاريخ العودة</label>
+    <div class="swap-wrap">
+      <button class="swap-btn" onclick="swapCities()">⇅</button>
+    </div>
+    <div class="field">
+      <label>TO الوصول</label>
       <div class="field-inner">
-        <span class="field-icon">📅</span>
-        <input type="date" id="retDate">
+        <span class="field-icon">🛬</span>
+        <input type="text" id="toCity" placeholder="وجهتك">
       </div>
     </div>
-  </div>
-
-  <!-- PASSENGERS -->
-  <div class="pass-row">
-    <div class="pass-label">
-      <span>👥</span>
-      <div><strong>المسافرون</strong><small>بالغ / طفل / رضيع</small></div>
+    <div class="date-row">
+      <div class="field" style="margin:0">
+        <label>الذهاب</label>
+        <div class="field-inner">
+          <span class="field-icon">📅</span>
+          <input type="date" id="depDate">
+        </div>
+      </div>
+      <div class="field" id="retDateWrap" style="margin:0">
+        <label>العودة</label>
+        <div class="field-inner">
+          <span class="field-icon">📅</span>
+          <input type="date" id="retDate">
+        </div>
+      </div>
     </div>
-    <div class="pass-ctrl">
-      <button class="pass-btn" onclick="changePass(-1)">−</button>
-      <div class="pass-num" id="passNum">١</div>
-      <button class="pass-btn" onclick="changePass(1)">+</button>
+    <div class="pass-row" style="margin-top:12px;">
+      <div class="field" style="margin:0">
+        <label>المسافرون</label>
+        <div class="field-inner">
+          <span class="field-icon">👤</span>
+          <select id="passengers">
+            <option value="1">١ مسافر</option>
+            <option value="2">٢ مسافران</option>
+            <option value="3">٣ مسافرون</option>
+            <option value="4">٤ مسافرون</option>
+            <option value="5">٥ مسافرون</option>
+          </select>
+        </div>
+      </div>
+      <div class="field" style="margin:0">
+        <label>الدرجة</label>
+        <div class="field-inner">
+          <span class="field-icon">💺</span>
+          <select id="cabinClass">
+            <option value="economy">اقتصادية</option>
+            <option value="business">رجال الأعمال</option>
+            <option value="first">الدرجة الأولى</option>
+          </select>
+        </div>
+      </div>
     </div>
+    <button class="search-btn" onclick="searchFlights()">🔍 ابحث عن أفضل سعر</button>
   </div>
 
-  <!-- CLASS -->
-  <div class="class-row">
-    <button class="class-btn active" onclick="setClass('economy',this)">اقتصادي</button>
-    <button class="class-btn" onclick="setClass('business',this)">رجال أعمال</button>
-    <button class="class-btn" onclick="setClass('first',this)">الدرجة الأولى</button>
+  <!-- HOTEL PANEL -->
+  <div class="search-panel" id="panel-hotel">
+    <div class="field">
+      <label>الوجهة</label>
+      <div class="field-inner">
+        <span class="field-icon">📍</span>
+        <input type="text" id="hotelCity" placeholder="ابحث عن مدينة أو فندق">
+      </div>
+    </div>
+    <div class="date-row">
+      <div class="field" style="margin:0">
+        <label>تاريخ الوصول</label>
+        <div class="field-inner">
+          <span class="field-icon">📅</span>
+          <input type="date" id="checkIn">
+        </div>
+      </div>
+      <div class="field" style="margin:0">
+        <label>تاريخ المغادرة</label>
+        <div class="field-inner">
+          <span class="field-icon">📅</span>
+          <input type="date" id="checkOut">
+        </div>
+      </div>
+    </div>
+    <div class="pass-row" style="margin-top:12px;">
+      <div class="field" style="margin:0">
+        <label>الغرف</label>
+        <div class="field-inner">
+          <span class="field-icon">🛏️</span>
+          <select id="rooms">
+            <option value="1">١ غرفة</option>
+            <option value="2">٢ غرفتان</option>
+            <option value="3">٣ غرف</option>
+          </select>
+        </div>
+      </div>
+      <div class="field" style="margin:0">
+        <label>الضيوف</label>
+        <div class="field-inner">
+          <span class="field-icon">👥</span>
+          <select id="guests">
+            <option value="1">١ ضيف</option>
+            <option value="2">٢ ضيوف</option>
+            <option value="3">٣ ضيوف</option>
+            <option value="4">٤ ضيوف</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    <button class="search-btn" onclick="searchHotels()" style="background:linear-gradient(135deg,#00C9B1,#00a896);">🔍 ابحث عن فندق</button>
   </div>
-
-  <!-- SEARCH BTN -->
-  <button class="search-btn" onclick="doSearch()">🔍 ابحث عن رحلات</button>
-
 </div>
 
-<!-- ENGINES -->
-<div class="engines-title">أو ابحث مباشرة في</div>
-<div class="engines">
-  <a class="engine-card" onclick="openSkyscanner()">
-    <div class="engine-logo">🌐</div>
-    <div class="engine-name">Skyscanner</div>
-    <div class="engine-desc">مقارنة شاملة لأفضل الأسعار</div>
-  </a>
-  <a class="engine-card" onclick="openGoogleFlights()">
-    <div class="engine-logo">🔍</div>
-    <div class="engine-name">Google Flights</div>
-    <div class="engine-desc">رسم بياني للأسعار والمواعيد</div>
-  </a>
-  <a class="engine-card" href="https://www.kayak.com/flights" target="_blank">
-    <div class="engine-logo">🛶</div>
-    <div class="engine-name">Kayak</div>
-    <div class="engine-desc">تنبيهات انخفاض الأسعار</div>
-  </a>
-  <a class="engine-card" href="https://www.wego.com/ar" target="_blank">
-    <div class="engine-logo">🌍</div>
-    <div class="engine-name">Wego</div>
-    <div class="engine-desc">الأفضل للسوق الخليجي</div>
-  </a>
+<!-- FLIGHT PARTNERS -->
+<div class="section" id="flightPartners">
+  <div class="sec-title">✈️ <span>شركاء الطيران</span></div>
+  <div class="partners-grid">
+    <a class="partner-card" href="https://go.urtrackinglink.com/aff_c?offer_id=1843&aff_id=169114" target="_blank">
+      <div class="partner-inner" style="background:rgba(92,45,145,0.12);border-color:rgba(92,45,145,0.3);">
+        <div class="partner-logo" style="color:#8B5CF6;font-size:12px;letter-spacing:.3px;">QATAR<br><span style="font-size:10px;opacity:.8;">AIRWAYS</span></div>
+        <div class="partner-sub">احجز الآن</div>
+      </div>
+    </a>
+    <a class="partner-card" href="https://go.urtrackinglink.com/aff_c?offer_id=1692&aff_id=169114" target="_blank">
+      <div class="partner-inner" style="background:rgba(180,140,90,0.12);border-color:rgba(180,140,90,0.3);">
+        <div class="partner-logo" style="color:#B48C5A;font-size:12px;">ETIHAD<br><span style="font-size:10px;opacity:.8;">AIRWAYS</span></div>
+        <div class="partner-sub">احجز الآن</div>
+      </div>
+    </a>
+    <a class="partner-card" href="https://go.urtrackinglink.com/aff_c?offer_id=1799&aff_id=169114" target="_blank">
+      <div class="partner-inner" style="background:rgba(255,102,0,0.12);border-color:rgba(255,102,0,0.3);">
+        <div class="partner-logo" style="color:#FF6600;font-size:13px;">flynas</div>
+        <div class="partner-sub">احجز الآن</div>
+      </div>
+    </a>
+    <a class="partner-card" href="https://go.urtrackinglink.com/aff_c?offer_id=1777&aff_id=169114" target="_blank">
+      <div class="partner-inner" style="background:rgba(200,16,46,0.12);border-color:rgba(200,16,46,0.3);">
+        <div class="partner-logo" style="color:#C8102E;font-size:11px;">AIR INDIA</div>
+        <div class="partner-sub">احجز الآن</div>
+      </div>
+    </a>
+    <a class="partner-card partner-full" href="https://go.urtrackinglink.com/aff_c?offer_id=1868&aff_id=169114" target="_blank">
+      <div class="partner-inner">
+        <span style="font-size:24px;">🌍</span>
+        <div>
+          <div style="font-size:14px;font-weight:800;">Expedia — طيران + فندق</div>
+          <div style="font-size:11px;color:var(--muted);">قارن وابحث عن أفضل باقة</div>
+        </div>
+      </div>
+    </a>
+  </div>
+</div>
+
+<!-- HOTEL PARTNERS -->
+<div class="section" id="hotelPartners" style="display:none;">
+  <div class="sec-title">🏨 <span>شركاء الفنادق</span></div>
+  <div class="partners-grid">
+    <a class="partner-card" href="https://go.urtrackinglink.com/aff_c?offer_id=252&aff_id=169114" target="_blank">
+      <div class="partner-inner" style="background:rgba(220,30,30,0.12);border-color:rgba(220,30,30,0.3);">
+        <div class="partner-logo" style="color:#ff4444;font-size:16px;">🔴<br><span style="font-size:12px;">agoda</span></div>
+        <div class="partner-sub">أفضل أسعار آسيا</div>
+      </div>
+    </a>
+    <a class="partner-card" href="https://go.urtrackinglink.com/aff_c?offer_id=1956&aff_id=169114" target="_blank">
+      <div class="partner-inner">
+        <div class="partner-logo" style="font-size:16px;">🏨<br><span style="font-size:12px;color:white;">IHG Hotels</span></div>
+        <div class="partner-sub">فنادق عالمية فاخرة</div>
+      </div>
+    </a>
+    <a class="partner-card" href="https://go.urtrackinglink.com/aff_c?offer_id=1556&aff_id=169114" target="_blank">
+      <div class="partner-inner">
+        <div class="partner-logo" style="font-size:16px;">🏩<br><span style="font-size:12px;color:white;">Rove Hotels</span></div>
+        <div class="partner-sub">فنادق دبي العصرية</div>
+      </div>
+    </a>
+    <a class="partner-card" href="https://go.urtrackinglink.com/aff_c?offer_id=1321&aff_id=169114" target="_blank">
+      <div class="partner-inner">
+        <div class="partner-logo" style="font-size:16px;">🌐<br><span style="font-size:12px;color:white;">Trip.com</span></div>
+        <div class="partner-sub">فنادق وطيران</div>
+      </div>
+    </a>
+    <a class="partner-card partner-full" href="https://go.urtrackinglink.com/aff_c?offer_id=1868&aff_id=169114" target="_blank">
+      <div class="partner-inner">
+        <span style="font-size:24px;">🌍</span>
+        <div>
+          <div style="font-size:14px;font-weight:800;">Expedia — طيران + فندق</div>
+          <div style="font-size:11px;color:var(--muted);">قارن وابحث عن أفضل باقة</div>
+        </div>
+      </div>
+    </a>
+  </div>
 </div>
 
 <!-- POPULAR ROUTES -->
-<div class="section">
+<div class="section" id="popularRoutes">
   <div class="sec-title">🔥 وجهات شائعة من الكويت</div>
-  <div class="routes-grid">
-    <div class="route-card" onclick="quickSearch('الكويت','دبي','KWI','DXB')">
-      <div class="route-flag">🇦🇪</div>
-      <div class="route-info"><strong>الكويت → دبي</strong><span>رحلة ساعة واحدة • متاحة يومياً</span></div>
-      <div class="route-arrow">←</div>
+  <div class="route-card" onclick="quickFlight('دبي')">
+    <div class="route-flag">🇦🇪</div>
+    <div class="route-info"><strong>الكويت ← دبي</strong><span>ساعة واحدة • يومياً • مباشر</span></div>
+    <div class="route-arrow">←</div>
+  </div>
+  <div class="route-card" onclick="quickFlight('إسطنبول')">
+    <div class="route-flag">🇹🇷</div>
+    <div class="route-info"><strong>الكويت ← إسطنبول</strong><span>٤ ساعات • مباشر • وجهة مميزة</span></div>
+    <div class="route-arrow">←</div>
+  </div>
+  <div class="route-card" onclick="quickFlight('لندن')">
+    <div class="route-flag">🇬🇧</div>
+    <div class="route-info"><strong>الكويت ← لندن</strong><span>٧ ساعات • مباشر • الأكثر طلباً</span></div>
+    <div class="route-arrow">←</div>
+  </div>
+  <div class="route-card" onclick="quickFlight('بانكوك')">
+    <div class="route-flag">🇹🇭</div>
+    <div class="route-info"><strong>الكويت ← بانكوك</strong><span>٧ ساعات • مباشر • سياحة وترفيه</span></div>
+    <div class="route-arrow">←</div>
+  </div>
+  <div class="route-card" onclick="quickFlight('القاهرة')">
+    <div class="route-flag">🇪🇬</div>
+    <div class="route-info"><strong>الكويت ← القاهرة</strong><span>٣ ساعات • مباشر • وجهة عربية</span></div>
+    <div class="route-arrow">←</div>
+  </div>
+  <div class="route-card" onclick="quickFlight('كوالالمبور')">
+    <div class="route-flag">🇲🇾</div>
+    <div class="route-info"><strong>الكويت ← كوالالمبور</strong><span>٨ ساعات • مباشر • العائلات</span></div>
+    <div class="route-arrow">←</div>
+  </div>
+</div>
+
+<!-- POPULAR HOTELS -->
+<div class="section" id="popularHotels" style="display:none;">
+  <div class="sec-title">🌟 وجهات فندقية شائعة</div>
+  <div class="route-card" onclick="quickHotel('دبي')">
+    <div class="route-flag">🇦🇪</div>
+    <div class="route-info"><strong>دبي</strong><span>فنادق فاخرة • خيارات لا تنتهي</span></div>
+    <div class="route-arrow">←</div>
+  </div>
+  <div class="route-card" onclick="quickHotel('إسطنبول')">
+    <div class="route-flag">🇹🇷</div>
+    <div class="route-info"><strong>إسطنبول</strong><span>أسعار ممتازة • موقع مركزي</span></div>
+    <div class="route-arrow">←</div>
+  </div>
+  <div class="route-card" onclick="quickHotel('بانكوك')">
+    <div class="route-flag">🇹🇭</div>
+    <div class="route-info"><strong>بانكوك</strong><span>أرخص فنادق فاخرة في آسيا</span></div>
+    <div class="route-arrow">←</div>
+  </div>
+  <div class="route-card" onclick="quickHotel('لندن')">
+    <div class="route-flag">🇬🇧</div>
+    <div class="route-info"><strong>لندن</strong><span>قريب من المعالم السياحية</span></div>
+    <div class="route-arrow">←</div>
+  </div>
+  <div class="route-card" onclick="quickHotel('المالديف')">
+    <div class="route-flag">🏝️</div>
+    <div class="route-info"><strong>المالديف</strong><span>منتجعات مائية استثنائية</span></div>
+    <div class="route-arrow">←</div>
+  </div>
+  <div class="route-card" onclick="quickHotel('باريس')">
+    <div class="route-flag">🇫🇷</div>
+    <div class="route-info"><strong>باريس</strong><span>رومانسية وثقافية بامتياز</span></div>
+    <div class="route-arrow">←</div>
+  </div>
+</div>
+
+<!-- TRAVEL TIPS -->
+<div class="section">
+  <div class="sec-title">💡 نصائح الحجز الذكي</div>
+  <div class="tips-grid">
+    <div class="tip-card">
+      <div class="tip-icon">📅</div>
+      <div class="tip-title">احجز مبكراً</div>
+      <div class="tip-text">أفضل الأسعار قبل ٦-٨ أسابيع من السفر</div>
     </div>
-    <div class="route-card" onclick="quickSearch('الكويت','إسطنبول','KWI','IST')">
-      <div class="route-flag">🇹🇷</div>
-      <div class="route-info"><strong>الكويت → إسطنبول</strong><span>رحلة ٤ ساعات • وجهة مميزة</span></div>
-      <div class="route-arrow">←</div>
+    <div class="tip-card">
+      <div class="tip-icon">🔄</div>
+      <div class="tip-title">قارن الأسعار</div>
+      <div class="tip-text">جرّب أكثر من موقع للحصول على أفضل سعر</div>
     </div>
-    <div class="route-card" onclick="quickSearch('الكويت','لندن','KWI','LHR')">
-      <div class="route-flag">🇬🇧</div>
-      <div class="route-info"><strong>الكويت → لندن</strong><span>رحلة ٧ ساعات • وجهة مفضلة</span></div>
-      <div class="route-arrow">←</div>
+    <div class="tip-card">
+      <div class="tip-icon">📦</div>
+      <div class="tip-title">باقات مدمجة</div>
+      <div class="tip-text">طيران + فندق معاً أوفر بكثير</div>
     </div>
-    <div class="route-card" onclick="quickSearch('الكويت','بانكوك','KWI','BKK')">
-      <div class="route-flag">🇹🇭</div>
-      <div class="route-info"><strong>الكويت → بانكوك</strong><span>رحلة ٧ ساعات • سياحة وترفيه</span></div>
-      <div class="route-arrow">←</div>
+    <div class="tip-card">
+      <div class="tip-icon">🌙</div>
+      <div class="tip-title">الرحلات الليلية</div>
+      <div class="tip-text">عادة أرخص وتوفر ليلة فندق</div>
     </div>
-    <div class="route-card" onclick="quickSearch('الكويت','القاهرة','KWI','CAI')">
-      <div class="route-flag">🇪🇬</div>
-      <div class="route-info"><strong>الكويت → القاهرة</strong><span>رحلة ٣ ساعات • وجهة عربية</span></div>
-      <div class="route-arrow">←</div>
+    <div class="tip-card">
+      <div class="tip-icon">🎒</div>
+      <div class="tip-title">الأمتعة</div>
+      <div class="tip-text">أضف الأمتعة مسبقاً أرخص من المطار</div>
     </div>
-    <div class="route-card" onclick="quickSearch('الكويت','طوكيو','KWI','NRT')">
-      <div class="route-flag">🇯🇵</div>
-      <div class="route-info"><strong>الكويت → طوكيو</strong><span>رحلة ١٠ ساعات • وجهة الأحلام</span></div>
-      <div class="route-arrow">←</div>
+    <div class="tip-card">
+      <div class="tip-icon">📱</div>
+      <div class="tip-title">تطبيقات الشركات</div>
+      <div class="tip-text">عروض حصرية عبر تطبيقات الطيران</div>
     </div>
   </div>
 </div>
 
-<!-- TIPS -->
-<div class="tips">
-  <h3>💡 نصائح للحصول على أفضل سعر</h3>
-  <div class="tip-item"><span>📅</span>احجز قبل السفر بـ ٦-٨ أسابيع للحصول على أفضل سعر</div>
-  <div class="tip-item"><span>🗓️</span>الثلاثاء والأربعاء عادةً أرخص أيام السفر</div>
-  <div class="tip-item"><span>🔔</span>فعّل تنبيهات الأسعار في Skyscanner لمعرفة انخفاض الأسعار</div>
-  <div class="tip-item"><span>🧳</span>قارن بين الحجز المباشر مع الشركة وبين مواقع المقارنة</div>
+<!-- ENTERTAINMENT -->
+<div class="section">
+  <div class="sec-title">🎢 تجارب وترفيه</div>
+  <div class="partners-grid">
+    <a class="partner-card" href="https://go.urtrackinglink.com/aff_c?offer_id=1548&aff_id=169114" target="_blank">
+      <div class="partner-inner"><div class="partner-logo" style="font-size:22px;">🎡</div><div style="font-size:12px;font-weight:800;color:white;">Yas Island</div><div class="partner-sub">أبوظبي</div></div>
+    </a>
+    <a class="partner-card" href="https://go.urtrackinglink.com/aff_c?offer_id=1547&aff_id=169114" target="_blank">
+      <div class="partner-inner"><div class="partner-logo" style="font-size:22px;">🦸</div><div style="font-size:12px;font-weight:800;color:white;">Warner Bros</div><div class="partner-sub">أبوظبي</div></div>
+    </a>
+    <a class="partner-card" href="https://go.urtrackinglink.com/aff_c?offer_id=1530&aff_id=169114" target="_blank">
+      <div class="partner-inner"><div class="partner-logo" style="font-size:22px;">🏎️</div><div style="font-size:12px;font-weight:800;color:white;">Ferrari World</div><div class="partner-sub">أبوظبي</div></div>
+    </a>
+    <a class="partner-card" href="https://go.urtrackinglink.com/aff_c?offer_id=1546&aff_id=169114" target="_blank">
+      <div class="partner-inner"><div class="partner-logo" style="font-size:22px;">🗺️</div><div style="font-size:12px;font-weight:800;color:white;">GoCity</div><div class="partner-sub">بطاقة السياحة</div></div>
+    </a>
+    <a class="partner-card partner-full" href="https://go.urtrackinglink.com/aff_c?offer_id=128&aff_id=169114" target="_blank">
+      <div class="partner-inner"><span style="font-size:24px;">🎟️</span><div><div style="font-size:14px;font-weight:800;">TicketsToDo</div><div style="font-size:11px;color:var(--muted);">تجارب وتذاكر حول العالم</div></div></div>
+    </a>
+  </div>
 </div>
 
-<!-- BOTTOM NAV -->
+<!-- BOTNAV -->
 <nav class="botnav">
-  <a href="index.html" class="bitem"><div class="bi">🏠</div><div class="bl">الرئيسية</div></a>
-  <a href="trips.html" class="bitem"><div class="bi">✈️</div><div class="bl">الرحلات</div></a>
-  <a href="destinations.html" class="bitem"><div class="bi">🗺️</div><div class="bl">الوجهات</div></a>
-  <a href="flights.html" class="bitem active"><div class="bi">🛫</div><div class="bl">طيران</div></a>
-  <a href="agents.html" class="bitem"><div class="bi">🤝</div><div class="bl">المرشدون</div></a>
+  <a href="index.html" class="bitem"><div class="bi">🏠</div><div>الرئيسية</div></a>
+  <a href="trips.html" class="bitem"><div class="bi">✈️</div><div>الرحلات</div></a>
+  <a href="destinations.html" class="bitem"><div class="bi">🗺️</div><div>الوجهات</div></a>
+  <a href="flights.html" class="bitem active"><div class="bi">🎫</div><div>احجز</div></a>
+  <a href="agents.html" class="bitem"><div class="bi">🤝</div><div>المرشدون</div></a>
 </nav>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-const{createClient}=supabase;
-const sb=createClient('https://ybjdagurvkweabujkeyz.supabase.co','eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InliamRhZ3Vydmt3ZWFidWprZXl6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkzNjQyMDAsImV4cCI6MjA5NDk0MDIwMH0.CIK7sew_-kBlC_t_szCjKjjnFNg695kwSryuRshQ9nI');
-
-let tripType='roundtrip', passengers=1, flightClass='economy';
-
-// ── SET MIN DATE ──
-const today=new Date().toISOString().split('T')[0];
-document.getElementById('depDate').min=today;
-document.getElementById('retDate').min=today;
-document.getElementById('depDate').value=today;
-
-// ── TRIP TYPE ──
-function setTripType(type,el){
-  tripType=type;
-  document.querySelectorAll('.tt-btn').forEach(b=>b.classList.remove('active'));
-  el.classList.add('active');
-  document.getElementById('retDateField').style.display=type==='oneway'?'none':'block';
+// ═══ NAV ═══
+async function goToProfile(){
+  const{createClient}=supabase;
+  const sb=createClient('https://ybjdagurvkweabujkeyz.supabase.co','eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InliamRhZ3Vydmt3ZWFidWprZXl6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkzNjQyMDAsImV4cCI6MjA5NDk0MDIwMH0.CIK7sew_-kBlC_t_szCjKjjnFNg695kwSryuRshQ9nI');
+  const{data:{session}}=await sb.auth.getSession();
+  window.location.href=session?'profile.html':'auth.html';
 }
 
-// ── SWAP CITIES ──
+// ═══ MAIN TABS ═══
+function switchMain(tab, el){
+  document.querySelectorAll('.main-tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  document.querySelectorAll('.search-panel').forEach(p=>p.classList.remove('active'));
+  document.getElementById('panel-'+tab).classList.add('active');
+  // Toggle sections
+  const isHotel = tab==='hotel';
+  document.getElementById('flightPartners').style.display = isHotel?'none':'block';
+  document.getElementById('hotelPartners').style.display = isHotel?'block':'none';
+  document.getElementById('popularRoutes').style.display = isHotel?'none':'block';
+  document.getElementById('popularHotels').style.display = isHotel?'block':'none';
+}
+
+// ═══ TRIP TYPE ═══
+function setTrip(type, el){
+  document.querySelectorAll('.tt-btn').forEach(b=>b.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('retDateWrap').style.display = type==='one'?'none':'block';
+}
+
+// ═══ SWAP ═══
 function swapCities(){
   const f=document.getElementById('fromCity');
   const t=document.getElementById('toCity');
   [f.value,t.value]=[t.value,f.value];
 }
 
-// ── PASSENGERS ──
-function changePass(d){
-  passengers=Math.min(9,Math.max(1,passengers+d));
-  document.getElementById('passNum').textContent=toAr(passengers);
-}
+// ═══ DATES ═══
+const today=new Date().toISOString().split('T')[0];
+document.getElementById('depDate').min=today;
+document.getElementById('depDate').value=today;
+document.getElementById('retDate').min=today;
+document.getElementById('checkIn').min=today;
+document.getElementById('checkIn').value=today;
+document.getElementById('checkOut').min=today;
 
-// ── CLASS ──
-function setClass(cls,el){
-  flightClass=cls;
-  document.querySelectorAll('.class-btn').forEach(b=>b.classList.remove('active'));
-  el.classList.add('active');
-}
-
-// ── QUICK SEARCH ──
-function quickSearch(fromName,toName,fromCode,toCode){
-  document.getElementById('fromCity').value=fromCode;
-  document.getElementById('toCity').value=toCode;
-  window.scrollTo({top:0,behavior:'smooth'});
-}
-
-// ── MAIN SEARCH ──
-function doSearch(){
-  const from=document.getElementById('fromCity').value.trim();
+// ═══ SEARCH FLIGHTS ═══
+function searchFlights(){
   const to=document.getElementById('toCity').value.trim();
   const dep=document.getElementById('depDate').value;
-
-  if(!from||!to){
-    alert('الرجاء إدخال مدينة المغادرة والوصول');
-    return;
-  }
-  if(!dep){
-    alert('الرجاء اختيار تاريخ الذهاب');
-    return;
-  }
-
-  // فتح نافذة اختيار محرك البحث
-  openEngineChoice(from,to,dep);
-}
-
-function openEngineChoice(from,to,dep){
   const ret=document.getElementById('retDate').value;
-  const depFmt=dep.replace(/-/g,'');
-
-  // Skyscanner URL
-  const ssFrom=encodeURIComponent(from);
-  const ssTo=encodeURIComponent(to);
-  const ssUrl=tripType==='roundtrip'&&ret
-    ? `https://www.skyscanner.com/transport/flights/${ssFrom}/${ssTo}/${depFmt}/${ret.replace(/-/g,'')}/?adults=${passengers}&cabinclass=${flightClass}`
-    : `https://www.skyscanner.com/transport/flights/${ssFrom}/${ssTo}/${depFmt}/?adults=${passengers}&cabinclass=${flightClass}`;
-
-  // Google Flights URL
-  const gfUrl=`https://www.google.com/travel/flights?q=رحلات+من+${encodeURIComponent(from)}+إلى+${encodeURIComponent(to)}`;
-
-  // فتح نافذة بسيطة
-  const choice=confirm(`هل تريد البحث في:\n\n✅ اضغط "موافق" لـ Skyscanner\n❌ اضغط "إلغاء" لـ Google Flights`);
-  if(choice){
-    window.open(ssUrl,'_blank');
-  } else {
-    window.open(gfUrl,'_blank');
-  }
+  const pax=document.getElementById('passengers').value;
+  if(!to){document.getElementById('toCity').focus();return;}
+  // Open all flight partners
+  const links=[
+    `https://go.urtrackinglink.com/aff_c?offer_id=1843&aff_id=169114`,
+    `https://go.urtrackinglink.com/aff_c?offer_id=1868&aff_id=169114`,
+    `https://go.urtrackinglink.com/aff_c?offer_id=1321&aff_id=169114`,
+  ];
+  showResultsModal(to, links, '✈️');
 }
 
-function openSkyscanner(){
-  window.open('https://www.skyscanner.com','_blank');
+// ═══ SEARCH HOTELS ═══
+function searchHotels(){
+  const city=document.getElementById('hotelCity').value.trim();
+  if(!city){document.getElementById('hotelCity').focus();return;}
+  const links=[
+    `https://go.urtrackinglink.com/aff_c?offer_id=252&aff_id=169114`,
+    `https://go.urtrackinglink.com/aff_c?offer_id=1956&aff_id=169114`,
+    `https://go.urtrackinglink.com/aff_c?offer_id=1321&aff_id=169114`,
+    `https://go.urtrackinglink.com/aff_c?offer_id=1868&aff_id=169114`,
+  ];
+  showResultsModal(city, links, '🏨');
 }
 
-function openGoogleFlights(){
-  window.open('https://www.google.com/travel/flights','_blank');
+// ═══ RESULTS MODAL ═══
+function showResultsModal(dest, links, type){
+  const isHotel = type==='🏨';
+  const partners = isHotel ? [
+    {name:'Agoda', sub:'أفضل أسعار آسيا', logo:'🔴', url:links[0], bg:'rgba(220,30,30,0.12)', bc:'rgba(220,30,30,0.3)'},
+    {name:'IHG Hotels', sub:'فنادق فاخرة', logo:'🏨', url:links[1]},
+    {name:'Trip.com', sub:'فنادق وطيران', logo:'🌐', url:links[2]},
+    {name:'Expedia', sub:'قارن الأسعار', logo:'🌍', url:links[3]},
+  ] : [
+    {name:'Qatar Airways', sub:'احجز الآن', logo:'✈', url:links[0], bg:'rgba(92,45,145,0.12)', bc:'rgba(92,45,145,0.3)', color:'#8B5CF6'},
+    {name:'Expedia', sub:'طيران + فندق', logo:'🌍', url:links[1]},
+    {name:'Trip.com', sub:'فنادق وطيران', logo:'🌐', url:links[2]},
+  ];
+
+  const modal = document.createElement('div');
+  modal.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,0.8);z-index:9999;display:flex;align-items:flex-end;';
+  modal.innerHTML=`
+    <div style="background:#111;border-radius:24px 24px 0 0;padding:24px;width:100%;max-height:80vh;overflow-y:auto;">
+      <div style="width:36px;height:4px;background:rgba(255,255,255,0.2);border-radius:2px;margin:0 auto 20px;"></div>
+      <div style="font-size:17px;font-weight:900;margin-bottom:6px;">${type} نتائج البحث</div>
+      <div style="font-size:13px;color:var(--muted);margin-bottom:20px;">اختر الموقع للبحث عن "${dest}"</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+        ${partners.map(p=>`
+          <a href="${p.url}" target="_blank" onclick="modal.remove()" style="text-decoration:none;">
+            <div style="background:${p.bg||'rgba(255,255,255,0.05)'};border:1px solid ${p.bc||'rgba(255,255,255,0.08)'};border-radius:16px;padding:16px;text-align:center;">
+              <div style="font-size:24px;margin-bottom:6px;${p.color?`color:${p.color}`:''};">${p.logo}</div>
+              <div style="font-size:13px;font-weight:800;color:${p.color||'white'};">${p.name}</div>
+              <div style="font-size:11px;color:var(--muted);margin-top:2px;">${p.sub}</div>
+            </div>
+          </a>`).join('')}
+      </div>
+      <button onclick="this.closest('div[style]').parentElement.remove()" style="width:100%;padding:14px;margin-top:14px;border-radius:14px;background:rgba(255,255,255,0.08);border:none;color:white;font-family:'Tajawal',sans-serif;font-size:14px;font-weight:800;cursor:pointer;">إغلاق</button>
+    </div>`;
+  modal.onclick=e=>{if(e.target===modal)modal.remove();};
+  document.body.appendChild(modal);
 }
 
-function toAr(n){return n.toString().replace(/\d/g,d=>'٠١٢٣٤٥٦٧٨٩'[d]);}
-
-async function goToProfile(){
-  try{
-    const{data:{session}}=await sb.auth.getSession();
-    window.location.href=session?'profile.html':'auth.html';
-  }catch(e){
-    window.location.href='auth.html';
-  }
+// ═══ QUICK SEARCH ═══
+function quickFlight(city){
+  document.getElementById('toCity').value=city;
+  document.querySelector('[onclick*="switchMain(\'flight\'"]').click();
+  document.querySelector('.search-card').scrollIntoView({behavior:'smooth'});
 }
-async function initNav(){
-  try{
-    const{data:{session}}=await sb.auth.getSession();
-    const btn=document.getElementById('navProfileBtn');
-    if(!btn) return;
-    if(session){
-      const{data:p}=await sb.from('profiles').select('full_name').eq('id',session.user.id).maybeSingle();
-      const name=p?.full_name?.split(' ')[0]||'ملفي';
-      btn.textContent=name+' 👤';
-    } else {
-      btn.textContent='تسجيل دخول 👤';
-    }
-  }catch(e){
-    const btn=document.getElementById('navProfileBtn');
-    if(btn) btn.textContent='تسجيل دخول 👤';
-  }
+function quickHotel(city){
+  document.getElementById('hotelCity').value=city;
+  document.querySelector('[onclick*="switchMain(\'hotel\'"]').click();
+  document.querySelector('.search-card').scrollIntoView({behavior:'smooth'});
 }
-initNav();
 </script>
 
-<!-- ═══ RIHLA AI ASSISTANT ═══ -->
-<style>
-#rihlaAiBtn{position:fixed;bottom:80px;right:16px;width:54px;height:54px;border-radius:50%;background:linear-gradient(135deg,#4285f4,#34a853);border:none;color:white;font-size:26px;cursor:pointer;z-index:9999;box-shadow:0 4px 20px rgba(66,133,244,0.5);display:flex;align-items:center;justify-content:center;}
-#rihlaAiWin{position:fixed;bottom:145px;right:12px;width:calc(100% - 24px);max-width:360px;background:#1a1a1a;border:1px solid rgba(255,255,255,0.12);border-radius:20px;z-index:9999;display:none;flex-direction:column;overflow:hidden;box-shadow:0 8px 32px rgba(0,0,0,0.6);}
-.rAiH{background:linear-gradient(135deg,#4285f4,#34a853);padding:13px 16px;display:flex;align-items:center;justify-content:space-between;}
-.rAiHT{color:white;font-weight:800;font-size:14px;font-family:"Tajawal",sans-serif;}
-.rAiX{background:none;border:none;color:white;font-size:20px;cursor:pointer;line-height:1;}
-.rAiSuggs{display:flex;gap:6px;padding:8px 10px;overflow-x:auto;border-bottom:1px solid rgba(255,255,255,0.07);}
-.rAiSugg{white-space:nowrap;padding:6px 11px;border-radius:14px;background:rgba(66,133,244,0.12);border:1px solid rgba(66,133,244,0.25);color:#4285f4;font-family:"Tajawal",sans-serif;font-size:12px;font-weight:700;cursor:pointer;flex-shrink:0;}
-.rAiMsgs{height:200px;overflow-y:auto;padding:10px 12px;display:flex;flex-direction:column;gap:7px;}
-.rAiU{align-self:flex-end;background:linear-gradient(135deg,#4285f4,#34a853);color:white;padding:9px 13px;border-radius:16px 16px 4px 16px;font-size:13px;line-height:1.6;max-width:85%;font-family:"Tajawal",sans-serif;}
-.rAiB{align-self:flex-start;background:rgba(255,255,255,0.08);color:rgba(255,255,255,0.9);padding:9px 13px;border-radius:4px 16px 16px 16px;font-size:13px;line-height:1.6;max-width:85%;font-family:"Tajawal",sans-serif;}
-.rAiRow{display:flex;gap:8px;padding:10px 12px;border-top:1px solid rgba(255,255,255,0.07);}
-.rAiInp{flex:1;background:rgba(255,255,255,0.07);border:1.5px solid rgba(255,255,255,0.12);border-radius:20px;padding:9px 14px;font-family:"Tajawal",sans-serif;font-size:13px;color:white;outline:none;direction:rtl;}
-.rAiInp:focus{border-color:#4285f4;}
-.rAiSend{width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,#4285f4,#34a853);border:none;color:white;font-size:17px;cursor:pointer;flex-shrink:0;}
-.rAiSend:disabled{opacity:0.5;}
-</style>
-
-<button id="rihlaAiBtn" onclick="rToggle()">🤖</button>
-<div id="rihlaAiWin">
-  <div class="rAiH">
-    <span class="rAiHT">🤖 مساعد رِحلة الذكي</span>
-    <button class="rAiX" onclick="rToggle()">✕</button>
-  </div>
-  <div class="rAiSuggs" id="rAiSuggs"></div>
-  <div class="rAiMsgs" id="rAiMsgs">
-    <div class="rAiB">مرحباً! 🌍 كيف أساعدك في السفر؟</div>
-  </div>
-  <div class="rAiRow">
-    <input class="rAiInp" id="rAiInp" placeholder="اسألني..." onkeydown="if(event.key==='Enter')rSend()">
-    <button class="rAiSend" id="rAiSend" onclick="rSend()">↑</button>
-  </div>
-</div>
-
-<script>
-(function(){
-  const CTX='أنت مساعد طيران للمسافرين الكويتيين. أجب بالعربية عن أسعار التذاكر وشركات الطيران والأمتعة.';
-  let open=false;
-  let chatHistory=[];
-
-  window.rToggle=function(){
-    open=!open;
-    document.getElementById('rihlaAiWin').style.display=open?'flex':'none';
-    if(open)document.getElementById('rAiInp').focus();
-  };
-
-  // Suggestions
-  const suggs=["متى أرخص التذاكر؟", "أفضل شركات من الكويت", "كيف أوفر في التذاكر؟", "وزن الأمتعة المسموح؟"];
-  document.getElementById('rAiSuggs').innerHTML=suggs.map(s=>
-    `<button class="rAiSugg" onclick="rQuick('${s}')">${s}</button>`
-  ).join('');
-
-  window.rQuick=function(t){document.getElementById('rAiInp').value=t;rSend();};
-
-  window.rSend=async function(){
-    const inp=document.getElementById('rAiInp');
-    const btn=document.getElementById('rAiSend');
-    const msgs=document.getElementById('rAiMsgs');
-    const msg=inp.value.trim();
-    if(!msg)return;
-    msgs.innerHTML+=`<div class="rAiU">${msg}</div><div class="rAiB" id="rTyping">⏳ جاري التفكير...</div>`;
-    msgs.scrollTop=msgs.scrollHeight;
-    inp.value='';btn.disabled=true;
-    try{
-      const r=await fetch('https://ybjdagurvkweabujkeyz.supabase.co/functions/v1/ai-chat',{
-        method:'POST',
-        headers:{'Content-Type':'application/json','apikey':'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InliamRhZ3Vydmt3ZWFidWprZXl6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkzNjQyMDAsImV4cCI6MjA5NDk0MDIwMH0.CIK7sew_-kBlC_t_szCjKjjnFNg695kwSryuRshQ9nI','Authorization':'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InliamRhZ3Vydmt3ZWFidWprZXl6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkzNjQyMDAsImV4cCI6MjA5NDk0MDIwMH0.CIK7sew_-kBlC_t_szCjKjjnFNg695kwSryuRshQ9nI'},
-        body:JSON.stringify({message:msg,context:CTX,history:chatHistory})
-      });
-      const d=await r.json();
-      const ans=d.answer||'عذراً، حاول مرة أخرى.';
-      document.getElementById('rTyping')?.remove();
-      msgs.innerHTML+=`<div class="rAiB">${ans.replace(/\n/g,'<br>')}</div>`;
-      chatHistory.push({role:'user',text:msg});
-      chatHistory.push({role:'model',text:ans});
-      if(chatHistory.length>20) chatHistory=chatHistory.slice(-20);
-    }catch(e){
-      document.getElementById('rTyping')?.remove();
-      msgs.innerHTML+=`<div class="rAiB">حدث خطأ. تحقق من الإنترنت.</div>`;
-    }
-    msgs.scrollTop=msgs.scrollHeight;btn.disabled=false;
-  };
-})();
-</script>
-<!-- ═══ END RIHLA AI ═══ -->
-
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </body>
 </html>
