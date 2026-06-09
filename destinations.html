@@ -617,6 +617,28 @@ const CITY_GRADIENTS = {
   'كلوج نابوكا': '#E74C3C,#F7971E',
   'سيغيشوارا': '#2C3E50,#C94B4B',
   'تبليسي الجديد': '#E55D87,#5FC3E4',
+  // إندونيسيا جديد
+  'كومودو': '#56AB2F,#11998E',
+  // ماليزيا جديد
+  'تيومان': '#00B4DB,#1D976C',
+  'ريدانغ': '#4776E6,#00B4DB',
+  // بريطانيا
+  'مانشستر': '#C0392B,#E74C3C',
+  'برايتون': '#F7971E,#FFD200',
+  'أدنبرة': '#2C3E50,#4CA1AF',
+  // أمريكا
+  'نيويورك': '#1CB5E0,#000851',
+  'ميامي': '#F953C6,#FF6B6B',
+  'لوس أنجلوس': '#F7971E,#FF6B6B',
+  'أورلاندو': '#56AB2F,#F7971E',
+  'سان فرانسيسكو': '#C0392B,#F7971E',
+  // كندا
+  'تورنتو': '#C0392B,#8E44AD',
+  'فانكوفر': '#1A5276,#56AB2F',
+  'مونتريال': '#8E44AD,#4776E6',
+  // المكسيك
+  'كانكون': '#00B4DB,#56AB2F',
+  'مكسيكو سيتي': '#E74C3C,#F39C12',
 };
 
 function getCityGradient(dest) {
@@ -910,9 +932,9 @@ function renderGeneralTab(d) {
       </div>
     </div>
 
-    ${directAirlines.length > 0 ? `
     <div class="info-sec">
       <div class="info-sec-title" style="color:var(--tl);">✈️ رحلات مباشرة من الكويت</div>
+      ${directAirlines.length > 0 ? `
       <div style="display:flex;flex-direction:column;gap:6px;">
         ${directAirlines.map(f=>`
           <div style="display:flex;justify-content:space-between;align-items:center;
@@ -921,8 +943,17 @@ function renderGeneralTab(d) {
             <span style="font-size:13px;font-weight:800;color:white;">🟢 ${f.airline}</span>
             <span style="font-size:11px;color:rgba(255,255,255,0.6);">${f.days}</span>
           </div>`).join('')}
-      </div>
-    </div>` : ''}
+      </div>` : `
+      <div style="display:flex;align-items:center;gap:10px;
+        background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);
+        border-radius:10px;padding:12px;">
+        <span style="font-size:20px;">🔴</span>
+        <div>
+          <div style="font-size:13px;font-weight:800;color:rgba(255,255,255,0.7);">لا تتوفر رحلات مباشرة</div>
+          <div style="font-size:11px;color:var(--muted);margin-top:2px;">تحقق من خيارات أخرى أدناه</div>
+        </div>
+      </div>`}
+    </div>
 
     ${connectingAirlines.length > 0 ? `
     <div class="info-sec">
