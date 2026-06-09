@@ -1,4 +1,4 @@
-const CACHE = 'rihla-v10';
+const CACHE = 'rihla-v11';
 
 self.addEventListener('install', e => {
   self.skipWaiting();

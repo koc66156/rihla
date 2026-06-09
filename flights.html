@@ -150,20 +150,18 @@ body{font-family:'Tajawal',sans-serif;background:var(--dk);color:white;min-heigh
         <input type="text" id="toCity" placeholder="وجهتك">
       </div>
     </div>
-    <div class="date-row">
-      <div class="field" style="margin:0">
-        <label>الذهاب</label>
-        <div class="field-inner">
-          <span class="field-icon">📅</span>
-          <input type="date" id="depDate">
-        </div>
+    <div class="field">
+      <label>الذهاب</label>
+      <div class="field-inner">
+        <span class="field-icon">📅</span>
+        <input type="date" id="depDate">
       </div>
-      <div class="field" id="retDateWrap" style="margin:0">
-        <label>العودة</label>
-        <div class="field-inner">
-          <span class="field-icon">📅</span>
-          <input type="date" id="retDate">
-        </div>
+    </div>
+    <div class="field" id="retDateWrap">
+      <label>العودة</label>
+      <div class="field-inner">
+        <span class="field-icon">📅</span>
+        <input type="date" id="retDate">
       </div>
     </div>
     <div class="pass-row" style="margin-top:12px;">
@@ -309,7 +307,7 @@ body{font-family:'Tajawal',sans-serif;background:var(--dk);color:white;min-heigh
         <div class="partner-sub">فنادق عالمية فاخرة</div>
       </div>
     </a>
-    <a class="partner-card" href="https://go.urtrackinglink.com/aff_c?offer_id=1556&aff_id=169114" target="_blank">
+    <a class="partner-card" href="https://go.urtrackinglink.com/aff_c?offer_id=1556&aff_id=169114" target="_blank" onclick="window.open(this.href);return false;">
       <div class="partner-inner">
         <div class="partner-logo" style="font-size:16px;">🏩<br><span style="font-size:12px;color:white;">Rove Hotels</span></div>
         <div class="partner-sub">فنادق دبي العصرية</div>
@@ -332,6 +330,69 @@ body{font-family:'Tajawal',sans-serif;background:var(--dk);color:white;min-heigh
     </a>
   </div>
 </div>
+
+<!-- ENTERTAINMENT -->
+<div class="section">
+  <div class="sec-title">🎢 تجارب وترفيه</div>
+  <div class="partners-grid">
+    <a class="partner-card" href="https://go.urtrackinglink.com/aff_c?offer_id=1548&aff_id=169114" target="_blank" onclick="window.open(this.href);return false;">
+      <div class="partner-inner"><div class="partner-logo" style="font-size:22px;">🎡</div><div style="font-size:12px;font-weight:800;color:white;">Yas Island</div><div class="partner-sub">أبوظبي</div></div>
+    </a>
+    <a class="partner-card" href="https://go.urtrackinglink.com/aff_c?offer_id=1547&aff_id=169114" target="_blank" onclick="window.open(this.href);return false;">
+      <div class="partner-inner"><div class="partner-logo" style="font-size:22px;">🦸</div><div style="font-size:12px;font-weight:800;color:white;">Warner Bros</div><div class="partner-sub">أبوظبي</div></div>
+    </a>
+    <a class="partner-card" href="https://go.urtrackinglink.com/aff_c?offer_id=1530&aff_id=169114" target="_blank" onclick="window.open(this.href);return false;">
+      <div class="partner-inner"><div class="partner-logo" style="font-size:22px;">🏎️</div><div style="font-size:12px;font-weight:800;color:white;">Ferrari World</div><div class="partner-sub">أبوظبي</div></div>
+    </a>
+    <a class="partner-card" href="https://go.urtrackinglink.com/aff_c?offer_id=1546&aff_id=169114" target="_blank">
+      <div class="partner-inner"><div class="partner-logo" style="font-size:22px;">🗺️</div><div style="font-size:12px;font-weight:800;color:white;">GoCity</div><div class="partner-sub">بطاقة السياحة</div></div>
+    </a>
+    <a class="partner-card partner-full" href="https://go.urtrackinglink.com/aff_c?offer_id=128&aff_id=169114" target="_blank">
+      <div class="partner-inner"><span style="font-size:24px;">🎟️</span><div><div style="font-size:14px;font-weight:800;">TicketsToDo</div><div style="font-size:11px;color:var(--muted);">تجارب وتذاكر حول العالم</div></div></div>
+    </a>
+  </div>
+</div>
+
+
+<!-- TRAVEL TIPS -->
+<div class="section">
+  <div class="sec-title">💡 نصائح الحجز الذكي</div>
+  <div class="tips-grid">
+    <div class="tip-card">
+      <div class="tip-icon">📅</div>
+      <div class="tip-title">احجز مبكراً</div>
+      <div class="tip-text">أفضل الأسعار قبل ٦-٨ أسابيع من السفر</div>
+    </div>
+    <div class="tip-card">
+      <div class="tip-icon">🔄</div>
+      <div class="tip-title">قارن الأسعار</div>
+      <div class="tip-text">جرّب أكثر من موقع للحصول على أفضل سعر</div>
+    </div>
+    <div class="tip-card">
+      <div class="tip-icon">📦</div>
+      <div class="tip-title">باقات مدمجة</div>
+      <div class="tip-text">طيران + فندق معاً أوفر بكثير</div>
+    </div>
+    <div class="tip-card">
+      <div class="tip-icon">🌙</div>
+      <div class="tip-title">الرحلات الليلية</div>
+      <div class="tip-text">عادة أرخص وتوفر ليلة فندق</div>
+    </div>
+    <div class="tip-card">
+      <div class="tip-icon">🎒</div>
+      <div class="tip-title">الأمتعة</div>
+      <div class="tip-text">أضف الأمتعة مسبقاً أرخص من المطار</div>
+    </div>
+    <div class="tip-card">
+      <div class="tip-icon">📱</div>
+      <div class="tip-title">تطبيقات الشركات</div>
+      <div class="tip-text">عروض حصرية عبر تطبيقات الطيران</div>
+    </div>
+  </div>
+</div>
+
+
+
 
 <!-- POPULAR ROUTES -->
 <div class="section" id="popularRoutes">
@@ -402,67 +463,6 @@ body{font-family:'Tajawal',sans-serif;background:var(--dk);color:white;min-heigh
     <div class="route-arrow">←</div>
   </div>
 </div>
-
-<!-- ENTERTAINMENT -->
-<div class="section">
-  <div class="sec-title">🎢 تجارب وترفيه</div>
-  <div class="partners-grid">
-    <a class="partner-card" href="https://go.urtrackinglink.com/aff_c?offer_id=1548&aff_id=169114" target="_blank">
-      <div class="partner-inner"><div class="partner-logo" style="font-size:22px;">🎡</div><div style="font-size:12px;font-weight:800;color:white;">Yas Island</div><div class="partner-sub">أبوظبي</div></div>
-    </a>
-    <a class="partner-card" href="https://go.urtrackinglink.com/aff_c?offer_id=1547&aff_id=169114" target="_blank">
-      <div class="partner-inner"><div class="partner-logo" style="font-size:22px;">🦸</div><div style="font-size:12px;font-weight:800;color:white;">Warner Bros</div><div class="partner-sub">أبوظبي</div></div>
-    </a>
-    <a class="partner-card" href="https://go.urtrackinglink.com/aff_c?offer_id=1530&aff_id=169114" target="_blank">
-      <div class="partner-inner"><div class="partner-logo" style="font-size:22px;">🏎️</div><div style="font-size:12px;font-weight:800;color:white;">Ferrari World</div><div class="partner-sub">أبوظبي</div></div>
-    </a>
-    <a class="partner-card" href="https://go.urtrackinglink.com/aff_c?offer_id=1546&aff_id=169114" target="_blank">
-      <div class="partner-inner"><div class="partner-logo" style="font-size:22px;">🗺️</div><div style="font-size:12px;font-weight:800;color:white;">GoCity</div><div class="partner-sub">بطاقة السياحة</div></div>
-    </a>
-    <a class="partner-card partner-full" href="https://go.urtrackinglink.com/aff_c?offer_id=128&aff_id=169114" target="_blank">
-      <div class="partner-inner"><span style="font-size:24px;">🎟️</span><div><div style="font-size:14px;font-weight:800;">TicketsToDo</div><div style="font-size:11px;color:var(--muted);">تجارب وتذاكر حول العالم</div></div></div>
-    </a>
-  </div>
-</div>
-
-<!-- TRAVEL TIPS -->
-<div class="section">
-  <div class="sec-title">💡 نصائح الحجز الذكي</div>
-  <div class="tips-grid">
-    <div class="tip-card">
-      <div class="tip-icon">📅</div>
-      <div class="tip-title">احجز مبكراً</div>
-      <div class="tip-text">أفضل الأسعار قبل ٦-٨ أسابيع من السفر</div>
-    </div>
-    <div class="tip-card">
-      <div class="tip-icon">🔄</div>
-      <div class="tip-title">قارن الأسعار</div>
-      <div class="tip-text">جرّب أكثر من موقع للحصول على أفضل سعر</div>
-    </div>
-    <div class="tip-card">
-      <div class="tip-icon">📦</div>
-      <div class="tip-title">باقات مدمجة</div>
-      <div class="tip-text">طيران + فندق معاً أوفر بكثير</div>
-    </div>
-    <div class="tip-card">
-      <div class="tip-icon">🌙</div>
-      <div class="tip-title">الرحلات الليلية</div>
-      <div class="tip-text">عادة أرخص وتوفر ليلة فندق</div>
-    </div>
-    <div class="tip-card">
-      <div class="tip-icon">🎒</div>
-      <div class="tip-title">الأمتعة</div>
-      <div class="tip-text">أضف الأمتعة مسبقاً أرخص من المطار</div>
-    </div>
-    <div class="tip-card">
-      <div class="tip-icon">📱</div>
-      <div class="tip-title">تطبيقات الشركات</div>
-      <div class="tip-text">عروض حصرية عبر تطبيقات الطيران</div>
-    </div>
-  </div>
-</div>
-
-
 
 <!-- BOTNAV -->
 <nav class="botnav">
