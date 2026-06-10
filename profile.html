@@ -956,7 +956,12 @@ function saveAvatar(){
   if(tempAvatar){
     sb.from('profiles').update({avatar:tempAvatar,avatar_url:null}).eq('id',currentUser.id)
     .then(function(r){
-      if(r.error){btn.disabled=false;btn.textContent='فشل الحفظ';return;}
+      if(r.error){
+        btn.disabled=false;
+        btn.textContent='فشل الحفظ';
+        alert('خطأ: ' + JSON.stringify(r.error));
+        return;
+      }
       profile.avatar=tempAvatar;
       profile.avatar_url=null;
       selectedAvatar=tempAvatar;
