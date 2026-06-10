@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>رِحلة — سياسة الخصوصية وشروط الاستخدام</title>
+<meta name="theme-color" content="#FF5C1A">
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;800;900&family=Righteous&display=swap" rel="stylesheet">
+<style>
+:root{--or:#FF5C1A;--yl:#FFD000;--tl:#00C9B1;--dk:#0E0E0E;--border:rgba(255,255,255,0.08);}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Tajawal',sans-serif;background:var(--dk);color:white;padding:0 0 60px;}
+
+.topnav{position:sticky;top:0;width:100%;z-index:100;height:64px;padding:0 16px;display:flex;align-items:center;justify-content:space-between;background:rgba(14,14,14,0.97);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);}
+.nav-logo{font-family:'Righteous',cursive;font-size:24px;background:linear-gradient(90deg,var(--or),var(--yl));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;border:none;background-color:transparent;cursor:pointer;}
+.back-btn{padding:8px 16px;border-radius:20px;background:rgba(255,255,255,0.06);border:1px solid var(--border);color:rgba(255,255,255,0.7);font-family:'Tajawal',sans-serif;font-size:13px;font-weight:700;cursor:pointer;}
+
+.hero{padding:40px 20px 32px;text-align:center;background:linear-gradient(180deg,rgba(255,92,26,0.08),transparent);}
+.hero h1{font-size:26px;font-weight:900;margin-bottom:8px;}
+.hero h1 span{background:linear-gradient(135deg,var(--or),var(--yl));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.hero p{font-size:13px;color:rgba(255,255,255,0.5);line-height:1.7;}
+
+/* TABS */
+.tabs{display:flex;margin:0 20px 24px;background:rgba(255,255,255,0.05);border-radius:14px;padding:3px;}
+.tab{flex:1;padding:10px;border-radius:12px;border:none;background:none;color:rgba(255,255,255,0.5);font-family:'Tajawal',sans-serif;font-size:13px;font-weight:800;cursor:pointer;transition:all .2s;}
+.tab.active{background:var(--or);color:white;}
+
+/* CONTENT */
+.content{padding:0 20px;display:none;}
+.content.active{display:block;}
+
+.section{margin-bottom:28px;}
+.section-title{font-size:16px;font-weight:900;color:var(--or);margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid rgba(255,92,26,0.2);display:flex;align-items:center;gap:8px;}
+.section-text{font-size:13px;line-height:1.9;color:rgba(255,255,255,0.75);}
+.section-text p{margin-bottom:10px;}
+.section-text ul{padding-right:20px;margin-bottom:10px;}
+.section-text ul li{margin-bottom:6px;}
+.highlight{background:rgba(255,92,26,0.08);border:1px solid rgba(255,92,26,0.15);border-radius:12px;padding:14px;margin-bottom:14px;font-size:13px;line-height:1.8;color:rgba(255,255,255,0.8);}
+.date-badge{display:inline-block;background:rgba(0,201,177,0.1);border:1px solid rgba(0,201,177,0.2);border-radius:8px;padding:4px 12px;font-size:12px;color:var(--tl);font-weight:800;margin-bottom:20px;}
+.contact-box{background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:16px;padding:18px;margin-top:20px;text-align:center;}
+.contact-box a{color:var(--or);text-decoration:none;font-weight:800;}
+</style>
+</head>
+<body>
+
+<nav class="topnav">
+  <button class="back-btn" onclick="history.back()">→ رجوع</button>
+  <button class="nav-logo" onclick="window.location.href='index.html'">Rihla</button>
+</nav>
+
+<div class="hero">
+  <h1>📋 <span>السياسات القانونية</span></h1>
+  <p>آخر تحديث: يونيو ٢٠٢٦</p>
+</div>
+
+<div class="tabs">
+  <button class="tab active" onclick="switchTab('privacy',this)">🔒 الخصوصية</button>
+  <button class="tab" onclick="switchTab('terms',this)">📜 الشروط</button>
+</div>
+
+<!-- PRIVACY POLICY -->
+<div class="content active" id="tab-privacy">
+  <div class="date-badge">آخر تحديث: يونيو ٢٠٢٦</div>
+
+  <div class="highlight">
+    نحن في رِحلة نحترم خصوصيتك ونلتزم بحماية بياناتك الشخصية. هذه السياسة توضح كيفية جمع معلوماتك واستخدامها وحمايتها.
+  </div>
+
+  <div class="section">
+    <div class="section-title">👤 المعلومات التي نجمعها</div>
+    <div class="section-text">
+      <p>عند تسجيلك في منصة رِحلة نجمع المعلومات التالية:</p>
+      <ul>
+        <li>الاسم الكامل وعنوان البريد الإلكتروني</li>
+        <li>الصورة الشخصية (اختيارية)</li>
+        <li>الجنسية ودولة الإقامة</li>
+        <li>السيرة الذاتية للملف الشخصي (اختيارية)</li>
+        <li>المنشورات والرحلات التي تنشرها</li>
+        <li>التعليقات والتقييمات</li>
+        <li>بيانات الاستخدام وسجلات النشاط</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">🎯 كيف نستخدم معلوماتك</div>
+    <div class="section-text">
+      <ul>
+        <li>تشغيل المنصة وتقديم الخدمات</li>
+        <li>ربطك بمسافرين آخرين ومرشدين</li>
+        <li>تخصيص تجربتك وتوصية الوجهات</li>
+        <li>إرسال إشعارات متعلقة بالخدمة</li>
+        <li>تحسين المنصة وتطويرها</li>
+        <li>الامتثال للمتطلبات القانونية</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">🔗 الروابط التابعة (Affiliate Links)</div>
+    <div class="section-text">
+      <p>تحتوي منصة رِحلة على روابط تابعة لشركاء مثل Agoda وQatar Airways وExpedia وغيرها. عند الضغط على هذه الروابط وإتمام حجز:</p>
+      <ul>
+        <li>يتم توجيهك لموقع الشريك المستقل</li>
+        <li>تخضع عملية الحجز لسياسة خصوصية الشريك</li>
+        <li>قد نحصل على عمولة من الشريك دون تكلفة إضافية عليك</li>
+        <li>لا نتحكم في بيانات مواقع الشركاء</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">🛡️ حماية البيانات</div>
+    <div class="section-text">
+      <p>نستخدم تقنيات متقدمة لحماية بياناتك:</p>
+      <ul>
+        <li>تشفير SSL/TLS لجميع الاتصالات</li>
+        <li>قاعدة بيانات Supabase المشفرة والآمنة</li>
+        <li>صلاحيات وصول محدودة للبيانات</li>
+        <li>مراجعات أمنية دورية</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">🤝 مشاركة البيانات</div>
+    <div class="section-text">
+      <p>لا نبيع بياناتك الشخصية لأطراف ثالثة. نشارك البيانات فقط في الحالات التالية:</p>
+      <ul>
+        <li>بموافقتك الصريحة</li>
+        <li>لتشغيل الخدمات الأساسية (مزودو الخدمة)</li>
+        <li>عند الطلب القانوني من الجهات المختصة</li>
+        <li>لحماية حقوق المنصة والمستخدمين</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">⚙️ حقوقك</div>
+    <div class="section-text">
+      <ul>
+        <li><strong>الوصول:</strong> يمكنك طلب نسخة من بياناتك</li>
+        <li><strong>التصحيح:</strong> يمكنك تعديل معلوماتك من ملفك الشخصي</li>
+        <li><strong>الحذف:</strong> يمكنك طلب حذف حسابك وبياناتك</li>
+        <li><strong>الاعتراض:</strong> يمكنك الاعتراض على معالجة بياناتك</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">🍪 ملفات الارتباط (Cookies)</div>
+    <div class="section-text">
+      <p>نستخدم ملفات الارتباط الضرورية فقط لتشغيل المنصة وتحسين تجربتك. لا نستخدم ملفات ارتباط تتبع إعلانية.</p>
+    </div>
+  </div>
+
+  <div class="contact-box">
+    <div style="font-size:14px;font-weight:800;margin-bottom:8px;">📧 تواصل معنا</div>
+    <div style="font-size:13px;color:rgba(255,255,255,0.6);margin-bottom:6px;">لأي استفسار عن خصوصيتك</div>
+    <a href="mailto:info@rihlakw.com">info@rihlakw.com</a>
+  </div>
+</div>
+
+<!-- TERMS OF SERVICE -->
+<div class="content" id="tab-terms">
+  <div class="date-badge">آخر تحديث: يونيو ٢٠٢٦</div>
+
+  <div class="highlight">
+    باستخدامك منصة رِحلة فأنت توافق على هذه الشروط. يُرجى قراءتها بعناية قبل استخدام الخدمة.
+  </div>
+
+  <div class="section">
+    <div class="section-title">📱 قبول الشروط</div>
+    <div class="section-text">
+      <p>باستخدامك لمنصة رِحلة (rihlakw.com) فإنك توافق على الالتزام بهذه الشروط وسياسة الخصوصية. إذا كنت لا توافق على هذه الشروط يُرجى التوقف عن استخدام المنصة.</p>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">👥 الأهلية والتسجيل</div>
+    <div class="section-text">
+      <ul>
+        <li>يجب أن يكون عمرك ١٨ عاماً أو أكثر</li>
+        <li>يجب تقديم معلومات صحيحة ودقيقة عند التسجيل</li>
+        <li>أنت مسؤول عن الحفاظ على سرية كلمة مرورك</li>
+        <li>حساب واحد فقط لكل مستخدم</li>
+        <li>يحق لنا إلغاء الحسابات المخالفة للشروط</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">✍️ قواعد المحتوى</div>
+    <div class="section-text">
+      <p>يلتزم المستخدم بعدم نشر أي محتوى:</p>
+      <ul>
+        <li>مسيء أو عنصري أو يحرض على الكراهية</li>
+        <li>ينتهك حقوق الملكية الفكرية</li>
+        <li>يحتوي على معلومات مضللة أو كاذبة</li>
+        <li>إعلانات تجارية غير مصرح بها</li>
+        <li>محتوى جنسي أو مخل بالآداب العامة</li>
+        <li>يهدد أو يتحرش بالمستخدمين الآخرين</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">🧭 خدمة المرشدين</div>
+    <div class="section-text">
+      <p>المرشدون المسجلون في المنصة يلتزمون بـ:</p>
+      <ul>
+        <li>تقديم معلومات صحيحة عن خدماتهم</li>
+        <li>الالتزام بالأسعار المعلنة</li>
+        <li>احترام المسافرين وتقديم خدمة احترافية</li>
+        <li>منصة رِحلة ليست طرفاً في عقود الخدمة بين المرشد والمسافر</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">🎫 حجوزات السفر</div>
+    <div class="section-text">
+      <p>الروابط الخاصة بحجوزات الطيران والفنادق تؤدي لمواقع شركاء مستقلين:</p>
+      <ul>
+        <li>منصة رِحلة ليست وكالة سفر مرخصة</li>
+        <li>لا نتحمل مسؤولية أي نزاع مع شركات الحجز</li>
+        <li>شروط وسياسات الإلغاء تعود لكل شريك</li>
+        <li>أسعار الحجز قابلة للتغيير وتحددها الشركات الشريكة</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">⚖️ حدود المسؤولية</div>
+    <div class="section-text">
+      <p>منصة رِحلة غير مسؤولة عن:</p>
+      <ul>
+        <li>محتوى المنشورات والتقييمات من المستخدمين</li>
+        <li>أي أضرار ناتجة عن استخدام المنصة</li>
+        <li>دقة معلومات الوجهات السياحية</li>
+        <li>الخدمات المقدمة من الشركاء والمرشدين</li>
+        <li>انقطاع الخدمة أو الأعطال التقنية</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">🔄 التعديلات على الشروط</div>
+    <div class="section-text">
+      <p>نحتفظ بالحق في تعديل هذه الشروط في أي وقت. سيتم إشعارك بالتغييرات الجوهرية عبر البريد الإلكتروني أو إشعار في المنصة. استمرارك في استخدام المنصة بعد التعديل يعني قبولك للشروط الجديدة.</p>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">🌍 القانون المطبق</div>
+    <div class="section-text">
+      <p>تخضع هذه الشروط لقوانين دولة الكويت. أي نزاع يُحل وفقاً للتشريعات الكويتية المعمول بها.</p>
+    </div>
+  </div>
+
+  <div class="contact-box">
+    <div style="font-size:14px;font-weight:800;margin-bottom:8px;">📧 تواصل معنا</div>
+    <div style="font-size:13px;color:rgba(255,255,255,0.6);margin-bottom:6px;">لأي استفسار قانوني</div>
+    <a href="mailto:info@rihlakw.com">info@rihlakw.com</a>
+  </div>
+</div>
+
+<script>
+function switchTab(tab, el){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.content').forEach(c=>c.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('tab-'+tab).classList.add('active');
+}
+</script>
+</body>
+</html>
