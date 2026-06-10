@@ -903,16 +903,11 @@ let photoFile=null;
 function previewPhoto(input){
   var file=input.files[0];
   if(!file) return;
-  if(file.size>5*1024*1024){
-    alert('الصورة أكبر من 5MB');
-    return;
-  }
   photoFile=file;
   var reader=new FileReader();
   reader.onload=function(e){
     uploadedPhotoUrl=e.target.result;
-    var preview=document.getElementById('uploadPreview');
-    preview.innerHTML='<img src="'+e.target.result+'" style="width:48px;height:48px;border-radius:12px;object-fit:cover;">';
+    document.getElementById('uploadPreview').innerHTML='<img src="'+e.target.result+'" style="width:48px;height:48px;border-radius:12px;object-fit:cover;">';
     document.querySelectorAll('.av-opt').forEach(function(x){x.classList.remove('selected');});
     tempAvatar=null;
   };
@@ -921,100 +916,74 @@ function previewPhoto(input){
 
 function saveAvatar(){
   var btn=document.getElementById('saveAvatarBtn');
-  if(!btn) return;
   btn.disabled=true;
   btn.textContent='⏳ جاري الحفظ...';
 
-  if(uploadedPhotoUrl && photoFile){
-    // رفع الصورة على Supabase Storage
-    var ext=photoFile.type.includes('png')?'png':'jpg';
-    var path=currentUser.id+'/avatar.'+ext;
-    
-    sb.storage.from('avatars').upload(path, photoFile, {upsert:true, contentType:photoFile.type})
-    .then(function(res){
-      if(res.error){
-        console.error('Storage error:',res.error);
-        // fallback: save base64 directly
-        return saveBase64();
-      }
-      var urlData=sb.storage.from('avatars').getPublicUrl(path);
-      var url=urlData.data.publicUrl+'?v='+Date.now();
-      return sb.from('profiles').update({avatar_url:url, avatar:null}).eq('id',currentUser.id)
-      .then(function(r){
-        if(r.error) return saveBase64();
-        showSuccess(url);
-      });
-    }).catch(function(){
-      saveBase64();
+  // حفظ إيموجي
+  if(!uploadedPhotoUrl && tempAvatar){
+    sb.from('profiles').update({avatar:tempAvatar,avatar_url:null}).eq('id',currentUser.id).then(function(r){
+      if(r.error){btn.disabled=false;btn.textContent='❌ فشل';return;}
+      profile.avatar=tempAvatar;profile.avatar_url=null;selectedAvatar=tempAvatar;
+      var av=document.getElementById('avatarEl');av.innerHTML='';av.textContent=tempAvatar;
+      _saveSuccess();
     });
     return;
   }
-  
-  if(!uploadedPhotoUrl && !tempAvatar){
-    btn.disabled=false;
-    btn.textContent='حفظ الصورة ✓';
-    alert('اختر صورة أو رمزاً أولاً');
+
+  // رفع صورة
+  if(uploadedPhotoUrl && photoFile){
+    var ext=photoFile.name.split('.').pop().toLowerCase();
+    if(!['jpg','jpeg','png','webp'].includes(ext)) ext='jpg';
+    var path=currentUser.id+'_avatar_'+Date.now()+'.'+ext;
+    
+    sb.storage.from('avatars').upload(path, photoFile, {
+      upsert:false,
+      contentType:photoFile.type||'image/jpeg'
+    }).then(function(r){
+      if(r.error){
+        console.error('upload failed:',r.error.message);
+        // محاولة بديلة: حذف القديم ثم رفع
+        sb.storage.from('avatars').remove([currentUser.id+'_avatar.jpg',currentUser.id+'_avatar.png']).then(function(){
+          sb.storage.from('avatars').upload(path,photoFile,{upsert:false,contentType:photoFile.type||'image/jpeg'}).then(function(r2){
+            if(r2.error){btn.disabled=false;btn.textContent='❌ فشل الرفع';console.error(r2.error);return;}
+            _handleUploadSuccess(r2,path);
+          });
+        });
+        return;
+      }
+      _handleUploadSuccess(r,path);
+    });
     return;
   }
 
-  // حفظ إيموجي
-  sb.from('profiles').update({avatar:tempAvatar, avatar_url:null}).eq('id',currentUser.id)
-  .then(function(res){
-    if(res.error){
-      btn.disabled=false;
-      btn.textContent='❌ فشل الحفظ';
-      return;
-    }
-    profile.avatar=tempAvatar;
-    profile.avatar_url=null;
-    selectedAvatar=tempAvatar;
-    var avEl=document.getElementById('avatarEl');
-    avEl.innerHTML='';
-    avEl.textContent=tempAvatar;
-    showSaveSuccess();
-  });
+  btn.disabled=false;btn.textContent='حفظ الصورة ✓';
 }
 
-function saveBase64(){
-  // fallback: حفظ كـ base64 مباشرة
-  sb.from('profiles').update({avatar_url:uploadedPhotoUrl, avatar:null}).eq('id',currentUser.id)
-  .then(function(res){
+function _handleUploadSuccess(r,path){
+  var pub=sb.storage.from('avatars').getPublicUrl(path);
+  var url=pub.data.publicUrl;
+  if(!url){document.getElementById('saveAvatarBtn').disabled=false;document.getElementById('saveAvatarBtn').textContent='❌ فشل';return;}
+  // أضف timestamp لتجنب cache
+  var displayUrl=url+'?t='+Date.now();
+  sb.from('profiles').update({avatar_url:url,avatar:null}).eq('id',currentUser.id).then(function(r){
     var btn=document.getElementById('saveAvatarBtn');
-    if(res.error){
-      console.error('Base64 error:',res.error);
-      btn.disabled=false;
-      btn.textContent='❌ فشل الحفظ';
-      return;
-    }
-    profile.avatar_url=uploadedPhotoUrl;
-    profile.avatar=null;
-    var avEl=document.getElementById('avatarEl');
-    avEl.innerHTML='<img src="'+uploadedPhotoUrl+'" style="width:100%;height:100%;border-radius:18px;object-fit:cover;">';
-    showSaveSuccess();
+    if(r.error){btn.disabled=false;btn.textContent='❌ فشل الحفظ';console.error(r.error);return;}
+    profile.avatar_url=url;profile.avatar=null;
+    var av=document.getElementById('avatarEl');
+    av.innerHTML='<img src="'+displayUrl+'" style="width:100%;height:100%;border-radius:18px;object-fit:cover;" onerror="this.parentElement.textContent='✈️'">';
+    _saveSuccess();
   });
 }
 
-function showSuccess(url){
-  profile.avatar_url=url;
-  profile.avatar=null;
-  var avEl=document.getElementById('avatarEl');
-  var img=new Image();
-  img.onload=function(){ avEl.innerHTML='<img src="'+url+'" style="width:100%;height:100%;border-radius:18px;object-fit:cover;">'; };
-  img.src=url;
-  showSaveSuccess();
-}
-
-function showSaveSuccess(){
+function _saveSuccess(){
+  uploadedPhotoUrl=null;photoFile=null;
+  var inp=document.getElementById('photoUploadInput');if(inp)inp.value='';
   var btn=document.getElementById('saveAvatarBtn');
-  uploadedPhotoUrl=null;
-  photoFile=null;
-  var inp=document.getElementById('photoUploadInput');
-  if(inp) inp.value='';
-  btn.textContent='✅ تم الحفظ!';
-  btn.disabled=false;
+  btn.textContent='✅ تم الحفظ!';btn.disabled=false;
   setTimeout(function(){
     document.getElementById('avatarOverlay').classList.remove('open');
     btn.textContent='حفظ الصورة ✓';
+    document.getElementById('uploadPreview').innerHTML='📷';
   },1200);
 }
 
