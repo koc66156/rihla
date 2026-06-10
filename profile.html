@@ -387,6 +387,19 @@ body{font-family:'Tajawal',sans-serif;background:var(--dk);color:white;min-heigh
     <div class="handle"></div>
     <div class="sheet-body">
       <div class="sheet-title">🖼️ اختر صورتك</div>
+
+      <!-- Upload real photo -->
+      <div onclick="document.getElementById('photoUploadInput').click()"
+        style="display:flex;align-items:center;gap:12px;background:rgba(255,92,26,0.08);border:1.5px dashed rgba(255,92,26,0.4);border-radius:14px;padding:14px;margin-bottom:16px;cursor:pointer;">
+        <div style="width:48px;height:48px;border-radius:12px;background:rgba(255,92,26,0.15);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;" id="uploadPreview">📷</div>
+        <div>
+          <div style="font-size:14px;font-weight:800;color:var(--or);">ارفع صورة من هاتفك</div>
+          <div style="font-size:11px;color:var(--muted);margin-top:2px;">JPG أو PNG • حجم أقصى 5MB</div>
+        </div>
+      </div>
+      <input type="file" id="photoUploadInput" accept="image/*" style="display:none" onchange="previewPhoto(this)">
+
+      <div style="font-size:12px;font-weight:800;color:var(--muted);margin-bottom:10px;text-align:center;">— أو اختر رمز —</div>
       <div class="avatar-grid" id="avatarGrid"></div>
       <button class="save-btn sb-or" onclick="saveAvatar()">حفظ الصورة ✓</button>
     </div>
@@ -551,7 +564,9 @@ async function init(){
   }
 
   selCountries=profile.visited_countries||[];
-  selectedAvatar=profile.avatar||'✈️';
+  document.getElementById('avatarEl').innerHTML = profile?.avatar_url
+    ? `<img src="${profile.avatar_url}?t=${Date.now()}" style="width:100%;height:100%;border-radius:18px;object-fit:cover;">`
+    : (profile?.avatar||'✈️');
 
   const{data:likes}=await sb.from('post_likes').select('post_id').eq('user_id',currentUser.id);
   if(likes) likes.forEach(l=>myLikes.add(l.post_id));
@@ -570,7 +585,9 @@ async function init(){
 // ══ RENDER ══
 function renderProfile(){
   const name=profile?.full_name||'مستخدم رِحلة';
-  const avatar=profile?.avatar||'✈️';
+  const avatar=profile?.avatar_url
+    ? `<img src="${profile.avatar_url}" style="width:100%;height:100%;border-radius:18px;object-fit:cover;">`
+    : (profile?.avatar||'✈️');
   const grad=GRADS[currentUser.id.charCodeAt(0)%GRADS.length];
 
   document.getElementById('coverBg').style.background=grad;
@@ -859,20 +876,63 @@ function openSettings(){document.getElementById('settingsOverlay').classList.add
 let tempAvatar=null;
 function openAvatarPicker(){
   tempAvatar=selectedAvatar;
+  uploadedPhotoUrl=null;
+  document.getElementById('uploadPreview').textContent='📷';
   document.getElementById('avatarGrid').innerHTML=AVATARS.map(a=>`
     <div class="av-opt ${a===selectedAvatar?'selected':''}" onclick="selectAv('${a}',this)">${a}</div>`).join('');
   document.getElementById('avatarOverlay').classList.add('open');
 }
 function selectAv(a,el){
   tempAvatar=a;
+  uploadedPhotoUrl=null;
+  document.getElementById('uploadPreview').textContent='📷';
   document.querySelectorAll('.av-opt').forEach(x=>x.classList.remove('selected'));
   el.classList.add('selected');
 }
+
+let uploadedPhotoUrl=null;
+function previewPhoto(input){
+  const file=input.files[0];
+  if(!file) return;
+  if(file.size>5*1024*1024){showToast('❌ الصورة أكبر من 5MB');return;}
+  const reader=new FileReader();
+  reader.onload=e=>{
+    const preview=document.getElementById('uploadPreview');
+    preview.style.background='none';
+    preview.innerHTML=`<img src="${e.target.result}" style="width:48px;height:48px;border-radius:12px;object-fit:cover;">`;
+    uploadedPhotoUrl=e.target.result;
+    document.querySelectorAll('.av-opt').forEach(x=>x.classList.remove('selected'));
+    tempAvatar=null;
+  };
+  reader.readAsDataURL(file);
+}
+
 async function saveAvatar(){
-  selectedAvatar=tempAvatar;
-  document.getElementById('avatarEl').textContent=selectedAvatar;
-  await sb.from('profiles').upsert({id:currentUser.id,avatar:selectedAvatar,account_type:profile?.account_type||'traveler'});
-  profile.avatar=selectedAvatar;
+  if(uploadedPhotoUrl){
+    // رفع الصورة على Supabase Storage
+    const file=document.getElementById('photoUploadInput').files[0];
+    const ext=file.name.split('.').pop();
+    const path=`avatars/${currentUser.id}.${ext}`;
+    const{error}=await sb.storage.from('avatars').upload(path,file,{upsert:true});
+    if(error){showToast('❌ فشل رفع الصورة');return;}
+    const{data}=sb.storage.from('avatars').getPublicUrl(path);
+    const url=data.publicUrl+'?t='+Date.now();
+    // حفظ في قاعدة البيانات
+    await sb.from('profiles').upsert({id:currentUser.id,avatar_url:url,account_type:profile?.account_type||'traveler'});
+    profile.avatar_url=url;
+    // تحديث الواجهة
+    const av=document.getElementById('avatarEl');
+    av.innerHTML=`<img src="${url}" style="width:100%;height:100%;border-radius:18px;object-fit:cover;">`;
+    av.textContent='';
+  } else {
+    selectedAvatar=tempAvatar;
+    await sb.from('profiles').upsert({id:currentUser.id,avatar:selectedAvatar,avatar_url:null,account_type:profile?.account_type||'traveler'});
+    profile.avatar=selectedAvatar;
+    profile.avatar_url=null;
+    document.getElementById('avatarEl').textContent=selectedAvatar;
+    document.getElementById('avatarEl').innerHTML='';
+    document.getElementById('avatarEl').textContent=selectedAvatar;
+  }
   document.getElementById('avatarOverlay').classList.remove('open');
   showToast('✅ تم تغيير صورتك!');
 }
