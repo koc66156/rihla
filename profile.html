@@ -540,47 +540,56 @@ let selectedAvatar=null, selectedType=null, isAgent=false;
 
 // ══ INIT ══
 async function init(){
-  const{data:{session}}=await sb.auth.getSession();
-  if(!session){
+  try{
+    const{data:{session}}=await sb.auth.getSession();
+    if(!session){
+      document.getElementById('loading').classList.add('hide');
+      document.getElementById('notLogged').classList.add('show');
+      return;
+    }
+    currentUser=session.user;
+
+    const[{data:p,error:pErr},{data:agArr}]=await Promise.all([
+      sb.from('profiles').select('*').eq('id',currentUser.id).maybeSingle(),
+      sb.from('agents').select('*').eq('user_id',currentUser.id)
+    ]);
+
+    profile=p||{};
+    agentData=(agArr&&agArr.length>0)?agArr[0]:null;
+    isAgent=profile.account_type==='agent'||agentData!==null;
+
+    if(agentData&&profile.account_type!=='agent'){
+      await sb.from('profiles').update({account_type:'agent'}).eq('id',currentUser.id);
+      profile.account_type='agent';
+      isAgent=true;
+    }
+
+    selCountries=profile.visited_countries||[];
+    const avEl0=document.getElementById('avatarEl');
+    if(profile?.avatar_url){
+      avEl0.innerHTML='<img src="'+profile.avatar_url+'" style="width:100%;height:100%;border-radius:18px;object-fit:cover;">';
+    } else {
+      avEl0.innerHTML='';
+      avEl0.textContent=profile?.avatar||'✈️';
+    }
+
+    const{data:likes}=await sb.from('post_likes').select('post_id').eq('user_id',currentUser.id);
+    if(likes) likes.forEach(l=>myLikes.add(l.post_id));
+
+    renderProfile();
+    renderTabs();
+    renderActionBtns();
+    await Promise.all([loadPosts(),loadTrips()]);
+    if(isAgent) await loadAgentReviews();
+    else await loadActivity();
+
     document.getElementById('loading').classList.add('hide');
-    document.getElementById('notLogged').classList.add('show');
-    return;
+    document.getElementById('mainContent').style.display='block';
+  } catch(e){
+    console.error('Init error:',e);
+    document.getElementById('loading').classList.add('hide');
+    document.getElementById('mainContent').style.display='block';
   }
-  currentUser=session.user;
-
-  const[{data:p},{data:agArr}]=await Promise.all([
-    sb.from('profiles').select('*').eq('id',currentUser.id).single(),
-    sb.from('agents').select('*').eq('user_id',currentUser.id)
-  ]);
-
-  profile=p||{};
-  agentData=(agArr&&agArr.length>0)?agArr[0]:null;
-  isAgent=profile.account_type==='agent'||agentData!==null;
-
-  if(agentData&&profile.account_type!=='agent'){
-    await sb.from('profiles').update({account_type:'agent'}).eq('id',currentUser.id);
-    profile.account_type='agent';
-    isAgent=true;
-  }
-
-  selCountries=profile.visited_countries||[];
-  document.getElementById('avatarEl').innerHTML = profile?.avatar_url
-    ? `<img src="${profile.avatar_url}?t=${Date.now()}" style="width:100%;height:100%;border-radius:18px;object-fit:cover;" onerror="this.parentElement.textContent='${profile?.avatar||'✈️'}';">`
-    : ''
-  if(!profile?.avatar_url) document.getElementById('avatarEl').textContent = profile?.avatar||'✈️';
-
-  const{data:likes}=await sb.from('post_likes').select('post_id').eq('user_id',currentUser.id);
-  if(likes) likes.forEach(l=>myLikes.add(l.post_id));
-
-  renderProfile();
-  renderTabs();
-  renderActionBtns();
-  await Promise.all([loadPosts(),loadTrips()]);
-  if(isAgent) await loadAgentReviews();
-  else await loadActivity();
-
-  document.getElementById('loading').classList.add('hide');
-  document.getElementById('mainContent').style.display='block';
 }
 
 // ══ RENDER ══
