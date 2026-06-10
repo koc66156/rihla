@@ -565,8 +565,9 @@ async function init(){
 
   selCountries=profile.visited_countries||[];
   document.getElementById('avatarEl').innerHTML = profile?.avatar_url
-    ? `<img src="${profile.avatar_url}?t=${Date.now()}" style="width:100%;height:100%;border-radius:18px;object-fit:cover;">`
-    : (profile?.avatar||'✈️');
+    ? `<img src="${profile.avatar_url}?t=${Date.now()}" style="width:100%;height:100%;border-radius:18px;object-fit:cover;" onerror="this.parentElement.textContent='${profile?.avatar||'✈️'}';">`
+    : ''
+  if(!profile?.avatar_url) document.getElementById('avatarEl').textContent = profile?.avatar||'✈️';
 
   const{data:likes}=await sb.from('post_likes').select('post_id').eq('user_id',currentUser.id);
   if(likes) likes.forEach(l=>myLikes.add(l.post_id));
@@ -908,33 +909,64 @@ function previewPhoto(input){
 }
 
 async function saveAvatar(){
-  if(uploadedPhotoUrl){
-    // رفع الصورة على Supabase Storage
-    const file=document.getElementById('photoUploadInput').files[0];
-    const ext=file.name.split('.').pop();
-    const path=`avatars/${currentUser.id}.${ext}`;
-    const{error}=await sb.storage.from('avatars').upload(path,file,{upsert:true});
-    if(error){showToast('❌ فشل رفع الصورة');return;}
-    const{data}=sb.storage.from('avatars').getPublicUrl(path);
-    const url=data.publicUrl+'?t='+Date.now();
-    // حفظ في قاعدة البيانات
-    await sb.from('profiles').upsert({id:currentUser.id,avatar_url:url,account_type:profile?.account_type||'traveler'});
-    profile.avatar_url=url;
-    // تحديث الواجهة
-    const av=document.getElementById('avatarEl');
-    av.innerHTML=`<img src="${url}" style="width:100%;height:100%;border-radius:18px;object-fit:cover;">`;
-    av.textContent='';
-  } else {
-    selectedAvatar=tempAvatar;
-    await sb.from('profiles').upsert({id:currentUser.id,avatar:selectedAvatar,avatar_url:null,account_type:profile?.account_type||'traveler'});
-    profile.avatar=selectedAvatar;
-    profile.avatar_url=null;
-    document.getElementById('avatarEl').textContent=selectedAvatar;
-    document.getElementById('avatarEl').innerHTML='';
-    document.getElementById('avatarEl').textContent=selectedAvatar;
+  const btn=document.querySelector('#avatarOverlay .save-btn');
+  btn.disabled=true;
+  btn.textContent='⏳ جاري الحفظ...';
+
+  try{
+    if(uploadedPhotoUrl){
+      const file=document.getElementById('photoUploadInput').files[0];
+      if(!file){showToast('❌ لم يتم اختيار صورة');return;}
+      
+      const ext=file.type.includes('png')?'png':'jpg';
+      const path=`avatars/${currentUser.id}/avatar.${ext}`;
+      
+      // رفع الصورة
+      const{error:upErr}=await sb.storage.from('avatars').upload(path,file,{upsert:true,contentType:file.type});
+      if(upErr){showToast('❌ فشل رفع الصورة: '+upErr.message);return;}
+      
+      // جلب الـ URL العام
+      const{data}=sb.storage.from('avatars').getPublicUrl(path);
+      const url=data.publicUrl;
+      
+      // حفظ في قاعدة البيانات
+      const{error:dbErr}=await sb.from('profiles').update({avatar_url:url,avatar:null}).eq('id',currentUser.id);
+      if(dbErr){showToast('❌ فشل حفظ البيانات');return;}
+      
+      // تحديث الذاكرة المحلية
+      profile.avatar_url=url;
+      profile.avatar=null;
+      
+      // تحديث الواجهة مع cache buster
+      const imgUrl=url+'?t='+Date.now();
+      document.getElementById('avatarEl').innerHTML=`<img src="${imgUrl}" style="width:100%;height:100%;border-radius:18px;object-fit:cover;">`;
+
+    } else if(tempAvatar){
+      const{error:dbErr}=await sb.from('profiles').update({avatar:tempAvatar,avatar_url:null}).eq('id',currentUser.id);
+      if(dbErr){showToast('❌ فشل الحفظ');return;}
+      
+      profile.avatar=tempAvatar;
+      profile.avatar_url=null;
+      selectedAvatar=tempAvatar;
+      
+      document.getElementById('avatarEl').innerHTML='';
+      document.getElementById('avatarEl').textContent=tempAvatar;
+    } else {
+      showToast('❌ اختر صورة أو رمزاً أولاً');
+      return;
+    }
+    
+    document.getElementById('avatarOverlay').classList.remove('open');
+    showToast('✅ تم تغيير صورتك!');
+    uploadedPhotoUrl=null;
+    document.getElementById('photoUploadInput').value='';
+
+  } catch(e){
+    showToast('❌ حدث خطأ: '+e.message);
+  } finally{
+    btn.disabled=false;
+    btn.textContent='حفظ الصورة ✓';
   }
-  document.getElementById('avatarOverlay').classList.remove('open');
-  showToast('✅ تم تغيير صورتك!');
 }
 
 // ══ PROFILE EDIT ══
