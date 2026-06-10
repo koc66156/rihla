@@ -979,7 +979,7 @@ function _handleUploadSuccess(r,path){
     if(r.error){btn.disabled=false;btn.textContent='❌ فشل الحفظ';console.error(r.error);return;}
     profile.avatar_url=url;profile.avatar=null;
     var av=document.getElementById('avatarEl');
-    av.innerHTML='<img src="'+displayUrl+'" style="width:100%;height:100%;border-radius:18px;object-fit:cover;" onerror="this.parentElement.textContent='✈️'">';
+    av.innerHTML='<img src="'+displayUrl+'" style="width:100%;height:100%;border-radius:18px;object-fit:cover;">';
     _saveSuccess();
   });
 }
