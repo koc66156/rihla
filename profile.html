@@ -931,6 +931,7 @@ function saveAvatar(){
         console.error('upload err:',res.error);
         btn.disabled=false;
         btn.textContent='فشل الرفع';
+        alert('خطأ رفع: ' + JSON.stringify(res.error));
         return;
       }
       var url=sb.storage.from('avatars').getPublicUrl(path).data.publicUrl;
