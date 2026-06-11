@@ -648,54 +648,11 @@ function getCityGradient(dest) {
   return `linear-gradient(145deg, ${c1} 0%, ${c2} 100%)`;
 }
 
-const UNSPLASH_KEY = 'UBhdGHhVAT-rYX5yz5sK2ctx-LsZrMUa-ehgpzcQ6Dw';
-
 function getDestImages(dest) {
-  // إذا في صور محفوظة في DB استخدمها
   if(dest.images && dest.images.length > 0) return dest.images;
-  // وإلا أرجع فارغ - سيتم جلب الصور من Unsplash لاحقاً
   return [];
 }
 
-// جلب صور من Unsplash للوجهات بدون صور
-async function loadUnsplashImages(dest, sliderEl) {
-  try {
-    const nameKey = Object.keys(CITY_EN).find(k => dest.name && dest.name.includes(k));
-    const query = (nameKey ? CITY_EN[nameKey] : dest.name) + ' landmark tourism';
-    const res = await fetch(
-      `https://api.unsplash.com/search/photos?query=${encodeURIComponent(query)}&per_page=4&orientation=landscape`,
-      {headers:{'Authorization':'Client-ID '+UNSPLASH_KEY}}
-    );
-    if(!res.ok) return;
-    const data = await res.json();
-    if(!data.results || !data.results.length) return;
-    
-    // أضف الصور
-    const grad = sliderEl.style.background;
-    sliderEl.style.background = grad;
-    sliderEl.innerHTML = data.results.map((r,j) =>
-      `<img src="${r.urls.regular}" alt="${dest.name}" class="${j===0?'active':''}" loading="lazy" onerror="this.style.display='none'">`
-    ).join('') +
-    `<div class="img-overlay"></div>
-     <div class="slider-dots">${data.results.map((_,j)=>`<div class="sdot ${j===0?'active':''}"></div>`).join('')}</div>`;
-    
-    if(data.results.length > 1){
-      let cur=0;
-      setInterval(()=>{
-        const imgs=sliderEl.querySelectorAll('img');
-        const dots=sliderEl.querySelectorAll('.sdot');
-        if(!imgs.length) return;
-        imgs[cur]?.classList.remove('active');
-        dots[cur]?.classList.remove('active');
-        cur=(cur+1)%imgs.length;
-        imgs[cur]?.classList.add('active');
-        dots[cur]?.classList.add('active');
-      },3000);
-    }
-  } catch(e) { 
-    // صامت - لا نكسر الصفحة
-  }
-}
 
 // ═══ INIT NAV ═══
 async function goToProfile() {
@@ -803,16 +760,6 @@ function renderGrid(dests) {
     const imgs = getDestImages(d);
     if(imgs.length > 1) autoSlide(i, imgs.length);
   });
-
-  // Unsplash للوجهات بدون صور - بعد تأخير حتى لا تؤثر على التحميل
-  setTimeout(() => {
-    dests.forEach((d, i) => {
-      if(!d.images || !d.images.length) {
-        const slider = document.getElementById('slider-'+i);
-        if(slider) loadUnsplashImages(d, slider);
-      }
-    });
-  }, 2000);
 }
 
 // ═══ AUTO SLIDE ═══
