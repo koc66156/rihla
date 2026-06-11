@@ -648,9 +648,37 @@ function getCityGradient(dest) {
   return `linear-gradient(145deg, ${c1} 0%, ${c2} 100%)`;
 }
 
+const UNSPLASH_KEY = 'UBhdGHhVAT-rYX5yz5sK2ctx-LsZrMUa-ehgpzcQ6Dw';
+
 function getDestImages(dest) {
+  // إذا في صور محفوظة في DB استخدمها
   if(dest.images && dest.images.length > 0) return dest.images;
+  // وإلا أرجع فارغ - سيتم جلب الصور من Unsplash لاحقاً
   return [];
+}
+
+// جلب صور من Unsplash للوجهات بدون صور
+async function loadUnsplashImages(dest, sliderEl) {
+  if(dest.images && dest.images.length > 0) return;
+  const nameKey = Object.keys(CITY_EN).find(k => dest.name && dest.name.includes(k));
+  const query = nameKey ? CITY_EN[nameKey] : dest.name;
+  try {
+    const res = await fetch(
+      `https://api.unsplash.com/search/photos?query=${encodeURIComponent(query)}+landmark&per_page=4&orientation=landscape`,
+      {headers:{'Authorization':'Client-ID '+UNSPLASH_KEY}}
+    );
+    const data = await res.json();
+    if(!data.results || !data.results.length) return;
+    const imgs = data.results.map(r => r.urls.regular);
+    // أضف الصور للـ slider
+    const existing = sliderEl.querySelector('div');
+    if(existing) return; // إذا فيه تدرج اللون فقط نبدله
+    sliderEl.innerHTML = imgs.map((url,j) =>
+      `<img src="${url}" alt="${dest.name}" class="${j===0?'active':''}" loading="lazy" onerror="this.style.display='none'">`
+    ).join('') +
+    `<div class="img-overlay"></div>` +
+    sliderEl.innerHTML.split('</div>').slice(1).join('</div>');
+  } catch(e) { console.log('Unsplash error:', e); }
 }
 
 // ═══ INIT NAV ═══
@@ -754,10 +782,14 @@ function renderGrid(dests) {
       </div>`;
   }).join('');
 
-  // Auto-slide images
+  // Auto-slide + Unsplash للوجهات بدون صور
   dests.forEach((d, i) => {
     const imgs = getDestImages(d);
     if(imgs.length > 1) autoSlide(i, imgs.length);
+    if(!d.images || !d.images.length) {
+      const slider = document.getElementById('slider-'+i);
+      if(slider) loadUnsplashImages(d, slider);
+    }
   });
 }
 
