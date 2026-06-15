@@ -91,7 +91,11 @@ body{font-family:'Tajawal',sans-serif;background:var(--dk);color:white;
   backdrop-filter:blur(8px);background:rgba(0,0,0,0.5);}
 .ibadge.novisa{background:rgba(0,201,177,0.8);color:white;}
 .ibadge.summer{background:rgba(255,208,0,0.8);color:#000;}
-.ibadge.family{background:rgba(255,92,26,0.8);color:white;}
+.ibadge.winter{background:rgba(100,180,255,0.85);color:#000;}
+.ibadge.beach{background:rgba(0,150,255,0.8);color:white;}
+.ibadge.youth{background:rgba(255,92,26,0.8);color:white;}
+.ibadge.culture{background:rgba(150,100,255,0.8);color:white;}
+.ibadge.family{background:rgba(0,200,100,0.8);color:white;}
 
 /* CARD BODY */
 .card-body{padding:10px 12px 12px;}
@@ -272,13 +276,14 @@ body{font-family:'Tajawal',sans-serif;background:var(--dk);color:white;
 
 <div class="filters">
   <button class="fchip active" onclick="setFilter('all',this)">🌍 الكل</button>
-  <button class="fchip" onclick="setFilter('summer',this)">☀️ الصيف</button>
-  <button class="fchip" onclick="setFilter('novisa',this)">🛂 بلا تأشيرة</button>
-  <button class="fchip" onclick="setFilter('family',this)">👨‍👩‍👧 عائلي</button>
-  <button class="fchip" onclick="setFilter('beach',this)">🌊 شاطئ</button>
+  <button class="fchip" onclick="setFilter('novisa',this)">🏷️ بلا تأشيرة</button>
+  <button class="fchip" onclick="setFilter('direct',this)">✈️ مباشر</button>
+  <button class="fchip" onclick="setFilter('summer',this)">☀️ صيف</button>
+  <button class="fchip" onclick="setFilter('winter',this)">❄️ شتاء</button>
+  <button class="fchip" onclick="setFilter('beach',this)">🏖️ شاطئ</button>
+  <button class="fchip" onclick="setFilter('youth',this)">🎒 شباب</button>
   <button class="fchip" onclick="setFilter('culture',this)">🏛️ ثقافة</button>
-  <button class="fchip" onclick="setFilter('adventure',this)">🔥 مغامرة</button>
-  <button class="fchip" onclick="setFilter('food',this)">🍜 طعام</button>
+  <button class="fchip" onclick="setFilter('family',this)">👨‍👩‍👧 عائلي</button>
 </div>
 
 <div class="grid" id="destsGrid" style="padding-bottom:100px">
@@ -699,13 +704,15 @@ function applyFilter() {
     let matchF = activeFilter === 'all';
     if(!matchF) {
       const t = txt.toLowerCase();
-      if(activeFilter==='summer') matchF = /صيف|يونيو|يوليو|أغسطس|مايو|أبريل|ربيع/.test(t);
-      else if(activeFilter==='novisa') matchF = /بدون تأشيرة|بلا تأشيرة|مجاناً/.test(d.visa_info||'');
-      else if(activeFilter==='family') matchF = /عائلي|عائلة|أطفال|all inclusive|منتجع/.test(t);
-      else if(activeFilter==='beach') matchF = /شاطئ|بحر|ساحل|جزيرة/.test(t);
-      else if(activeFilter==='culture') matchF = /متحف|تاريخ|قصر|قلعة|تراث|معبد/.test(t);
-      else if(activeFilter==='adventure') matchF = /جبل|سفاري|غطس|مغامرة|شلال|بركان/.test(t);
-      else if(activeFilter==='food') matchF = (d.must_eat||[]).length >= 4;
+      const dtags = d.tags || [];
+      if(activeFilter==='summer') matchF = /صيف|يونيو|يوليو|أغسطس/.test(d.best_time||'');
+      else if(activeFilter==='novisa') matchF = /بدون تأشيرة|بلا تأشيرة/.test(d.visa_info||'');
+      else if(activeFilter==='direct') matchF = d.has_direct === true;
+      else if(activeFilter==='winter') matchF = dtags.includes('شتاء');
+      else if(activeFilter==='beach') matchF = dtags.includes('شاطئ');
+      else if(activeFilter==='youth') matchF = dtags.includes('شباب');
+      else if(activeFilter==='culture') matchF = dtags.includes('ثقافة');
+      else if(activeFilter==='family') matchF = dtags.includes('عائلي');
     }
     return matchQ && matchF;
   });
@@ -723,8 +730,13 @@ function renderGrid(dests) {
     const imgs = getDestImages(d);
     const stars = d.rating_avg ? '⭐'.repeat(Math.round(d.rating_avg)) : '';
     const noVisa = /بدون تأشيرة|بلا تأشيرة/.test(d.visa_info||'');
-    const isSummer = /صيف|يونيو|يوليو|أغسطس|مايو|أبريل/.test(d.best_time||'');
-    const isFamily = /عائلي|عائلة/.test((d.description||'')+(d.must_visit||[]).join(''));
+    const isSummer = /صيف|يونيو|يوليو|أغسطس/.test(d.best_time||'');
+    const tags = d.tags || [];
+    const isWinter  = tags.includes('شتاء');
+    const isBeach   = tags.includes('شاطئ');
+    const isYouth   = tags.includes('شباب');
+    const isCulture = tags.includes('ثقافة');
+    const isFamily  = tags.includes('عائلي');
     const hasDirect = d.has_direct === true;
     return `
       <div class="dest-card" onclick="openDest(${i})">
@@ -738,7 +750,11 @@ function renderGrid(dests) {
             ${hasDirect ? '<span class="ibadge novisa">✈️ مباشر</span>' : ''}
             ${noVisa ? '<span class="ibadge novisa">بلا تأشيرة</span>' : ''}
             ${isSummer ? '<span class="ibadge summer">☀️ صيف</span>' : ''}
-            ${isFamily ? '<span class="ibadge family">👨‍👩‍👧</span>' : ''}
+            ${isWinter ? '<span class="ibadge winter">❄️ شتاء</span>' : ''}
+            ${isBeach ? '<span class="ibadge beach">🏖️ شاطئ</span>' : ''}
+            ${isYouth ? '<span class="ibadge youth">🎒 شباب</span>' : ''}
+            ${isCulture ? '<span class="ibadge culture">🏛️ ثقافة</span>' : ''}
+            ${isFamily ? '<span class="ibadge family">👨‍👩‍👧 عائلي</span>' : ''}
           </div>
           <div class="slider-dots">
             ${imgs.map((_,j) => `<div class="sdot ${j===0?'active':''}"></div>`).join('')}
