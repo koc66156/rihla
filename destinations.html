@@ -157,7 +157,29 @@ body{font-family:'Tajawal',sans-serif;background:var(--dk);color:white;
   font-size:13px;font-weight:800;cursor:pointer;transition:all .2s;}
 .tab.active{background:var(--or);color:white;}
 
-/* TAB PANELS */
+/* ITINERARY TAB */
+.itin-card{background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:18px;padding:18px;margin-bottom:12px;}
+.itin-label{font-size:12px;font-weight:800;color:var(--muted);letter-spacing:.8px;margin-bottom:10px;text-transform:uppercase;}
+.itin-opts{display:flex;flex-wrap:wrap;gap:8px;}
+.itin-opt{padding:9px 14px;border-radius:22px;border:1.5px solid var(--border);background:rgba(255,255,255,0.05);color:rgba(255,255,255,0.7);font-family:'Tajawal',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:all .2s;white-space:nowrap;}
+.itin-opt.selected{background:var(--or);border-color:var(--or);color:white;}
+.itin-days{display:flex;gap:8px;justify-content:center;}
+.itin-day{width:44px;height:44px;border-radius:50%;border:1.5px solid var(--border);background:rgba(255,255,255,0.05);color:rgba(255,255,255,0.7);font-family:'Tajawal',sans-serif;font-size:15px;font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;}
+.itin-day.selected{background:var(--or);border-color:var(--or);color:white;}
+.budget-opts{display:flex;flex-direction:column;gap:8px;}
+.budget-opt{padding:11px 16px;border-radius:14px;border:1.5px solid var(--border);background:rgba(255,255,255,0.05);color:white;font-family:'Tajawal',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:all .2s;text-align:right;}
+.budget-opt.selected{border-color:var(--or);background:rgba(255,92,26,0.1);}
+.itin-btn{width:100%;padding:15px;border-radius:16px;background:linear-gradient(135deg,var(--or),#ff8c42);color:white;font-family:'Tajawal',sans-serif;font-size:16px;font-weight:900;border:none;cursor:pointer;margin-top:4px;box-shadow:0 4px 20px rgba(255,92,26,0.3);}
+.itin-btn:disabled{opacity:.6;cursor:not-allowed;}
+.itin-result{margin-top:4px;}
+.itin-day-block{background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:16px;padding:16px;margin-bottom:10px;}
+.itin-day-title{font-size:14px;font-weight:900;color:var(--or);margin-bottom:10px;}
+.itin-place{display:flex;align-items:flex-start;gap:10px;margin-bottom:8px;padding-bottom:8px;border-bottom:1px solid rgba(255,255,255,0.05);}
+.itin-place:last-child{border-bottom:none;margin-bottom:0;padding-bottom:0;}
+.itin-time{font-size:11px;color:var(--muted);font-weight:700;min-width:50px;padding-top:2px;}
+.itin-place-info strong{display:block;font-size:13px;font-weight:800;color:white;}
+.itin-place-info span{font-size:11px;color:var(--muted);line-height:1.5;}
+.itin-warn{background:rgba(255,208,0,0.08);border:1px solid rgba(255,208,0,0.2);border-radius:12px;padding:10px 14px;font-size:12px;color:rgba(255,208,0,0.9);margin-bottom:12px;}
 .tab-panel{display:none;padding:0 16px;}
 .tab-panel.active{display:block;}
 
@@ -305,6 +327,7 @@ body{font-family:'Tajawal',sans-serif;background:var(--dk);color:white;
     <div class="tabs">
       <button class="tab active" onclick="switchTab('general',this)">📍 عام</button>
       <button class="tab" onclick="switchTab('tips',this)">💡 نصائح</button>
+      <button class="tab" onclick="switchTab('itinerary',this)">🗓️ جدول</button>
       <button class="tab" onclick="switchTab('booking',this)">✈️ حجز</button>
       <button class="tab" onclick="switchTab('reviews',this)">⭐ تقييمات</button>
     </div>
@@ -314,6 +337,9 @@ body{font-family:'Tajawal',sans-serif;background:var(--dk);color:white;
 
     <!-- TAB: TIPS + FOOD -->
     <div class="tab-panel" id="panel-tips"></div>
+
+    <!-- TAB: ITINERARY -->
+    <div class="tab-panel" id="panel-itinerary"></div>
 
     <!-- TAB: BOOKING -->
     <div class="tab-panel" id="panel-booking"></div>
@@ -841,6 +867,7 @@ async function openDest(idx) {
 
   renderGeneralTab(d);
   renderTipsTab(d);
+  renderItineraryTab(d);
   renderBookingTab(d);
   await renderReviewsTab(d);
 
@@ -1101,7 +1128,205 @@ function renderTipsTab(d) {
     </div>` : ''}`;
 }
 
-function renderBookingTab(d) {
+function renderItineraryTab(d){
+  const recDays = d.recommended_days || 3;
+  const dayOpts = [2,3,5,7,10];
+  document.getElementById('panel-itinerary').innerHTML=`
+    <div style="padding:4px 0 16px;">
+
+      <div class="itin-card">
+        <div class="itin-label">نوع الرحلة</div>
+        <div class="itin-opts" id="tripType">
+          <button class="itin-opt" onclick="selectOpt(this,'tripType')">👨‍👩‍👧 عائلي</button>
+          <button class="itin-opt" onclick="selectOpt(this,'tripType')">👫 زوجين</button>
+          <button class="itin-opt" onclick="selectOpt(this,'tripType')">🎒 شباب</button>
+          <button class="itin-opt" onclick="selectOpt(this,'tripType')">🧳 منفرد</button>
+        </div>
+      </div>
+
+      <div class="itin-card">
+        <div class="itin-label">اهتمامات الرحلة <span style="color:var(--muted);font-size:10px;">(اختر أكثر من واحد)</span></div>
+        <div class="itin-opts" id="tripInterests">
+          <button class="itin-opt" onclick="toggleInterest(this)">🏛️ ثقافة</button>
+          <button class="itin-opt" onclick="toggleInterest(this)">🛍️ تسوق</button>
+          <button class="itin-opt" onclick="toggleInterest(this)">🌿 طبيعة</button>
+          <button class="itin-opt" onclick="toggleInterest(this)">🏖️ شاطئ</button>
+          <button class="itin-opt" onclick="toggleInterest(this)">🎢 ترفيه</button>
+          <button class="itin-opt" onclick="toggleInterest(this)">🍽️ طعام</button>
+        </div>
+      </div>
+
+      <div class="itin-card">
+        <div class="itin-label">مدة الرحلة</div>
+        ${recDays ? `<div class="itin-warn">⭐ يُنصح بـ ${recDays} أيام لاكتشاف ${d.name}</div>` : ''}
+        <div class="itin-days" id="tripDays">
+          ${dayOpts.map(n=>`<button class="itin-day ${n===3?'selected':''}" onclick="selectDay(this)">${n}</button>`).join('')}
+        </div>
+      </div>
+
+      <div class="itin-card">
+        <div class="itin-label">ميزانية الرحلة</div>
+        <div class="budget-opts" id="tripBudget">
+          <button class="budget-opt" onclick="selectOpt(this,'tripBudget')">🟢 اقتصادي — أفضل قيمة بأقل تكلفة</button>
+          <button class="budget-opt" onclick="selectOpt(this,'tripBudget')">🟡 متوسط — توازن بين الجودة والسعر</button>
+          <button class="budget-opt" onclick="selectOpt(this,'tripBudget')">🔴 فاخر — أفضل تجربة بلا حدود</button>
+        </div>
+      </div>
+
+      <button class="itin-btn" id="itinBtn" onclick="generateItinerary()">✨ اقترح جدولي</button>
+      <div class="itin-result" id="itinResult"></div>
+    </div>`;
+}
+
+function selectOpt(el, groupId){
+  document.querySelectorAll('#'+groupId+' .itin-opt, #'+groupId+' .budget-opt')
+    .forEach(b=>b.classList.remove('selected'));
+  el.classList.add('selected');
+}
+function selectDay(el){
+  document.querySelectorAll('#tripDays .itin-day').forEach(b=>b.classList.remove('selected'));
+  el.classList.add('selected');
+}
+function toggleInterest(el){
+  el.classList.toggle('selected');
+}
+
+async function generateItinerary(){
+  const d = currentDest;
+  const btn = document.getElementById('itinBtn');
+  const result = document.getElementById('itinResult');
+
+  // جمع البيانات
+  const typeEl = document.querySelector('#tripType .selected');
+  const interests = [...document.querySelectorAll('#tripInterests .selected')].map(e=>e.textContent.trim());
+  const daysEl = document.querySelector('#tripDays .selected');
+  const budgetEl = document.querySelector('#tripBudget .selected');
+
+  if(!typeEl){result.innerHTML='<div class="itin-warn">⚠️ اختر نوع الرحلة أولاً</div>';return;}
+  if(!interests.length){result.innerHTML='<div class="itin-warn">⚠️ اختر اهتماماً واحداً على الأقل</div>';return;}
+  if(!budgetEl){result.innerHTML='<div class="itin-warn">⚠️ اختر ميزانية الرحلة</div>';return;}
+
+  const days = daysEl ? parseInt(daysEl.textContent) : 3;
+  const type = typeEl.textContent.trim();
+  const budget = budgetEl.textContent.trim();
+
+  btn.disabled=true;
+  btn.textContent='⏳ جاري إعداد جدولك...';
+  result.innerHTML='';
+
+  const prompt = `أنت مرشد سفر خبير. اقترح جدول رحلة تفصيلي لـ ${days} أيام في ${d.name}، ${d.country}.
+
+معلومات الرحلة:
+- نوع الرحلة: ${type}
+- الاهتمامات: ${interests.join('، ')}
+- الميزانية: ${budget}
+- أفضل وقت: ${d.best_time||''}
+- تكلفة يومية: ${d.daily_cost||''}
+
+قواعد مهمة:
+1. رتّب الأماكن جغرافياً (القريب مع القريب في نفس اليوم)
+2. لا تكرر أي مكان
+3. كل يوم له طابع مختلف (ثقافة، تسوق، طبيعة...)
+4. راعِ الميزانية في اختيار المطاعم والأنشطة
+5. أضف توقيت مقترح لكل نشاط (صباح/ظهر/مساء)
+6. أضف نصيحة مختصرة لكل مكان
+
+اكتب الجدول بهذا الشكل بالضبط:
+اليوم 1: [عنوان اليوم]
+صباحاً | [اسم المكان] | [نصيحة مختصرة]
+ظهراً | [اسم المكان] | [نصيحة مختصرة]
+مساءً | [اسم المكان] | [نصيحة مختصرة]
+
+اليوم 2: [عنوان اليوم]
+...وهكذا`;
+
+  try{
+    const r = await fetch('https://ybjdagurvkweabujkeyz.supabase.co/functions/v1/ai-chat',{
+      method:'POST',
+      headers:{
+        'Content-Type':'application/json',
+        'apikey':'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InliamRhZ3Vydmt3ZWFidWprZXl6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkzNjQyMDAsImV4cCI6MjA5NDk0MDIwMH0.CIK7sew_-kBlC_t_szCjKjjnFNg695kwSryuRshQ9nI',
+        'Authorization':'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InliamRhZ3Vydmt3ZWFidWprZXl6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkzNjQyMDAsImV4cCI6MjA5NDk0MDIwMH0.CIK7sew_-kBlC_t_szCjKjjnFNg695kwSryuRshQ9nI'
+      },
+      body:JSON.stringify({message:prompt, context:'أنت مرشد سفر خبير للمسافرين الخليجيين.', history:[]})
+    });
+    const data = await r.json();
+    const ans = data.answer||'';
+    if(!ans){throw new Error('empty');}
+
+    // تحليل الرد وعرضه بشكل جميل
+    result.innerHTML = parseItinerary(ans, d.name, days, type, interests, budget);
+
+  }catch(e){
+    result.innerHTML='<div class="itin-warn">❌ حدث خطأ، حاول مرة أخرى</div>';
+  }
+
+  btn.disabled=false;
+  btn.textContent='✨ اقترح جدولاً آخر';
+}
+
+function parseItinerary(text, city, days, type, interests, budget){
+  // تقسيم النص لأيام
+  const lines = text.split('\n').filter(l=>l.trim());
+  let html = `
+    <div style="background:rgba(255,92,26,0.06);border:1px solid rgba(255,92,26,0.15);border-radius:14px;padding:12px 16px;margin-bottom:12px;">
+      <div style="font-size:13px;font-weight:800;color:var(--or);margin-bottom:4px;">🗓️ جدولك في ${city}</div>
+      <div style="font-size:12px;color:var(--muted);">${days} أيام · ${type} · ${budget.split('—')[0].trim()}</div>
+    </div>`;
+
+  let currentDay = null;
+  let dayContent = '';
+
+  for(const line of lines){
+    const trimmed = line.trim();
+    if(!trimmed) continue;
+
+    // اليوم الجديد
+    if(trimmed.match(/^اليوم\s*\d/)){
+      if(currentDay !== null){
+        html += `<div class="itin-day-block"><div class="itin-day-title">${currentDay}</div>${dayContent}</div>`;
+        dayContent = '';
+      }
+      currentDay = trimmed;
+    }
+    // نشاط
+    else if(trimmed.includes('|')){
+      const parts = trimmed.split('|').map(p=>p.trim());
+      if(parts.length >= 2){
+        const time = parts[0];
+        const place = parts[1];
+        const tip = parts[2]||'';
+        const timeIcon = time.includes('صباح')?'🌅':time.includes('ظهر')?'☀️':'🌙';
+        dayContent += `
+          <div class="itin-place">
+            <div class="itin-time">${timeIcon} ${time}</div>
+            <div class="itin-place-info">
+              <strong>${place}</strong>
+              ${tip?`<span>${tip}</span>`:''}
+            </div>
+          </div>`;
+      }
+    }
+    // نص عادي ضمن اليوم
+    else if(currentDay !== null && trimmed.length > 5){
+      dayContent += `<div style="font-size:12px;color:var(--muted);margin-bottom:6px;padding-right:4px;">${trimmed}</div>`;
+    }
+  }
+
+  // آخر يوم
+  if(currentDay !== null && dayContent){
+    html += `<div class="itin-day-block"><div class="itin-day-title">${currentDay}</div>${dayContent}</div>`;
+  }
+
+  // إذا لم ينجح التحليل — اعرض النص مباشرة
+  if(!html.includes('itin-day-block')){
+    html += `<div class="itin-day-block" style="white-space:pre-line;font-size:13px;line-height:1.8;color:rgba(255,255,255,0.8);">${text}</div>`;
+  }
+
+  return html;
+}
+
+
   const links = getAffiliateLinks(d);
   document.getElementById('panel-booking').innerHTML = `
     <div class="info-sec">
