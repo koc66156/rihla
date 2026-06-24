@@ -1219,28 +1219,21 @@ async function generateItinerary(){
 الشكل: اليوم 1: [عنوان] | صباحاً | [مكان] | [نصيحة] | ظهراً | [مكان] | [نصيحة] | مساءً | [مكان] | [نصيحة]`;
 
   try{
-    const r = await fetch('https://ybjdagurvkweabujkeyz.supabase.co/functions/v1/ai-chat',{
+    const r=await fetch('https://ybjdagurvkweabujkeyz.supabase.co/functions/v1/ai-chat',{
       method:'POST',
-      headers:{
-        'Content-Type':'application/json',
-        'apikey':'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InliamRhZ3Vydmt3ZWFidWprZXl6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkzNjQyMDAsImV4cCI6MjA5NDk0MDIwMH0.CIK7sew_-kBlC_t_szCjKjjnFNg695kwSryuRshQ9nI',
-        'Authorization':'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InliamRhZ3Vydmt3ZWFidWprZXl6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkzNjQyMDAsImV4cCI6MjA5NDk0MDIwMH0.CIK7sew_-kBlC_t_szCjKjjnFNg695kwSryuRshQ9nI'
-      },
-      body:JSON.stringify({message:prompt, context:'أنت مرشد سفر خبير للمسافرين الخليجيين.', history:[]})
+      headers:{'Content-Type':'application/json','apikey':'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InliamRhZ3Vydmt3ZWFidWprZXl6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkzNjQyMDAsImV4cCI6MjA5NDk0MDIwMH0.CIK7sew_-kBlC_t_szCjKjjnFNg695kwSryuRshQ9nI','Authorization':'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InliamRhZ3Vydmt3ZWFidWprZXl6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkzNjQyMDAsImV4cCI6MjA5NDk0MDIwMH0.CIK7sew_-kBlC_t_szCjKjjnFNg695kwSryuRshQ9nI'},
+      body:JSON.stringify({message:prompt,context:'أنت مرشد سفر خبير للمسافرين الخليجيين.',history:[]})
     });
-    const data = await r.json();
-    const ans = data.answer || data.response || data.text || data.message || '';
+    const resp=await r.json();
+    const ans=resp.answer||'';
     if(!ans){
-      result.innerHTML='<div class="itin-warn">❌ رد غير متوقع: '+JSON.stringify(data).substring(0,150)+'</div>';
-      btn.disabled=false; btn.textContent='✨ اقترح جدولي';
+      result.innerHTML='<div class="itin-warn">الرد: '+JSON.stringify(resp).substring(0,200)+'</div>';
+      btn.disabled=false;btn.textContent='✨ اقترح جدولي';
       return;
     }
-
-    // تحليل الرد وعرضه بشكل جميل
-    result.innerHTML = parseItinerary(ans, d.name, days, type, interests, budget);
-
+    result.innerHTML=parseItinerary(ans,d.name,days,type,interests,budget);
   }catch(e){
-    result.innerHTML='<div class="itin-warn">❌ '+e.message+'</div>';
+    result.innerHTML='<div class="itin-warn">خطأ: '+e+'</div>';
   }
 
   btn.disabled=false;
