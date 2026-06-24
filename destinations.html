@@ -1251,14 +1251,18 @@ async function generateItinerary(){
       body:JSON.stringify({message:prompt, context:'أنت مرشد سفر خبير للمسافرين الخليجيين.', history:[]})
     });
     const data = await r.json();
-    const ans = data.answer||'';
-    if(!ans){throw new Error('empty');}
+    const ans = data.answer || data.response || data.text || data.message || '';
+    if(!ans){
+      result.innerHTML='<div class="itin-warn">❌ رد غير متوقع: '+JSON.stringify(data).substring(0,150)+'</div>';
+      btn.disabled=false; btn.textContent='✨ اقترح جدولي';
+      return;
+    }
 
     // تحليل الرد وعرضه بشكل جميل
     result.innerHTML = parseItinerary(ans, d.name, days, type, interests, budget);
 
   }catch(e){
-    result.innerHTML='<div class="itin-warn">❌ حدث خطأ، حاول مرة أخرى</div>';
+    result.innerHTML='<div class="itin-warn">❌ '+e.message+'</div>';
   }
 
   btn.disabled=false;
