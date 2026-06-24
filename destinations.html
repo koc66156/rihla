@@ -1129,67 +1129,131 @@ function renderTipsTab(d) {
 }
 
 function renderItineraryTab(d){
-  const recDays = d.recommended_days || 3;
-  const dayOpts = [2,3,5,7,10];
+  const hasPlaces = d.places_classified && d.places_classified.length > 0;
+  
+  if(!hasPlaces){
+    document.getElementById('panel-itinerary').innerHTML=`
+      <div style="text-align:center;padding:40px 20px;">
+        <div style="font-size:48px;margin-bottom:16px;">🗓️</div>
+        <div style="font-size:15px;font-weight:800;margin-bottom:8px;">جدول الرحلة قادم قريباً</div>
+        <div style="font-size:13px;color:var(--muted);">نعمل على إضافة جدول مخصص لهذه الوجهة</div>
+      </div>`;
+    return;
+  }
+
+  // تجميع الأماكن حسب التصنيف
+  const cats = {};
+  const catIcons = {
+    'ثقافة':'🏛️','تسوق':'🛍️','طبيعة':'🌿',
+    'شاطئ':'🏖️','ترفيه':'🎢','طعام':'🍽️'
+  };
+  
+  d.places_classified.forEach(p => {
+    if(!cats[p.category]) cats[p.category] = [];
+    cats[p.category].push(p);
+  });
+
   document.getElementById('panel-itinerary').innerHTML=`
     <div style="padding:4px 0 16px;">
+      <div style="font-size:13px;font-weight:800;color:var(--or);margin-bottom:6px;">🗓️ خطط رحلتك في ${d.name}</div>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:16px;">اختر الأماكن التي تريد زيارتها</div>
 
-      <div class="itin-card">
-        <div class="itin-label">نوع الرحلة</div>
-        <div class="itin-opts" id="tripType">
-          <button class="itin-opt" onclick="selectOpt(this,'tripType')">👨‍👩‍👧 عائلي</button>
-          <button class="itin-opt" onclick="selectOpt(this,'tripType')">👫 زوجين</button>
-          <button class="itin-opt" onclick="selectOpt(this,'tripType')">🎒 شباب</button>
-          <button class="itin-opt" onclick="selectOpt(this,'tripType')">🧳 منفرد</button>
-        </div>
-      </div>
+      ${Object.entries(cats).map(([cat, places]) => `
+        <div style="margin-bottom:14px;">
+          <div style="font-size:12px;font-weight:800;color:var(--muted);margin-bottom:8px;display:flex;align-items:center;gap:6px;">
+            <span>${catIcons[cat]||'📍'}</span><span>${cat}</span>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:6px;">
+            ${places.map(p=>`
+              <label style="display:flex;align-items:center;gap:10px;background:rgba(255,255,255,0.04);border:1.5px solid rgba(255,255,255,0.08);border-radius:12px;padding:10px 12px;cursor:pointer;transition:all .2s;" 
+                onclick="togglePlace(this)">
+                <div class="place-check" style="width:20px;height:20px;border-radius:6px;border:2px solid rgba(255,255,255,0.2);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s;"></div>
+                <div style="flex:1;">
+                  <div style="font-size:13px;font-weight:800;">${p.name}</div>
+                  <div style="font-size:11px;color:var(--muted);margin-top:2px;">
+                    ${p.time === 'صباحاً' ? '🌅' : p.time === 'ظهراً' ? '☀️' : '🌙'} ${p.time}
+                    · ${p.for.includes('جميع') ? '👥 للجميع' : p.for.map(f=>
+                      f==='عائلي'?'👨‍👩‍👧':f==='شباب'?'🎒':f==='زوجين'?'👫':'🧳'
+                    ).join('')}
+                  </div>
+                </div>
+              </label>`).join('')}
+          </div>
+        </div>`).join('')}
 
-      <div class="itin-card">
-        <div class="itin-label">اهتمامات الرحلة <span style="color:var(--muted);font-size:10px;">(اختر أكثر من واحد)</span></div>
-        <div class="itin-opts" id="tripInterests">
-          <button class="itin-opt" onclick="toggleInterest(this)">🏛️ ثقافة</button>
-          <button class="itin-opt" onclick="toggleInterest(this)">🛍️ تسوق</button>
-          <button class="itin-opt" onclick="toggleInterest(this)">🌿 طبيعة</button>
-          <button class="itin-opt" onclick="toggleInterest(this)">🏖️ شاطئ</button>
-          <button class="itin-opt" onclick="toggleInterest(this)">🎢 ترفيه</button>
-          <button class="itin-opt" onclick="toggleInterest(this)">🍽️ طعام</button>
-        </div>
-      </div>
-
-      <div class="itin-card">
-        <div class="itin-label">مدة الرحلة</div>
-        ${recDays ? `<div class="itin-warn">⭐ يُنصح بـ ${recDays} أيام لاكتشاف ${d.name}</div>` : ''}
-        <div class="itin-days" id="tripDays">
-          ${dayOpts.map(n=>`<button class="itin-day ${n===3?'selected':''}" onclick="selectDay(this)">${n}</button>`).join('')}
-        </div>
-      </div>
-
-      <div class="itin-card">
-        <div class="itin-label">ميزانية الرحلة</div>
-        <div class="budget-opts" id="tripBudget">
-          <button class="budget-opt" onclick="selectOpt(this,'tripBudget')">🟢 اقتصادي — أفضل قيمة بأقل تكلفة</button>
-          <button class="budget-opt" onclick="selectOpt(this,'tripBudget')">🟡 متوسط — توازن بين الجودة والسعر</button>
-          <button class="budget-opt" onclick="selectOpt(this,'tripBudget')">🔴 فاخر — أفضل تجربة بلا حدود</button>
-        </div>
-      </div>
-
-      <button class="itin-btn" id="itinBtn" onclick="generateItinerary()">✨ اقترح جدولي</button>
-      <div class="itin-result" id="itinResult"></div>
+      <button class="itin-btn" onclick="buildSchedule('${d.name}')">📋 أنشئ جدولي</button>
+      <div id="scheduleResult" style="margin-top:12px;"></div>
     </div>`;
 }
 
-function selectOpt(el, groupId){
-  document.querySelectorAll('#'+groupId+' .itin-opt, #'+groupId+' .budget-opt')
-    .forEach(b=>b.classList.remove('selected'));
-  el.classList.add('selected');
+function togglePlace(el){
+  const check = el.querySelector('.place-check');
+  const isSelected = el.dataset.selected === '1';
+  if(isSelected){
+    el.dataset.selected = '0';
+    el.style.borderColor = 'rgba(255,255,255,0.08)';
+    el.style.background = 'rgba(255,255,255,0.04)';
+    check.style.background = 'transparent';
+    check.style.borderColor = 'rgba(255,255,255,0.2)';
+    check.innerHTML = '';
+  } else {
+    el.dataset.selected = '1';
+    el.style.borderColor = 'var(--or)';
+    el.style.background = 'rgba(255,92,26,0.08)';
+    check.style.background = 'var(--or)';
+    check.style.borderColor = 'var(--or)';
+    check.innerHTML = '<svg width="12" height="12" viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2" fill="none"/></svg>';
+  }
 }
-function selectDay(el){
-  document.querySelectorAll('#tripDays .itin-day').forEach(b=>b.classList.remove('selected'));
-  el.classList.add('selected');
+
+function buildSchedule(cityName){
+  // جمع الأماكن المختارة
+  const selected = [];
+  document.querySelectorAll('#panel-itinerary label[data-selected="1"]').forEach(el => {
+    const name = el.querySelector('div > div:first-child').textContent;
+    const timeText = el.querySelector('div > div:last-child').textContent;
+    const time = timeText.includes('صباحاً') ? 'صباحاً' : timeText.includes('ظهراً') ? 'ظهراً' : 'مساءً';
+    selected.push({name, time});
+  });
+
+  if(selected.length === 0){
+    document.getElementById('scheduleResult').innerHTML = '<div class="itin-warn">⚠️ اختر مكاناً واحداً على الأقل</div>';
+    return;
+  }
+
+  // ترتيب الأماكن حسب الوقت
+  const order = {'صباحاً':1,'ظهراً':2,'مساءً':3};
+  selected.sort((a,b) => order[a.time] - order[b.time]);
+
+  // تقسيم على أيام (3 أماكن لكل يوم)
+  const days = [];
+  for(let i=0; i<selected.length; i+=3){
+    days.push(selected.slice(i, i+3));
+  }
+
+  const timeIcon = t => t==='صباحاً'?'🌅':t==='ظهراً'?'☀️':'🌙';
+
+  let html = `
+    <div style="background:rgba(255,92,26,0.06);border:1px solid rgba(255,92,26,0.15);border-radius:14px;padding:12px 16px;margin-bottom:12px;">
+      <div style="font-size:13px;font-weight:800;color:var(--or);">🗓️ جدولك في ${cityName}</div>
+      <div style="font-size:12px;color:var(--muted);margin-top:3px;">${days.length} ${days.length===1?'يوم':'أيام'} · ${selected.length} مكان</div>
+    </div>`;
+
+  days.forEach((dayPlaces, i) => {
+    html += `<div class="itin-day-block">
+      <div class="itin-day-title">اليوم ${i+1}</div>
+      ${dayPlaces.map(p=>`
+        <div class="itin-place">
+          <div class="itin-time">${timeIcon(p.time)} ${p.time}</div>
+          <div class="itin-place-info"><strong>${p.name}</strong></div>
+        </div>`).join('')}
+    </div>`;
+  });
+
+  document.getElementById('scheduleResult').innerHTML = html;
+  document.getElementById('scheduleResult').scrollIntoView({behavior:'smooth'});
 }
-function toggleInterest(el){
-  el.classList.toggle('selected');
-}
+
 
 async function generateItinerary(){
   const dest=currentDest;
