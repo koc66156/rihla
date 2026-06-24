@@ -1192,128 +1192,116 @@ function toggleInterest(el){
 }
 
 async function generateItinerary(){
-  const d = currentDest;
-  const btn = document.getElementById('itinBtn');
-  const result = document.getElementById('itinResult');
+  const dest=currentDest;
+  const btn=document.getElementById('itinBtn');
+  const result=document.getElementById('itinResult');
 
-  // جمع البيانات
-  const typeEl = document.querySelector('#tripType .selected');
-  const interests = [...document.querySelectorAll('#tripInterests .selected')].map(e=>e.textContent.trim());
-  const daysEl = document.querySelector('#tripDays .selected');
-  const budgetEl = document.querySelector('#tripBudget .selected');
+  const typeEl=document.querySelector('#tripType .selected');
+  const interests=[...document.querySelectorAll('#tripInterests .selected')].map(e=>e.textContent.trim());
+  const daysEl=document.querySelector('#tripDays .selected');
+  const budgetEl=document.querySelector('#tripBudget .selected');
 
-  if(!typeEl){result.innerHTML='<div class="itin-warn">⚠️ اختر نوع الرحلة أولاً</div>';return;}
-  if(!interests.length){result.innerHTML='<div class="itin-warn">⚠️ اختر اهتماماً واحداً على الأقل</div>';return;}
-  if(!budgetEl){result.innerHTML='<div class="itin-warn">⚠️ اختر ميزانية الرحلة</div>';return;}
+  if(!typeEl){result.innerHTML='<div class="itin-warn">⚠️ اختر نوع الرحلة</div>';return;}
+  if(!interests.length){result.innerHTML='<div class="itin-warn">⚠️ اختر اهتماماً واحداً</div>';return;}
+  if(!budgetEl){result.innerHTML='<div class="itin-warn">⚠️ اختر الميزانية</div>';return;}
 
-  const days = daysEl ? parseInt(daysEl.textContent) : 3;
-  const type = typeEl.textContent.trim();
-  const budget = budgetEl.textContent.trim();
+  const days=daysEl?parseInt(daysEl.textContent):3;
+  const type=typeEl.textContent.trim();
+  const budget=budgetEl.textContent.split('—')[0].trim();
 
   btn.disabled=true;
-  btn.textContent='⏳ جاري إعداد جدولك...';
+  btn.textContent='⏳ جاري البحث...';
   result.innerHTML='';
 
-  const prompt = `جدول ${days} أيام في ${d.name} لـ${type}، ${interests.join('+')}، ${budget.split('—')[0].trim()}.
-ابدأ مباشرة بهذا الشكل:
-اليوم 1: [عنوان]
-صباحاً | [مكان] | [نصيحة قصيرة]
-ظهراً | [مكان] | [نصيحة قصيرة]
-مساءً | [مكان] | [نصيحة قصيرة]
-اليوم 2: [عنوان]
-...إلخ حتى اليوم ${days}`;
-
-  // محاولة مع retry تلقائي
-  let ans = '';
-  for(let attempt=0; attempt<2; attempt++){
-    try{
-      const r=await fetch('https://ybjdagurvkweabujkeyz.supabase.co/functions/v1/ai-chat',{
-        method:'POST',
-        headers:{'Content-Type':'application/json','apikey':'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InliamRhZ3Vydmt3ZWFidWprZXl6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkzNjQyMDAsImV4cCI6MjA5NDk0MDIwMH0.CIK7sew_-kBlC_t_szCjKjjnFNg695kwSryuRshQ9nI','Authorization':'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InliamRhZ3Vydmt3ZWFidWprZXl6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkzNjQyMDAsImV4cCI6MjA5NDk0MDIwMH0.CIK7sew_-kBlC_t_szCjKjjnFNg695kwSryuRshQ9nI'},
-        body:JSON.stringify({message:prompt,context:'أنت مرشد سفر. أجب بالجدول فقط.',history:[]})
-      });
-      const resp=await r.json();
-      ans=resp.answer||'';
-      if(ans && ans.includes('اليوم')) break;
-      if(attempt===0) btn.textContent='⏳ إعادة المحاولة...';
-    }catch(e){
-      if(attempt===1){
-        result.innerHTML='<div class="itin-warn">❌ تحقق من الإنترنت وحاول مجدداً</div>';
-        btn.disabled=false;btn.textContent='✨ اقترح جدولي';
-        return;
-      }
+  // ١. ابحث في DB أولاً
+  try{
+    const{data:cached}=await sb.from('itineraries')
+      .select('content')
+      .eq('destination_id',dest.id)
+      .eq('trip_type',type)
+      .eq('days',days)
+      .eq('budget',budget)
+      .limit(1)
+      .maybeSingle();
+    if(cached&&cached.content&&cached.content.days&&cached.content.days.length){
+      result.innerHTML=renderItineraryHTML(cached.content,dest.name,days,type,budget);
+      btn.disabled=false;btn.textContent='✨ اقترح جدولاً مختلفاً';
+      return;
     }
-  }
+  }catch(e){}
 
-  if(!ans){
-    result.innerHTML='<div class="itin-warn">❌ حاول مرة أخرى</div>';
-    btn.disabled=false;btn.textContent='✨ اقترح جدولي';
-    return;
-  }
-  result.innerHTML=parseItinerary(ans,d.name,days,type,interests,budget);
+  // ٢. اطلب من AI
+  btn.textContent='⏳ جاري إعداد جدولك...';
+  const prompt=`جدول ${days} أيام في ${dest.name} لـ${type}، ${interests.join('+')}، ${budget}.
+ابدأ مباشرة:
+اليوم 1: [عنوان]
+صباحاً | [مكان] | [نصيحة]
+ظهراً | [مكان] | [نصيحة]
+مساءً | [مكان] | [نصيحة]
+اليوم 2: [عنوان]
+...حتى اليوم ${days}`;
 
-  btn.disabled=false;
-  btn.textContent='✨ اقترح جدولاً آخر';
+  try{
+    const r=await fetch('https://ybjdagurvkweabujkeyz.supabase.co/functions/v1/ai-chat',{
+      method:'POST',
+      headers:{'Content-Type':'application/json',
+        'apikey':'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InliamRhZ3Vydmt3ZWFidWprZXl6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkzNjQyMDAsImV4cCI6MjA5NDk0MDIwMH0.CIK7sew_-kBlC_t_szCjKjjnFNg695kwSryuRshQ9nI',
+        'Authorization':'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InliamRhZ3Vydmt3ZWFidWprZXl6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkzNjQyMDAsImV4cCI6MjA5NDk0MDIwMH0.CIK7sew_-kBlC_t_szCjKjjnFNg695kwSryuRshQ9nI'},
+      body:JSON.stringify({message:prompt,context:'أنت مرشد سفر. أجب بالجدول فقط بدون مقدمة.',history:[]})
+    });
+    const resp=await r.json();
+    const ans=resp.answer||'';
+    if(!ans||!ans.includes('اليوم')){
+      result.innerHTML='<div class="itin-warn">⚠️ المساعد مشغول، انتظر لحظة وحاول مجدداً</div>';
+      btn.disabled=false;btn.textContent='✨ اقترح جدولي';
+      return;
+    }
+    const parsed=parseItineraryToJSON(ans);
+    result.innerHTML=renderItineraryHTML(parsed,dest.name,days,type,budget);
+    // خزّن للمرة القادمة
+    sb.from('itineraries').insert({
+      destination_id:dest.id,trip_type:type,
+      interests:interests,days:days,budget:budget,content:parsed
+    }).then(()=>{});
+  }catch(e){
+    result.innerHTML='<div class="itin-warn">⚠️ المساعد مشغول، انتظر لحظة وحاول مجدداً</div>';
+  }
+  btn.disabled=false;btn.textContent='✨ اقترح جدولاً مختلفاً';
 }
 
-function parseItinerary(text, city, days, type, interests, budget){
-  // تقسيم النص لأيام
-  const lines = text.split('\n').filter(l=>l.trim());
-  let html = `
-    <div style="background:rgba(255,92,26,0.06);border:1px solid rgba(255,92,26,0.15);border-radius:14px;padding:12px 16px;margin-bottom:12px;">
-      <div style="font-size:13px;font-weight:800;color:var(--or);margin-bottom:4px;">🗓️ جدولك في ${city}</div>
-      <div style="font-size:12px;color:var(--muted);">${days} أيام · ${type} · ${budget.split('—')[0].trim()}</div>
-    </div>`;
-
-  let currentDay = null;
-  let dayContent = '';
-
-  for(const line of lines){
-    const trimmed = line.trim();
-    if(!trimmed) continue;
-
-    // اليوم الجديد
-    if(trimmed.match(/^اليوم\s*\d/)){
-      if(currentDay !== null){
-        html += `<div class="itin-day-block"><div class="itin-day-title">${currentDay}</div>${dayContent}</div>`;
-        dayContent = '';
-      }
-      currentDay = trimmed;
-    }
-    // نشاط
-    else if(trimmed.includes('|')){
-      const parts = trimmed.split('|').map(p=>p.trim());
-      if(parts.length >= 2){
-        const time = parts[0];
-        const place = parts[1];
-        const tip = parts[2]||'';
-        const timeIcon = time.includes('صباح')?'🌅':time.includes('ظهر')?'☀️':'🌙';
-        dayContent += `
-          <div class="itin-place">
-            <div class="itin-time">${timeIcon} ${time}</div>
-            <div class="itin-place-info">
-              <strong>${place}</strong>
-              ${tip?`<span>${tip}</span>`:''}
-            </div>
-          </div>`;
-      }
-    }
-    // نص عادي ضمن اليوم
-    else if(currentDay !== null && trimmed.length > 5){
-      dayContent += `<div style="font-size:12px;color:var(--muted);margin-bottom:6px;padding-right:4px;">${trimmed}</div>`;
+function parseItineraryToJSON(text){
+  const days=[];
+  let cur=null;
+  for(const line of text.split('\n')){
+    const t=line.trim();
+    if(!t) continue;
+    if(t.match(/^اليوم\s*\d/)){
+      if(cur) days.push(cur);
+      cur={title:t,places:[]};
+    } else if(t.includes('|')&&cur){
+      const p=t.split('|').map(x=>x.trim());
+      if(p.length>=2) cur.places.push({time:p[0],name:p[1],tip:p[2]||''});
     }
   }
+  if(cur) days.push(cur);
+  return {days};
+}
 
-  // آخر يوم
-  if(currentDay !== null && dayContent){
-    html += `<div class="itin-day-block"><div class="itin-day-title">${currentDay}</div>${dayContent}</div>`;
+function renderItineraryHTML(data,city,days,type,budget){
+  if(!data||!data.days||!data.days.length)
+    return '<div class="itin-warn">⚠️ لم يتم إنشاء الجدول، حاول مجدداً</div>';
+  const icon=t=>t.includes('صباح')?'🌅':t.includes('ظهر')?'☀️':'🌙';
+  let html=`<div style="background:rgba(255,92,26,0.06);border:1px solid rgba(255,92,26,0.15);border-radius:14px;padding:12px 16px;margin-bottom:12px;">
+    <div style="font-size:13px;font-weight:800;color:var(--or);">🗓️ جدولك في ${city}</div>
+    <div style="font-size:12px;color:var(--muted);margin-top:3px;">${days} أيام · ${type} · ${budget}</div>
+  </div>`;
+  for(const d of data.days){
+    html+=`<div class="itin-day-block"><div class="itin-day-title">${d.title}</div>
+    ${d.places.map(p=>`<div class="itin-place">
+      <div class="itin-time">${icon(p.time)} ${p.time}</div>
+      <div class="itin-place-info"><strong>${p.name}</strong>${p.tip?`<span>${p.tip}</span>`:''}</div>
+    </div>`).join('')}</div>`;
   }
-
-  // إذا لم ينجح التحليل — اعرض النص مباشرة
-  if(!html.includes('itin-day-block')){
-    html += `<div class="itin-day-block" style="white-space:pre-line;font-size:13px;line-height:1.8;color:rgba(255,255,255,0.8);">${text}</div>`;
-  }
-
   return html;
 }
 
