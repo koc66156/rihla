@@ -75,14 +75,16 @@ async function classifyOne(idx){
   }
   log(`⏳ ${d.name}...`);
 
-  const prompt=`صنّف هذه الأماكن في ${d.name} بتنسيق JSON فقط بدون أي نص:
-الأماكن: ${d.must_visit.join('، ')}
+  const prompt=`للأماكن التالية في ${d.name}، أعطني JSON array فقط:
+${d.must_visit.join('، ')}
 
-التنسيق المطلوب (JSON array فقط):
-[{"name":"اسم المكان","category":"ثقافة او تسوق او طبيعة او شاطئ او ترفيه او طعام","time":"صباحاً او ظهراً او مساءً","for":["عائلي","شباب","زوجين","منفرد"]}]
+مثال على الشكل المطلوب:
+[{"name":"آيا صوفيا","category":"ثقافة","time":"صباحاً","for":["عائلي","شباب"]},{"name":"البازار","category":"تسوق","time":"ظهراً","for":["جميع"]}]
 
-التصنيفات المتاحة للـ category: ثقافة، تسوق، طبيعة، شاطئ، ترفيه، طعام
-الـ for يحتوي على واحد أو أكثر من: عائلي، شباب، زوجين، منفرد`;
+category: ثقافة أو تسوق أو طبيعة أو شاطئ أو ترفيه أو طعام
+time: صباحاً أو ظهراً أو مساءً
+for: مصفوفة من عائلي، شباب، زوجين، منفرد (أو جميع)
+أجب بـ JSON فقط بدون backticks أو نص`;
 
   try{
     const r=await fetch('https://ybjdagurvkweabujkeyz.supabase.co/functions/v1/ai-chat',{
@@ -95,11 +97,31 @@ async function classifyOne(idx){
     const resp=await r.json();
     const ans=resp.answer||'';
     
-    // استخراج JSON من الرد
-    const match=ans.match(/\[[\s\S]*\]/);
-    if(!match){log(`❌ ${d.name}: رد غير صحيح`);return;}
+    // استخراج JSON من الرد بطرق متعددة
+    let places = null;
+    const ans2 = ans.replace(/```json|```/g,'').trim();
     
-    const places=JSON.parse(match[0]);
+    // محاولة 1: JSON مباشر
+    try{ places=JSON.parse(ans2); }catch(e){}
+    
+    // محاولة 2: استخراج array
+    if(!places){
+      const match=ans2.match(/\[[\s\S]*?\]/);
+      if(match){ try{ places=JSON.parse(match[0]); }catch(e){} }
+    }
+    
+    // محاولة 3: إذا فشل كل شيء - بناء JSON يدوياً من must_visit
+    if(!places || !Array.isArray(places) || !places.length){
+      const cats=['ثقافة','تسوق','طبيعة','ترفيه'];
+      const times=['صباحاً','ظهراً','مساءً'];
+      places=d.must_visit.map((name,i)=>({
+        name,
+        category:cats[i%cats.length],
+        time:times[i%times.length],
+        for:['جميع']
+      }));
+      log(`⚠️ ${d.name}: استخدام تصنيف تلقائي`);
+    }
     
     // تخزين في DB
     await sb.from('destinations')
