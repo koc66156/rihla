@@ -1214,39 +1214,43 @@ async function generateItinerary(){
   btn.textContent='⏳ جاري إعداد جدولك...';
   result.innerHTML='';
 
-  const prompt = `اكتب جدول سفر لـ${days} أيام في ${d.name} لـ${type}، اهتمامات: ${interests.join(' و')}، ميزانية: ${budget.split('—')[0].trim()}.
-
-اكتب الجدول بهذا الشكل فقط بدون أي مقدمة:
-
+  const prompt = `جدول ${days} أيام في ${d.name} لـ${type}، ${interests.join('+')}، ${budget.split('—')[0].trim()}.
+ابدأ مباشرة بهذا الشكل:
 اليوم 1: [عنوان]
-صباحاً | [اسم المكان] | [نصيحة]
-ظهراً | [اسم المكان] | [نصيحة]
-مساءً | [اسم المكان] | [نصيحة]
-
+صباحاً | [مكان] | [نصيحة قصيرة]
+ظهراً | [مكان] | [نصيحة قصيرة]
+مساءً | [مكان] | [نصيحة قصيرة]
 اليوم 2: [عنوان]
-صباحاً | [اسم المكان] | [نصيحة]
-ظهراً | [اسم المكان] | [نصيحة]
-مساءً | [اسم المكان] | [نصيحة]
+...إلخ حتى اليوم ${days}`;
 
-استمر حتى اليوم ${days}. لا تكرر أماكن. رتّب القريب مع القريب.`;
-
-  try{
-    const r=await fetch('https://ybjdagurvkweabujkeyz.supabase.co/functions/v1/ai-chat',{
-      method:'POST',
-      headers:{'Content-Type':'application/json','apikey':'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InliamRhZ3Vydmt3ZWFidWprZXl6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkzNjQyMDAsImV4cCI6MjA5NDk0MDIwMH0.CIK7sew_-kBlC_t_szCjKjjnFNg695kwSryuRshQ9nI','Authorization':'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InliamRhZ3Vydmt3ZWFidWprZXl6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkzNjQyMDAsImV4cCI6MjA5NDk0MDIwMH0.CIK7sew_-kBlC_t_szCjKjjnFNg695kwSryuRshQ9nI'},
-      body:JSON.stringify({message:prompt,context:'أنت مرشد سفر خبير للمسافرين الخليجيين.',history:[]})
-    });
-    const resp=await r.json();
-    const ans=resp.answer||'';
-    if(!ans){
-      result.innerHTML='<div class="itin-warn">الرد: '+JSON.stringify(resp).substring(0,200)+'</div>';
-      btn.disabled=false;btn.textContent='✨ اقترح جدولي';
-      return;
+  // محاولة مع retry تلقائي
+  let ans = '';
+  for(let attempt=0; attempt<2; attempt++){
+    try{
+      const r=await fetch('https://ybjdagurvkweabujkeyz.supabase.co/functions/v1/ai-chat',{
+        method:'POST',
+        headers:{'Content-Type':'application/json','apikey':'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InliamRhZ3Vydmt3ZWFidWprZXl6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkzNjQyMDAsImV4cCI6MjA5NDk0MDIwMH0.CIK7sew_-kBlC_t_szCjKjjnFNg695kwSryuRshQ9nI','Authorization':'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InliamRhZ3Vydmt3ZWFidWprZXl6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkzNjQyMDAsImV4cCI6MjA5NDk0MDIwMH0.CIK7sew_-kBlC_t_szCjKjjnFNg695kwSryuRshQ9nI'},
+        body:JSON.stringify({message:prompt,context:'أنت مرشد سفر. أجب بالجدول فقط.',history:[]})
+      });
+      const resp=await r.json();
+      ans=resp.answer||'';
+      if(ans && ans.includes('اليوم')) break;
+      if(attempt===0) btn.textContent='⏳ إعادة المحاولة...';
+    }catch(e){
+      if(attempt===1){
+        result.innerHTML='<div class="itin-warn">❌ تحقق من الإنترنت وحاول مجدداً</div>';
+        btn.disabled=false;btn.textContent='✨ اقترح جدولي';
+        return;
+      }
     }
-    result.innerHTML=parseItinerary(ans,d.name,days,type,interests,budget);
-  }catch(e){
-    result.innerHTML='<div class="itin-warn">خطأ: '+e+'</div>';
   }
+
+  if(!ans){
+    result.innerHTML='<div class="itin-warn">❌ حاول مرة أخرى</div>';
+    btn.disabled=false;btn.textContent='✨ اقترح جدولي';
+    return;
+  }
+  result.innerHTML=parseItinerary(ans,d.name,days,type,interests,budget);
 
   btn.disabled=false;
   btn.textContent='✨ اقترح جدولاً آخر';
